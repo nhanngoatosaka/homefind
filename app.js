@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupFilterEvents();
   setupContactForm();
   setupDialogClose();
+  initKeisanCalculator();
   loadData();
 });
 
@@ -1451,3 +1452,694 @@ function renderFooterCompanyInfo() {
     privacyContact.innerHTML = `<strong>4. Liên hệ về dữ liệu cá nhân:</strong> BIG不動産株式会社 — 〒577-0057 大阪府東大阪市足代新町4-12 テレビル5F${phoneDisplay ? ` · Tel: ${phoneDisplay}` : ''}${email ? ` · Email: ${email}` : ''}.`;
   }
 }
+
+// --------------------------------------------------------------------------
+// 11. MÁY TÍNH TIỀN TRẢ GÓP & SO SÁNH TIỀN THUÊ NHÀ (Chuẩn công thức Keisan.site 1256186048)
+// --------------------------------------------------------------------------
+let currentKeisanMethod = 'ganri'; // 'ganri' (元利均等) | 'gankin' (元金均等)
+let lastKeisanResult = null;
+let isKeisanScheduleOpen = false;
+
+const KEISAN_PRESETS = {
+  house3480: {
+    totalMan: 3480,
+    bonusMan: 0,
+    method: 'ganri',
+    years: 35,
+    months: 0,
+    bonusMonths: '7-1',
+    rate1: 0.6,
+    rate1Years: 5,
+    rate2: 0.6,
+    currentRent: 95000,
+    roundMode: 'floor',
+    startYm: '2026-01'
+  },
+  condo990: {
+    totalMan: 990,
+    bonusMan: 0,
+    method: 'ganri',
+    years: 25,
+    months: 0,
+    bonusMonths: '7-1',
+    rate1: 0.7,
+    rate1Years: 5,
+    rate2: 0.9,
+    currentRent: 68000,
+    roundMode: 'floor',
+    startYm: '2026-01'
+  },
+  standard3000: {
+    totalMan: 3000,
+    bonusMan: 300,
+    method: 'ganri',
+    years: 35,
+    months: 0,
+    bonusMonths: '7-1',
+    rate1: 0.5,
+    rate1Years: 5,
+    rate2: 1.2,
+    currentRent: 85000,
+    roundMode: 'floor',
+    startYm: '2026-01'
+  },
+  keisanDefault: {
+    totalMan: 1000,
+    bonusMan: 400,
+    method: 'ganri',
+    years: 10,
+    months: 0,
+    bonusMonths: '7-1',
+    rate1: 2.0,
+    rate1Years: 5,
+    rate2: 3.0,
+    currentRent: 85000,
+    roundMode: 'floor',
+    startYm: '2026-01'
+  }
+};
+
+function keisanRoundVal(x, mode) {
+  if (mode === 'floor') return Math.floor(x + 1e-9);
+  if (mode === 'round') return Math.round(x);
+  if (mode === 'ceil') return Math.ceil(x - 1e-9);
+  return Math.floor(x + 1e-9);
+}
+
+function keisanCalcPmt(principal, periodRate, n, mode) {
+  if (n <= 0 || principal <= 0) return 0;
+  if (periodRate === 0) return keisanRoundVal(principal / n, mode);
+  const factor = Math.pow(1 + periodRate, n);
+  return keisanRoundVal((principal * periodRate * factor) / (factor - 1), mode);
+}
+
+/**
+ * Thuật toán tính lịch trả nợ chuẩn Keisan.site (1256186048):
+ * - Tách khoản vay thành 2 phần độc lập: Phần trả hàng tháng (Pm) và Phần trả kỳ thưởng Bonus (Pb)
+ * - Hỗ trợ 2 phương thức: 元利均等 (ganri - Gốc+Lãi đều) và 元金均等 (gankin - Gốc đều)
+ * - Hỗ trợ đổi lãi suất 2 giai đoạn: 당초금리 (rate1 trong rate1Years năm đầu) và 以降金利 (rate2 từ tháng 12*rate1Years + 1)
+ * - Tháng trả kỳ thứ 1 bắt đầu sau tháng giải ngân (借入年月) 1 tháng.
+ */
+function computeKeisanSchedule(params) {
+  const {
+    totalMan,
+    bonusMan,
+    method,
+    years,
+    months,
+    bonusMonthsPair,
+    rate1Pct,
+    rate1Years,
+    rate2Pct,
+    roundMode,
+    startYear,
+    startMonth
+  } = params;
+
+  const totalMonths = Math.max(1, (Number(years) || 0) * 12 + (Number(months) || 0));
+  const safeTotalMan = Math.max(0, Number(totalMan) || 0);
+  const safeBonusMan = Math.min(safeTotalMan, Math.max(0, Number(bonusMan) || 0));
+
+  let balM = Math.round((safeTotalMan - safeBonusMan) * 10000);
+  let balB = Math.round(safeBonusMan * 10000);
+
+  const [bm1, bm2] = (bonusMonthsPair || '7-1').split('-').map(Number);
+  const isBonusMonth = m => m === bm1 || m === bm2;
+
+  // Xác định danh sách các kỳ có trả Bonus
+  const scheduleDates = [];
+  let y = Number(startYear) || 2026;
+  let m = Number(startMonth) || 1;
+  for (let i = 1; i <= totalMonths; i++) {
+    m += 1;
+    if (m > 12) {
+      m = 1;
+      y += 1;
+    }
+    scheduleDates.push({ idx: i, year: y, month: m, isBonus: isBonusMonth(m) });
+  }
+
+  const totalBonusCount = scheduleDates.filter(d => d.isBonus).length;
+  let remM = totalMonths;
+  let remB = totalBonusCount;
+
+  const switchAfterMonth = Math.max(0, (Number(rate1Years) || 0) * 12);
+
+  let curRatePct = Number(rate1Pct) || 0;
+  let rM = curRatePct / 100 / 12;
+  let rB = curRatePct / 100 / 2;
+
+  let pmtM = method === 'ganri'
+    ? keisanCalcPmt(balM, rM, remM, roundMode)
+    : keisanRoundVal(balM / remM, roundMode);
+
+  let pmtB = remB > 0
+    ? (method === 'ganri' ? keisanCalcPmt(balB, rB, remB, roundMode) : keisanRoundVal(balB / remB, roundMode))
+    : 0;
+
+  let firstMonthPay = 0;
+  let secondStageMonthPay = null;
+  let firstBonusExtraPay = 0;
+  let secondStageBonusExtraPay = null;
+
+  let sumPayM = 0;
+  let sumPrinM = 0;
+  let sumIntM = 0;
+  let sumPayB = 0;
+  let sumPrinB = 0;
+  let sumIntB = 0;
+
+  const rows = [];
+
+  for (let i = 0; i < totalMonths; i++) {
+    const step = scheduleDates[i];
+    const k = step.idx;
+
+    // Chuyển sang lãi suất giai đoạn 2 tại kỳ (switchAfterMonth + 1)
+    if (k === switchAfterMonth + 1 && k > 1) {
+      curRatePct = Number(rate2Pct) || 0;
+      rM = curRatePct / 100 / 12;
+      rB = curRatePct / 100 / 2;
+      if (method === 'ganri') {
+        pmtM = keisanCalcPmt(balM, rM, remM, roundMode);
+        pmtB = remB > 0 ? keisanCalcPmt(balB, rB, remB, roundMode) : 0;
+      } else {
+        pmtM = remM > 0 ? keisanRoundVal(balM / remM, roundMode) : 0;
+        pmtB = remB > 0 ? keisanRoundVal(balB / remB, roundMode) : 0;
+      }
+    }
+
+    // 1. Tính phần trả hàng tháng (月払)
+    let intM = keisanRoundVal(balM * rM, roundMode);
+    let prinM = 0;
+    let payM = 0;
+
+    if (balM > 0) {
+      if (remM === 1) {
+        prinM = balM;
+        payM = prinM + intM;
+      } else if (method === 'ganri') {
+        payM = pmtM;
+        prinM = payM - intM;
+        if (prinM > balM) {
+          prinM = balM;
+          payM = prinM + intM;
+        }
+      } else {
+        prinM = pmtM;
+        if (prinM > balM) prinM = balM;
+        payM = prinM + intM;
+      }
+      balM -= prinM;
+    }
+    remM -= 1;
+
+    // 2. Tính phần trả kỳ thưởng Bonus (ボーナス払) nếu tháng này là tháng Bonus
+    let intB = 0;
+    let prinB = 0;
+    let payB = 0;
+
+    if (step.isBonus && balB > 0 && remB > 0) {
+      intB = keisanRoundVal(balB * rB, roundMode);
+      if (remB === 1) {
+        prinB = balB;
+        payB = prinB + intB;
+      } else if (method === 'ganri') {
+        payB = pmtB;
+        prinB = payB - intB;
+        if (prinB > balB) {
+          prinB = balB;
+          payB = prinB + intB;
+        }
+      } else {
+        prinB = pmtB;
+        if (prinB > balB) prinB = balB;
+        payB = prinB + intB;
+      }
+      balB -= prinB;
+      remB -= 1;
+
+      if (firstBonusExtraPay === 0 && k <= switchAfterMonth) {
+        firstBonusExtraPay = payB;
+      }
+      if (k > switchAfterMonth && secondStageBonusExtraPay === null) {
+        secondStageBonusExtraPay = payB;
+      }
+    }
+
+    if (k === 1) {
+      firstMonthPay = payM;
+    }
+    if (k === switchAfterMonth + 1 && k > 1) {
+      secondStageMonthPay = payM;
+    }
+
+    sumPayM += payM;
+    sumPrinM += prinM;
+    sumIntM += intM;
+    sumPayB += payB;
+    sumPrinB += prinB;
+    sumIntB += intB;
+
+    rows.push({
+      index: k,
+      ym: `${step.year}/${String(step.month).padStart(2, '0')}`,
+      isBonus: step.isBonus && (payB > 0 || safeBonusMan > 0),
+      payM,
+      prinM,
+      intM,
+      payB,
+      prinB,
+      intB,
+      balance: balM + balB
+    });
+  }
+
+  if (secondStageMonthPay === null) {
+    secondStageMonthPay = firstMonthPay;
+  }
+  if (secondStageBonusExtraPay === null) {
+    secondStageBonusExtraPay = firstBonusExtraPay;
+  }
+
+  return {
+    totalMonths,
+    endYm: rows.length > 0 ? rows[rows.length - 1].ym : '',
+    firstMonthPay,
+    secondStageMonthPay,
+    firstBonusExtraPay,
+    secondStageBonusExtraPay,
+    sumPayM,
+    sumPrinM,
+    sumIntM,
+    sumPayB,
+    sumPrinB,
+    sumIntB,
+    grandTotalPay: sumPayM + sumPayB,
+    grandTotalPrin: sumPrinM + sumPrinB,
+    grandTotalInt: sumIntM + sumIntB,
+    rows
+  };
+}
+
+function initKeisanCalculator() {
+  const totalInput = document.getElementById('ks-total-man');
+  if (!totalInput) return; // Chỉ chạy trên trang có khung #featured máy tính
+
+  const totalSlider = document.getElementById('ks-total-slider');
+  const bonusInput = document.getElementById('ks-bonus-man');
+  const bonusSlider = document.getElementById('ks-bonus-slider');
+
+  const clearPresetHighlight = () => {
+    document.querySelectorAll('#keisan-presets .keisan-preset-btn').forEach(b => b.classList.remove('active'));
+  };
+
+  // Đồng bộ thanh trượt & ô nhập Tổng tiền vay
+  if (totalSlider && totalInput) {
+    totalSlider.addEventListener('input', () => {
+      totalInput.value = totalSlider.value;
+      if (Number(bonusInput.value) > Number(totalInput.value)) {
+        bonusInput.value = totalInput.value;
+        if (bonusSlider) bonusSlider.value = totalInput.value;
+      }
+      clearPresetHighlight();
+      recalcAndRenderKeisan();
+    });
+    totalInput.addEventListener('input', () => {
+      totalSlider.value = Math.min(8000, Math.max(100, Number(totalInput.value) || 0));
+      clearPresetHighlight();
+      recalcAndRenderKeisan();
+    });
+  }
+
+  // Đồng bộ thanh trượt & ô nhập Tiền trả Bonus
+  if (bonusSlider && bonusInput) {
+    bonusSlider.addEventListener('input', () => {
+      const maxAllowed = Number(totalInput.value) || 0;
+      const val = Math.min(maxAllowed, Number(bonusSlider.value) || 0);
+      bonusInput.value = val;
+      bonusSlider.value = val;
+      clearPresetHighlight();
+      recalcAndRenderKeisan();
+    });
+    bonusInput.addEventListener('input', () => {
+      const maxAllowed = Number(totalInput.value) || 0;
+      if (Number(bonusInput.value) > maxAllowed) {
+        bonusInput.value = maxAllowed;
+      }
+      bonusSlider.value = Math.min(2000, Math.max(0, Number(bonusInput.value) || 0));
+      clearPresetHighlight();
+      recalcAndRenderKeisan();
+    });
+  }
+
+  // Gắn sự kiện tính tự động cho mọi ô nhập khác
+  const controlIds = [
+    'ks-term-years',
+    'ks-term-months',
+    'ks-bonus-months',
+    'ks-rate1',
+    'ks-rate1-years',
+    'ks-rate2',
+    'ks-current-rent',
+    'ks-round-mode',
+    'ks-start-ym'
+  ];
+
+  controlIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', () => {
+        clearPresetHighlight();
+        recalcAndRenderKeisan();
+      });
+      el.addEventListener('change', () => {
+        clearPresetHighlight();
+        recalcAndRenderKeisan();
+      });
+    }
+  });
+
+  recalcAndRenderKeisan();
+}
+
+function readKeisanInputs() {
+  const totalMan = Number(document.getElementById('ks-total-man')?.value) || 0;
+  const bonusMan = Math.min(totalMan, Math.max(0, Number(document.getElementById('ks-bonus-man')?.value) || 0));
+  const years = Math.max(1, Math.min(50, Number(document.getElementById('ks-term-years')?.value) || 35));
+  const months = Math.max(0, Math.min(12, Number(document.getElementById('ks-term-months')?.value) || 0));
+  const bonusMonthsPair = document.getElementById('ks-bonus-months')?.value || '7-1';
+  const rate1Pct = Math.max(0, Number(document.getElementById('ks-rate1')?.value) || 0);
+  const rate1Years = Math.max(1, Number(document.getElementById('ks-rate1-years')?.value) || 5);
+  const rate2Pct = Math.max(0, Number(document.getElementById('ks-rate2')?.value) || 0);
+  const currentRent = Math.max(0, Number(document.getElementById('ks-current-rent')?.value) || 0);
+  const roundMode = document.getElementById('ks-round-mode')?.value || 'floor';
+  const startYmStr = document.getElementById('ks-start-ym')?.value || '2026-01';
+  const [sy, sm] = startYmStr.split('-').map(Number);
+
+  return {
+    totalMan,
+    bonusMan,
+    method: currentKeisanMethod,
+    years,
+    months,
+    bonusMonthsPair,
+    rate1Pct,
+    rate1Years,
+    rate2Pct,
+    currentRent,
+    roundMode,
+    startYear: sy || 2026,
+    startMonth: sm || 1
+  };
+}
+
+function recalcAndRenderKeisan() {
+  const totalInput = document.getElementById('ks-total-man');
+  if (!totalInput) return;
+
+  const params = readKeisanInputs();
+  const res = computeKeisanSchedule(params);
+  lastKeisanResult = { params, res };
+
+  const fmtYen = n => `¥${Math.round(n).toLocaleString('en-US')}`;
+
+  // 1. Hiển thị tiền trả hàng tháng kỳ đầu & giai đoạn 2
+  const pay1El = document.getElementById('ks-res-pay1');
+  const pay2LabelEl = document.getElementById('ks-res-pay2-label');
+  const pay2El = document.getElementById('ks-res-pay2');
+  const bonusPayEl = document.getElementById('ks-res-bonus-pay');
+  const endBadgeEl = document.getElementById('ks-res-end-badge');
+
+  if (pay1El) {
+    pay1El.innerHTML = `${fmtYen(res.firstMonthPay)}<span style="font-size: 15px; font-weight: 400; color: var(--muted);">/tháng</span>`;
+  }
+  if (endBadgeEl) {
+    endBadgeEl.textContent = `${res.totalMonths} kỳ · Tất toán ${res.endYm}`;
+  }
+  if (pay2LabelEl) {
+    if (params.rate1Years < params.years) {
+      pay2LabelEl.textContent = `Từ năm thứ ${params.rate1Years + 1} (Lãi ${params.rate2Pct}%) · 以降月額`;
+    } else {
+      pay2LabelEl.textContent = `Suốt kỳ hạn vay · 毎月返済額`;
+    }
+  }
+  if (pay2El) {
+    pay2El.textContent = `${fmtYen(res.secondStageMonthPay)}/tháng`;
+  }
+  if (bonusPayEl) {
+    if (params.bonusMan > 0 && res.firstBonusExtraPay > 0) {
+      if (res.secondStageBonusExtraPay !== res.firstBonusExtraPay && params.rate1Years < params.years) {
+        bonusPayEl.textContent = `+${fmtYen(res.firstBonusExtraPay)} → +${fmtYen(res.secondStageBonusExtraPay)}/kỳ`;
+      } else {
+        bonusPayEl.textContent = `+${fmtYen(res.firstBonusExtraPay)} / kỳ`;
+      }
+    } else {
+      bonusPayEl.textContent = `¥0 (Không trả Bonus)`;
+    }
+  }
+
+  // 2. Tổng gốc, lãi và thanh tỷ lệ
+  const grandTotalEl = document.getElementById('ks-res-grand-total');
+  const totalPrinEl = document.getElementById('ks-res-total-prin');
+  const totalIntEl = document.getElementById('ks-res-total-int');
+  const barPrinEl = document.getElementById('ks-bar-prin');
+  const barIntEl = document.getElementById('ks-bar-int');
+
+  if (grandTotalEl) grandTotalEl.textContent = fmtYen(res.grandTotalPay);
+  if (totalPrinEl) totalPrinEl.textContent = fmtYen(res.grandTotalPrin);
+  if (totalIntEl) totalIntEl.textContent = fmtYen(res.grandTotalInt);
+
+  if (barPrinEl && barIntEl && res.grandTotalPay > 0) {
+    const prinPct = Math.round((res.grandTotalPrin / res.grandTotalPay) * 100);
+    const intPct = 100 - prinPct;
+    barPrinEl.style.width = `${prinPct}%`;
+    barIntEl.style.width = `${intPct}%`;
+  }
+
+  // 3. Bảng tóm tắt 月払 vs ボーナス払 chuẩn Keisan
+  const monthlyBreakdownEl = document.getElementById('ks-res-monthly-breakdown');
+  const bonusBreakdownEl = document.getElementById('ks-res-bonus-breakdown');
+  if (monthlyBreakdownEl) {
+    monthlyBreakdownEl.textContent = `${fmtYen(res.sumPayM)} (Gốc ${fmtYen(res.sumPrinM)} + Lãi ${fmtYen(res.sumIntM)})`;
+  }
+  if (bonusBreakdownEl) {
+    if (params.bonusMan > 0) {
+      bonusBreakdownEl.textContent = `${fmtYen(res.sumPayB)} (Gốc ${fmtYen(res.sumPrinB)} + Lãi ${fmtYen(res.sumIntB)})`;
+    } else {
+      bonusBreakdownEl.textContent = `¥0 (Không tách trả kỳ Bonus)`;
+    }
+  }
+
+  // 4. Hộp so sánh trực tiếp với Tiền thuê nhà hiện tại (現在の家賃)
+  const rentCompareBox = document.getElementById('ks-rent-compare-box');
+  if (rentCompareBox) {
+    // Trung bình thực trả mỗi tháng (đã quy đổi cả phần Bonus nếu có trong giai đoạn 1)
+    const effectiveMonthly = res.firstMonthPay + Math.round((res.firstBonusExtraPay * 2) / 12);
+    const totalRentOverTerm = params.currentRent * res.totalMonths;
+    const diffMonthly = effectiveMonthly - params.currentRent;
+
+    let diffVerdictHtml = '';
+    if (params.currentRent > 0) {
+      if (diffMonthly <= 0) {
+        diffVerdictHtml = `<strong style="color: var(--ok);">Nhẹ hơn tiền thuê hiện tại ${fmtYen(Math.abs(diffMonthly))}/tháng</strong> — lại sở hữu tài sản riêng sau ${params.years} năm.`;
+      } else {
+        diffVerdictHtml = `Chênh thêm <strong style="color: var(--amber-ink);">+${fmtYen(diffMonthly)}/tháng</strong> so với tiền thuê hiện tại để đổi lấy nhà đứng tên mình.`;
+      }
+    }
+
+    rentCompareBox.innerHTML = `
+      <div class="keisan-rent-compare-title">
+        <span>Đối chiếu Thuê nhà (${fmtYen(params.currentRent)}/tháng) vs Mua trả góp</span>
+        <span style="font-size: 12px; color: var(--amber-ink);">Trong ${params.years} năm (${res.totalMonths} tháng)</span>
+      </div>
+      <div class="keisan-rent-compare-row">
+        <span>Nếu tiếp tục thuê nhà (${fmtYen(params.currentRent)} × ${res.totalMonths} tháng):</span>
+        <strong style="color: var(--danger);">${fmtYen(totalRentOverTerm)} (Mất trắng tiền thuê)</strong>
+      </div>
+      <div class="keisan-rent-compare-row">
+        <span>Trung bình trả góp mua nhà mỗi tháng (gồm Bonus):</span>
+        <strong style="color: var(--ink);">${fmtYen(effectiveMonthly)}/tháng</strong>
+      </div>
+      ${diffVerdictHtml ? `<div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--line); font-size: 12.5px; color: var(--ink);">${diffVerdictHtml}</div>` : ''}
+    `;
+  }
+
+  // 5. Nếu bảng chi tiết đang mở thì cập nhật luôn bảng 9 cột
+  if (isKeisanScheduleOpen) {
+    renderKeisanScheduleTable(res);
+  }
+}
+
+function renderKeisanScheduleTable(res) {
+  const tbody = document.getElementById('keisan-schedule-tbody');
+  const tfoot = document.getElementById('keisan-schedule-tfoot');
+  if (!tbody || !tfoot || !res) return;
+
+  const fmt = n => Math.round(n).toLocaleString('en-US');
+
+  tbody.innerHTML = res.rows.map(r => `
+    <tr class="${r.isBonus ? 'bonus-row' : ''}">
+      <td>${r.index}</td>
+      <td>${r.ym}</td>
+      <td>¥${fmt(r.payM)}</td>
+      <td>¥${fmt(r.prinM)}</td>
+      <td>¥${fmt(r.intM)}</td>
+      <td>${r.payB > 0 ? `¥${fmt(r.payB)}` : '—'}</td>
+      <td>${r.prinB > 0 ? `¥${fmt(r.prinB)}` : '—'}</td>
+      <td>${r.intB > 0 ? `¥${fmt(r.intB)}` : '—'}</td>
+      <td><strong>¥${fmt(r.balance)}</strong></td>
+    </tr>
+  `).join('');
+
+  tfoot.innerHTML = `
+    <tr>
+      <td colspan="2">Tổng cộng (合計)</td>
+      <td>¥${fmt(res.sumPayM)}</td>
+      <td>¥${fmt(res.sumPrinM)}</td>
+      <td>¥${fmt(res.sumIntM)}</td>
+      <td>¥${fmt(res.sumPayB)}</td>
+      <td>¥${fmt(res.sumPrinB)}</td>
+      <td>¥${fmt(res.sumIntB)}</td>
+      <td>¥0</td>
+    </tr>
+  `;
+}
+
+window.setKeisanMethod = function(method) {
+  currentKeisanMethod = method === 'gankin' ? 'gankin' : 'ganri';
+  const btnGanri = document.getElementById('ks-method-ganri');
+  const btnGankin = document.getElementById('ks-method-gankin');
+  if (btnGanri) btnGanri.classList.toggle('active', currentKeisanMethod === 'ganri');
+  if (btnGankin) btnGankin.classList.toggle('active', currentKeisanMethod === 'gankin');
+  recalcAndRenderKeisan();
+};
+
+window.applyKeisanPreset = function(presetKey, btnEl) {
+  const preset = KEISAN_PRESETS[presetKey];
+  if (!preset) return;
+
+  document.querySelectorAll('#keisan-presets .keisan-preset-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+
+  const setVal = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  };
+
+  setVal('ks-total-man', preset.totalMan);
+  setVal('ks-total-slider', Math.min(8000, preset.totalMan));
+  setVal('ks-bonus-man', preset.bonusMan);
+  setVal('ks-bonus-slider', Math.min(2000, preset.bonusMan));
+  setVal('ks-term-years', preset.years);
+  setVal('ks-term-months', preset.months);
+  setVal('ks-bonus-months', preset.bonusMonths);
+  setVal('ks-rate1', preset.rate1);
+  setVal('ks-rate1-years', preset.rate1Years);
+  setVal('ks-rate2', preset.rate2);
+  setVal('ks-current-rent', preset.currentRent);
+  setVal('ks-round-mode', preset.roundMode);
+  setVal('ks-start-ym', preset.startYm);
+
+  window.setKeisanMethod(preset.method);
+};
+
+window.toggleKeisanSchedule = function() {
+  const wrap = document.getElementById('keisan-schedule-wrap');
+  const btn = document.getElementById('btn-toggle-keisan-table');
+  if (!wrap) return;
+
+  isKeisanScheduleOpen = !isKeisanScheduleOpen;
+  wrap.classList.toggle('open', isKeisanScheduleOpen);
+
+  if (btn) {
+    btn.textContent = isKeisanScheduleOpen
+      ? 'Thu gọn bảng lịch trả nợ ↑'
+      : 'Xem bảng lịch trả nợ chi tiết ↓';
+  }
+
+  if (isKeisanScheduleOpen && lastKeisanResult) {
+    renderKeisanScheduleTable(lastKeisanResult.res);
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+};
+
+window.downloadKeisanCsv = function() {
+  if (!lastKeisanResult || !lastKeisanResult.res) return;
+  const { params, res } = lastKeisanResult;
+
+  const headers = [
+    'Ky (回目)',
+    'Nam/Thang (年月)',
+    'Tra hang thang (月払返済額)',
+    'Goc thang (月払元金)',
+    'Lai thang (月払利息)',
+    'Tra Bonus (ボーナス返済額)',
+    'Goc Bonus (ボーナス元金)',
+    'Lai Bonus (ボーナス利息)',
+    'Du no con lai (借入残高)'
+  ];
+
+  const lines = [headers.join(',')];
+  res.rows.forEach(r => {
+    lines.push([
+      r.index,
+      r.ym,
+      r.payM,
+      r.prinM,
+      r.intM,
+      r.payB,
+      r.prinB,
+      r.intB,
+      r.balance
+    ].join(','));
+  });
+
+  lines.push([
+    'Tong cong (合計)',
+    '',
+    res.sumPayM,
+    res.sumPrinM,
+    res.sumIntM,
+    res.sumPayB,
+    res.sumPrinB,
+    res.sumIntB,
+    0
+  ].join(','));
+
+  const bom = '\uFEFF';
+  const blob = new Blob([bom + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `lich-tra-gop-${params.totalMan}man-${params.years}nam.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+window.consultWithKeisanResult = function() {
+  if (!lastKeisanResult) return;
+  const { params, res } = lastKeisanResult;
+  const methodLabel = params.method === 'ganri' ? '元利均等 (Gốc+Lãi đều)' : '元金均等 (Gốc đều)';
+  const propInput = document.getElementById('form-property');
+  const msgInput = document.getElementById('form-message');
+
+  if (propInput) {
+    propInput.value = `Tư vấn vay ${params.totalMan.toLocaleString()}万円 (${params.years} năm · ${methodLabel})`;
+  }
+  if (msgInput) {
+    msgInput.value = `Tôi vừa tính thử trên web: Vay ${params.totalMan.toLocaleString()}万円 (Bonus ${params.bonusMan}万円), thời hạn ${params.years} năm, lãi suất đầu ${params.rate1Pct}% (${params.rate1Years} năm) → sau đó ${params.rate2Pct}%. Tiền trả ước tính mỗi tháng khoảng ¥${res.firstMonthPay.toLocaleString()}. Nhờ BIG不動産 tư vấn hồ sơ vay và giới thiệu căn phù hợp.`;
+  }
+
+  const contactSection = document.getElementById('contact');
+  if (contactSection) {
+    contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  setTimeout(() => {
+    const nameInput = document.getElementById('form-name');
+    if (nameInput) nameInput.focus();
+  }, 450);
+};
+

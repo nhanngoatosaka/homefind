@@ -1028,6 +1028,278 @@ footer.site-footer {
   font-weight: 600;
 }
 
+/* ==========================================================================
+   MÁY TÍNH KHOẢN VAY & SO SÁNH TIỀN THUÊ NHÀ (Chuẩn Keisan.site — Japandi UI)
+   ========================================================================== */
+.keisan-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.keisan-preset-btn {
+  background-color: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.keisan-preset-btn:hover {
+  border-color: var(--amber);
+  background-color: var(--amber-soft);
+  color: var(--amber-ink);
+}
+.keisan-preset-btn.active {
+  background-color: var(--ink);
+  color: var(--cta-ink);
+  border-color: var(--ink);
+}
+
+.keisan-grid {
+  display: grid;
+  grid-template-columns: 1.08fr 0.92fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.keisan-card {
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 24px 26px;
+}
+
+.keisan-section-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--amber-ink);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+
+.keisan-form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.keisan-form-row-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.keisan-field label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 5px;
+}
+.keisan-field label span.jp-sub {
+  font-size: 11px;
+  color: var(--faint);
+  font-weight: 400;
+}
+
+.keisan-input-unit {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.keisan-input-unit .form-control {
+  padding-right: 48px;
+}
+.keisan-unit-tag {
+  position: absolute;
+  right: 12px;
+  font-size: 12.5px;
+  color: var(--muted);
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.keisan-range {
+  width: 100%;
+  margin-top: 6px;
+  accent-color: var(--amber);
+  cursor: pointer;
+}
+
+.keisan-method-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.keisan-method-btn {
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  background-color: var(--bg);
+  color: var(--muted);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+.keisan-method-btn.active {
+  background-color: var(--ink);
+  color: var(--cta-ink);
+  border-color: var(--ink);
+}
+
+/* Hộp kết quả bên phải */
+.keisan-result-card {
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 26px;
+}
+.keisan-hero-numbers {
+  background-color: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+}
+.keisan-main-pay {
+  font-size: clamp(28px, 3.5vw, 36px);
+  color: var(--amber-ink);
+  font-family: 'Shippori Mincho B1', serif;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.keisan-sub-pay-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+/* Thanh biểu đồ Gốc vs Lãi */
+.keisan-ratio-bar {
+  height: 10px;
+  width: 100%;
+  background-color: var(--amber-soft);
+  border-radius: 999px;
+  overflow: hidden;
+  display: flex;
+  margin: 10px 0 8px;
+  border: 1px solid var(--line);
+}
+.keisan-ratio-prin {
+  background-color: var(--ink);
+  height: 100%;
+}
+.keisan-ratio-int {
+  background-color: var(--amber);
+  height: 100%;
+}
+.keisan-ratio-legend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+/* Hộp so sánh Tiền thuê vs Trả góp */
+.keisan-rent-compare {
+  background-color: var(--amber-soft);
+  border: 1px solid var(--amber);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-top: 16px;
+  margin-bottom: 18px;
+}
+
+/* Bảng lịch trả nợ chi tiết chuẩn Keisan */
+.keisan-schedule-wrap {
+  display: none;
+  margin-top: 24px;
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 20px;
+}
+.keisan-schedule-wrap.open {
+  display: block;
+}
+.keisan-table-scroll {
+  max-height: 440px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+.keisan-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  text-align: right;
+}
+.keisan-table th,
+.keisan-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.keisan-table th {
+  position: sticky;
+  top: 0;
+  background-color: var(--bg-soft);
+  color: var(--ink);
+  font-weight: 600;
+  z-index: 2;
+}
+.keisan-table td:first-child,
+.keisan-table th:first-child,
+.keisan-table td:nth-child(2),
+.keisan-table th:nth-child(2) {
+  text-align: center;
+}
+.keisan-table tr.bonus-row {
+  background-color: var(--amber-soft);
+}
+.keisan-table tfoot td {
+  position: sticky;
+  bottom: 0;
+  background-color: var(--bg-soft);
+  font-weight: 600;
+  color: var(--ink);
+  border-top: 2px solid var(--amber);
+}
+
+@media (max-width: 920px) {
+  .keisan-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .keisan-form-row,
+  .keisan-form-row-3,
+  .keisan-sub-pay-grid {
+    grid-template-columns: 1fr;
+  }
+  .keisan-card,
+  .keisan-result-card {
+    padding: 18px;
+  }
+}
+
 /* Dải CTA giữa trang (Nền chàm, chữ trắng, đúng bảng màu STYLE_GUIDE.md) */
 .mid-cta-band {
   background-color: var(--ink);
