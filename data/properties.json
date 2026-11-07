@@ -1,6 +1,36 @@
 {
   "properties": [
     {
+      "id": "komatsu-2-kodate",
+      "name_jp": "大阪市東淀川区小松２丁目 中古一戸建て",
+      "name_vi": "Nhà nguyên căn 3 tầng Komatsu 2-chome, Higashiyodogawa",
+      "price": 34800000,
+      "price_label": "3,480万円",
+      "type": "buy",
+      "area": "Osaka",
+      "address": "大阪府大阪市東淀川区小松２ — Higashiyodogawa, Osaka",
+      "size_m2": 94.25,
+      "land_m2": 54.66,
+      "layout": "3LDK",
+      "station": "阪急京都線「上新庄」 đi bộ 7 phút · 地下鉄今里筋線「瑞光四丁目」 đi bộ 11 phút",
+      "management_fee": 0,
+      "repair_fund": 0,
+      "year_built": 2007,
+      "structure": "Nhà gỗ 3 tầng (木造3階建) · Sở hữu vĩnh viễn (所有権)",
+      "renovation": "Reform 3/2023 (Toilet, bình nóng lạnh) · Có chỗ đậu xe",
+      "images": [
+        "assets/properties/komatsu-2-kodate/01-exterior.jpg",
+        "assets/properties/komatsu-2-kodate/02-living.jpg",
+        "assets/properties/komatsu-2-kodate/03-madori.jpg",
+        "assets/properties/komatsu-2-kodate/04-kitchen.jpg",
+        "assets/properties/komatsu-2-kodate/05-bath.jpg",
+        "assets/properties/komatsu-2-kodate/06-parking.jpg"
+      ],
+      "status": "available",
+      "featured": false,
+      "notes": "Nhà nguyên căn 3LDK xây tháng 8/2007, diện tích sàn 94.25㎡ (đất 54.66㎡, sở hữu vĩnh viễn 所有権), có sẵn chỗ đậu ô tô. Đã cải tạo thiết bị vệ sinh và bình nước nóng tháng 3/2023. Cách ga Kamishinjo (Hankyu Kyoto Line) chỉ 7 phút đi bộ, nhận nhà ngay (即引渡可)."
+    },
+    {
       "id": "tsuda-flat-207",
       "name_jp": "ツダフラット 207号室",
       "name_vi": "Căn hộ Tsuda Flat phòng 207",

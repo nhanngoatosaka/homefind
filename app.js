@@ -256,12 +256,21 @@ window.openPropertyDialog = function(id) {
 
   const isSold = p.status === 'sold';
   const typeLabel = p.type === 'buy' ? 'Nhà bán · 売買' : 'Cho thuê · 賃貸';
-  const mainImg = (p.images && p.images.length > 0) ? p.images[0] : '';
-  const mgmtText = p.management_fee ? `¥${p.management_fee.toLocaleString()}/tháng` : '—';
-  const repairText = p.repair_fund ? `¥${p.repair_fund.toLocaleString()}/tháng` : '—';
+  const images = (p.images && p.images.length > 0) ? p.images : [];
+  const mainImg = images[0] || '';
+  const thumbsHtml = images.length > 1 ? `
+    <div class="gallery-thumbs" style="padding: 12px 28px 0;">
+      ${images.map((imgUrl, idx) => `
+        <div class="gallery-thumb ${idx === 0 ? 'active' : ''}" onclick="switchDialogImage('${imgUrl}', this)">
+          <img src="${imgUrl}" alt="Ảnh ${idx + 1}" loading="lazy">
+        </div>
+      `).join('')}
+    </div>
+  ` : '';
 
   content.innerHTML = `
-    ${mainImg ? `<img src="${mainImg}" alt="${p.name_jp}" class="dialog-image">` : ''}
+    ${mainImg ? `<img id="dialog-main-img" src="${mainImg}" alt="${p.name_jp}" class="dialog-image">` : ''}
+    ${thumbsHtml}
     <div class="dialog-body">
       <div class="dialog-header-meta">
         <span class="status-pill">${typeLabel} ${isSold ? '· Đã giao dịch' : ''}</span>
@@ -273,33 +282,44 @@ window.openPropertyDialog = function(id) {
 
       <table class="spec-table">
         <tbody>
+          ${p.layout ? `
           <tr>
             <td>Loại căn / Bố cục</td>
-            <td>${p.layout || '—'}</td>
-          </tr>
+            <td>${p.layout}</td>
+          </tr>` : ''}
+          ${p.size_m2 ? `
           <tr>
             <td>Diện tích sàn</td>
-            <td>${p.size_m2 || '—'} ㎡ ${p.balcony_m2 ? `(Ban công ${p.balcony_m2} ㎡)` : ''}</td>
-          </tr>
+            <td>${p.size_m2} ㎡ ${p.balcony_m2 ? `(Ban công ${p.balcony_m2} ㎡)` : ''}</td>
+          </tr>` : ''}
+          ${p.land_m2 ? `
+          <tr>
+            <td>Diện tích đất</td>
+            <td>${p.land_m2} ㎡</td>
+          </tr>` : ''}
+          ${p.station ? `
           <tr>
             <td>Ga gần nhất &amp; Đi bộ</td>
-            <td>${p.station || '—'}</td>
-          </tr>
+            <td>${p.station}</td>
+          </tr>` : ''}
+          ${(p.year_built || p.structure) ? `
           <tr>
             <td>Năm xây &amp; Kết cấu</td>
-            <td>${p.year_built ? `Xây năm ${p.year_built}` : '—'} ${p.structure ? `· ${p.structure}` : ''}</td>
-          </tr>
+            <td>${p.year_built ? `Xây năm ${p.year_built}` : ''} ${p.structure ? `· ${p.structure}` : ''}</td>
+          </tr>` : ''}
+          ${p.management_fee ? `
           <tr>
             <td>Phí quản lý</td>
-            <td>${mgmtText}</td>
-          </tr>
+            <td>¥${p.management_fee.toLocaleString()}/tháng</td>
+          </tr>` : ''}
+          ${p.repair_fund ? `
           <tr>
             <td>Quỹ sửa chữa</td>
-            <td>${repairText}</td>
-          </tr>
+            <td>¥${p.repair_fund.toLocaleString()}/tháng</td>
+          </tr>` : ''}
           ${p.renovation ? `
             <tr>
-              <td>Tình trạng Renovation</td>
+              <td>Tình trạng / Ghi chú</td>
               <td>${p.renovation}</td>
             </tr>
           ` : ''}
@@ -320,6 +340,17 @@ window.openPropertyDialog = function(id) {
   `;
 
   overlay.classList.add('open');
+};
+
+window.switchDialogImage = function(src, element) {
+  const mainImg = document.getElementById('dialog-main-img');
+  if (mainImg) mainImg.src = src;
+
+  const overlay = document.getElementById('property-dialog');
+  if (!overlay) return;
+  const thumbs = overlay.querySelectorAll('.gallery-thumb');
+  thumbs.forEach(t => t.classList.remove('active'));
+  if (element) element.classList.add('active');
 };
 
 window.closePropertyDialog = function() {
