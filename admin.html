@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin – Maisoku AI</title><link rel="stylesheet" href="styles.css"></head><body>
+<header><h1>Admin · Maisoku AI</h1><a href="index.html" style="color:#fff">← Website</a></header>
+<div class="wrap">
+<div class="panel"><b>1. Gemini API Key</b> (lấy miễn phí tại aistudio.google.com/apikey – chỉ lưu trong trình duyệt của bạn)
+<input id="key" type="password" placeholder="AIza..."></div>
+<div class="panel"><b>2. Thả tờ Maisoku (PDF / ảnh)</b>
+<div class="drop" id="drop">Kéo thả hoặc bấm để chọn file (có thể chọn nhiều ảnh nhà)<input id="file" type="file" multiple accept="image/*,application/pdf" hidden></div>
+<p><label>Ảnh đại diện (URL, tuỳ chọn)</label><input id="img" placeholder="https://..."></p>
+<button class="btn" id="go">Đọc &amp; dịch bằng AI</button> <span id="status"></span></div>
+<div class="panel"><b>3. Kiểm tra &amp; chỉnh sửa (JSON)</b>
+<textarea id="out" rows="22" placeholder="Kết quả AI hiện ở đây, bạn có thể sửa trực tiếp"></textarea><br><br>
+<button class="btn" id="add">Thêm vào danh sách</button>
+<button class="btn" id="dl" style="background:#1f2a44">Tải properties.json</button>
+<p class="sub">Sau khi tải, thay file <code>data/properties.json</code> rồi commit lên GitHub → Cloudflare/GitHub Pages tự cập nhật.<br>Tổng số nhà hiện có: <b id="cnt">0</b></p></div>
+</div>
+<script src="admin.js"></script></body></html>

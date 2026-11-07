@@ -1,0 +1,23 @@
+window.I18N = {
+  ja: { tagline: "日本の不動産｜購入・投資", search: "物件を探す", all: "すべて", city: "エリア", purpose: "目的",
+    invest: "投資", live: "居住", price: "価格", area: "専有面積", layout: "間取り", year: "築年", structure: "構造",
+    floor: "階", tenure: "権利", freehold: "所有権", leasehold: "借地権", walk: "徒歩", min: "分", station: "駅",
+    mgmt: "管理費", repair: "修繕積立金", gross: "表面利回り", net: "実質利回り", rent: "年間家賃収入",
+    seismic: "耐震", shin: "新耐震基準", grade1: "耐震等級1", grade2: "耐震等級2", grade3: "耐震等級3", old: "旧耐震",
+    contact: "お問い合わせ", permonth: "/月", noresult: "該当なし", sort: "並び替え", s_new: "新着", s_yield: "利回り順", s_price: "価格順",
+    about: "外国人のお客様の購入・投資を日本語・英語・ベトナム語でサポートします。" },
+  en: { tagline: "Japan Real Estate | Buy & Invest", search: "Find Properties", all: "All", city: "Area", purpose: "Purpose",
+    invest: "Investment", live: "Residence", price: "Price", area: "Floor area", layout: "Layout", year: "Built", structure: "Structure",
+    floor: "Floor", tenure: "Tenure", freehold: "Freehold (所有権)", leasehold: "Leasehold (借地権)", walk: "Walk", min: "min", station: "Station",
+    mgmt: "Mgmt fee", repair: "Repair reserve", gross: "Gross yield", net: "Net yield", rent: "Annual rent",
+    seismic: "Seismic", shin: "New standard (post-1981)", grade1: "Grade 1", grade2: "Grade 2", grade3: "Grade 3", old: "Old standard",
+    contact: "Contact us", permonth: "/mo", noresult: "No results", sort: "Sort", s_new: "Newest", s_yield: "Yield", s_price: "Price",
+    about: "Helping foreign buyers and investors purchase in Japan, in Japanese, English and Vietnamese." },
+  vi: { tagline: "BĐS Nhật Bản | Mua bán & Đầu tư", search: "Tìm bất động sản", all: "Tất cả", city: "Khu vực", purpose: "Mục đích",
+    invest: "Đầu tư", live: "Để ở", price: "Giá", area: "Diện tích", layout: "Layout", year: "Năm xây", structure: "Kết cấu",
+    floor: "Tầng", tenure: "Sở hữu", freehold: "Sở hữu đất (所有権)", leasehold: "Thuê đất (借地権)", walk: "Đi bộ", min: "phút", station: "Ga",
+    mgmt: "Phí quản lý", repair: "Quỹ bảo trì", gross: "Lợi suất gộp", net: "Lợi suất ròng", rent: "Thu nhập thuê/năm",
+    seismic: "Chống động đất", shin: "Chuẩn mới (sau 1981)", grade1: "Cấp 1", grade2: "Cấp 2", grade3: "Cấp 3", old: "Chuẩn cũ",
+    contact: "Liên hệ", permonth: "/tháng", noresult: "Không có kết quả", sort: "Sắp xếp", s_new: "Mới nhất", s_yield: "Lợi suất", s_price: "Giá",
+    about: "Hỗ trợ khách nước ngoài và nhà đầu tư mua BĐS Nhật bằng tiếng Nhật, Anh, Việt." }
+};
