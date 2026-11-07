@@ -1,13 +1,273 @@
 <!DOCTYPE html>
-<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Japan Real Estate</title><link rel="stylesheet" href="styles.css"></head><body>
-<header><h1 id="brand"></h1>
-<div class="ctrl"><select id="lang"><option value="vi">Tiếng Việt</option><option value="en">English</option><option value="ja">日本語</option></select>
-<select id="cur"><option>JPY</option><option>USD</option><option>VND</option></select></div></header>
-<section class="hero"><h2 id="tagline"></h2><p id="about"></p></section>
-<div class="filters">
-<select id="fCity"></select><select id="fPurpose"></select><select id="fSort"></select></div>
-<main class="grid" id="list"></main>
-<div class="modal" id="modal"><div class="box" id="box"></div></div>
-<footer id="foot"></footer>
-<script src="config.js"></script><script src="i18n.js"></script><script src="app.js"></script></body></html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BIG不動産 — Bất động sản Osaka & Kansai, Nhật Bản</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- 1. HEADER TỐI GIẢN (Dính trên cùng) -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand-logo">
+        <a href="#" class="brand-name serif">BIG不動産</a>
+        <span class="brand-sub">Big Real Estate · Osaka</span>
+      </div>
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="#featured" class="nav-link">Căn nổi bật</a></li>
+          <li><a href="#portfolio" class="nav-link">Danh sách nhà</a></li>
+          <li><a href="#articles" class="nav-link">Bài chia sẻ</a></li>
+          <li><a href="#process" class="nav-link">Hướng dẫn</a></li>
+          <li><a href="#contact" class="btn-outline-amber">Liên hệ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 2. HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="kicker">Kansai Real Estate · 関西不動産</div>
+      <h1 class="hero-title">Mua bán &amp; cho thuê bất động sản Osaka — Kyoto</h1>
+      <p class="hero-desc">
+        Hỗ trợ cộng đồng người Việt và nhà đầu tư tìm kiếm, thẩm định và sở hữu căn hộ, nhà phố chất lượng tại Osaka và vùng Kansai. Cập nhật thị trường minh bạch, thủ tục vay và pháp lý chuẩn mực.
+      </p>
+      <div class="hero-actions">
+        <a href="#portfolio" class="btn-primary">Xem danh sách nhà</a>
+        <a href="#contact" class="btn-secondary">Tư vấn miễn phí</a>
+      </div>
+      <div class="hero-metrics">
+        <div class="metric-item">
+          <span class="metric-val">100%</span>
+          <span class="metric-label">Pháp lý &amp; sổ bách khoa</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-val">0.7%</span>
+          <span class="metric-label">Hỗ trợ giảm trừ thuế vay</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-val">Osaka · Kyoto</span>
+          <span class="metric-label">Khu vực trọng tâm</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. DẢI ẢNH THƯƠNG HIỆU HOÀNG HÔN -->
+  <section class="brand-banner">
+    <div class="container">
+      <div class="banner-frame">
+        <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1600&auto=format&fit=crop" alt="清水寺 — Kyoto, lúc hoàng hôn">
+        <div class="banner-caption">清水寺 — Kyoto, lúc hoàng hôn</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. CĂN NỔI BẬT (Nền be nhạt) -->
+  <section class="featured-section" id="featured">
+    <div class="container">
+      <div class="featured-grid" id="featured-content">
+        <!-- Render động từ properties.json -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. LƯỚI PORTFOLIO CÁC CĂN -->
+  <section class="portfolio-section" id="portfolio">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker">物件一覧</div>
+        <h2 class="section-title">Danh sách bất động sản chọn lọc</h2>
+      </div>
+
+      <!-- Nút lọc dạng viên tròn -->
+      <div class="filter-pills" id="filter-pills">
+        <button class="filter-btn active" data-filter="all">Tất cả</button>
+        <button class="filter-btn" data-filter="buy">Nhà bán · 売買</button>
+        <button class="filter-btn" data-filter="rent-osaka">Thuê · Osaka</button>
+        <button class="filter-btn" data-filter="rent-kyoto">Thuê · Kyoto</button>
+      </div>
+
+      <!-- Lưới thẻ nhà -->
+      <div class="property-grid" id="property-grid">
+        <!-- Render động từ properties.json -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. BÀI CHIA SẺ, TIP, HƯỚNG DẪN -->
+  <section class="articles-section" id="articles">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker">読みもの</div>
+        <h2 class="section-title">Kinh nghiệm &amp; Cập nhật thị trường</h2>
+      </div>
+      <div class="article-grid" id="article-grid">
+        <!-- Render động từ articles trong properties.json -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. QUY TRÌNH MUA NHÀ 4 BƯỚC -->
+  <section class="process-section" id="process">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker">購入の流れ</div>
+        <h2 class="section-title">Quy trình 4 bước sở hữu nhà tại Nhật</h2>
+      </div>
+      <div class="process-grid">
+        <div class="process-step">
+          <div class="step-num">01</div>
+          <h3 class="step-title">Tư vấn &amp; xem nhà</h3>
+          <p class="step-desc">Khảo sát nhu cầu ở/đầu tư, phân tích bảng Maisoku, kiểm tra thực địa căn nhà và tiện ích xung quanh ga.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-num">02</div>
+          <h3 class="step-title">Thẩm định vay sơ bộ</h3>
+          <p class="step-desc">Nộp hồ sơ 사전심사 (thẩm định trước) tại các ngân hàng lớn hoặc Flat 35 để chốt hạn mức và lãi suất ưu đãi.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-num">03</div>
+          <h3 class="step-title">Đặt mua &amp; hợp đồng</h3>
+          <p class="step-desc">Ký giấy đăng ký mua (買付証明書), giải thích thuyết minh quan trọng (重要事項説明) và ký hợp đồng mua bán chính thức.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-num">04</div>
+          <h3 class="step-title">Quyết toán &amp; nhận nhà</h3>
+          <p class="step-desc">Ngân hàng giải ngân quyết toán số tiền còn lại, công chứng viên làm thủ tục sang tên sổ đỏ (登記) và bàn giao chìa khóa.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. KHỐI LIÊN HỆ & FORM TỰ SOẠN TIN NHẮN -->
+  <section class="contact-section" id="contact">
+    <div class="container">
+      <div class="contact-grid">
+        <!-- Cột trái: 4 kênh liên hệ -->
+        <div class="contact-channels">
+          <div class="kicker">お問い合わせ</div>
+          <h2 class="section-title" style="margin-bottom: 20px;">Liên hệ với BIG不動産</h2>
+          
+          <div class="channel-card">
+            <div class="channel-info">
+              <h4 class="serif">Form tư vấn trên Web</h4>
+              <p>Soạn sẵn tin nhắn mẫu và gửi trực tiếp</p>
+            </div>
+            <span class="channel-badge">Nhanh chóng</span>
+          </div>
+
+          <div class="channel-card">
+            <div class="channel-info">
+              <h4 class="serif">Zalo</h4>
+              <p>Tư vấn tiếng Việt cho người ở Việt Nam &amp; Nhật</p>
+            </div>
+            <span class="channel-badge">Hỗ trợ 24/7</span>
+          </div>
+
+          <div class="channel-card">
+            <div class="channel-info">
+              <h4 class="serif">LINE</h4>
+              <p>Kênh liên lạc thuận tiện cho khách tại Nhật</p>
+            </div>
+            <span class="channel-badge">Kết nối ngay</span>
+          </div>
+
+          <div class="channel-card">
+            <div class="channel-info">
+              <h4 class="serif">WhatsApp</h4>
+              <p>Hỗ trợ khách hàng và nhà đầu tư quốc tế</p>
+            </div>
+            <span class="channel-badge">Global</span>
+          </div>
+        </div>
+
+        <!-- Cột phải: Form soạn nội dung (KHÔNG gửi về server) -->
+        <div class="contact-form-card">
+          <h3 class="form-title serif">Soạn nội dung liên hệ nhanh</h3>
+          <p class="form-sub">Điền thông tin bên dưới, hệ thống sẽ tự tạo sẵn đoạn tin nhắn đầy đủ để bạn sao chép gửi qua Zalo / LINE / WhatsApp.</p>
+
+          <form id="contact-form">
+            <div class="form-group">
+              <label for="form-name">Họ và tên của bạn</label>
+              <input type="text" id="form-name" class="form-control" placeholder="Ví dụ: Nguyễn Văn An" required>
+            </div>
+
+            <div class="form-group">
+              <label for="form-contact">Số điện thoại / ID Zalo / ID LINE</label>
+              <input type="text" id="form-contact" class="form-control" placeholder="Ví dụ: 080-xxxx-xxxx hoặc Zalo SĐT" required>
+            </div>
+
+            <div class="form-group">
+              <label for="form-channel">Kênh bạn muốn liên hệ</label>
+              <select id="form-channel" class="form-control">
+                <option value="Zalo">Zalo</option>
+                <option value="LINE">LINE</option>
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Email">Email</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="form-property">Căn nhà đang quan tâm</label>
+              <input type="text" id="form-property" class="form-control" placeholder="Mã căn hoặc tên nhà (ví dụ: tsuda-flat-207)">
+            </div>
+
+            <div class="form-group">
+              <label for="form-message">Nhu cầu hoặc thắc mắc cụ thể</label>
+              <textarea id="form-message" class="form-control" placeholder="Ví dụ: Mình muốn đặt lịch xem căn này vào cuối tuần, cần tư vấn thêm về thủ tục vay ngân hàng..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%;">Tạo nội dung liên hệ</button>
+          </form>
+
+          <!-- Khung viền đứt nét hổ phách hiện ra sau khi bấm nút -->
+          <div class="ready-message-box" id="ready-message-box">
+            <div class="ready-message-title">Đoạn tin nhắn đã sẵn sàng:</div>
+            <div class="ready-message-text" id="ready-message-text"></div>
+            <button type="button" class="btn-primary" id="btn-copy-message">Sao chép nội dung</button>
+            <span id="copy-status" style="margin-left: 10px; font-size: 13px; color: var(--amber-ink);"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. FOOTER (Gradient chàm #2E4057 -> #1B2436) -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <h3 class="serif">BIG不動産</h3>
+          <p>Big Real Estate · Osaka, Japan</p>
+        </div>
+        <ul class="footer-links">
+          <li><a href="#featured" class="footer-link">Căn nổi bật</a></li>
+          <li><a href="#portfolio" class="footer-link">Danh sách nhà</a></li>
+          <li><a href="#articles" class="footer-link">Bài chia sẻ</a></li>
+          <li><a href="#process" class="footer-link">Quy trình mua</a></li>
+          <li><a href="#contact" class="footer-link">Liên hệ tư vấn</a></li>
+        </ul>
+      </div>
+      <p class="footer-desc">
+        BIG不動産 chuyên tư vấn mua bán, thuê và quản lý bất động sản tại Osaka và khu vực Kansai. Đồng hành cùng khách hàng từ bước khảo sát quy hoạch, thẩm định hồ sơ vay ngân hàng Nhật Bản đến bàn giao quyết toán và hoàn tất thủ tục đăng ký quyền sở hữu.
+      </p>
+      <div class="footer-copy">
+        © 2026 BIG不動産. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- HỘP THOẠI CHI TIẾT (DIALOG) -->
+  <div class="dialog-overlay" id="property-dialog">
+    <div class="dialog-box" id="dialog-content">
+      <!-- Render chi tiết căn hộ khi bấm Xem chi tiết -->
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

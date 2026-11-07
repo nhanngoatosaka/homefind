@@ -1,29 +1,109 @@
-[
-  {
-    "id": "TK-001", "purpose": "invest", "type": "mansion", "city": "Tokyo", "ward": "Toshima-ku",
-    "price": 38800000, "area": 25.4, "layout": "1K", "yearBuilt": 2016, "structure": "RC",
-    "floor": "8/12", "tenure": "freehold", "walkMin": 6, "station": "Ikebukuro",
-    "mgmtFee": 8500, "repairFund": 6200, "annualRent": 1920000, "grossYield": 4.9, "netYield": 3.8,
-    "seismic": "shin", "image": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800",
-    "title": {"ja": "池袋駅徒歩6分 1K 投資用マンション", "en": "1K Investment Condo, 6 min walk to Ikebukuro", "vi": "Căn hộ 1K đầu tư, cách ga Ikebukuro 6 phút đi bộ"},
-    "desc": {"ja": "満室稼働中。管理状態良好。", "en": "Fully occupied, well-managed building.", "vi": "Đang cho thuê kín, tòa nhà quản lý tốt."}
-  },
-  {
-    "id": "OS-002", "purpose": "live", "type": "house", "city": "Osaka", "ward": "Suita-shi",
-    "price": 52800000, "area": 98.2, "layout": "4LDK", "yearBuilt": 2021, "structure": "Wood",
-    "floor": "2F", "tenure": "freehold", "walkMin": 12, "station": "Suita",
-    "mgmtFee": 0, "repairFund": 0, "annualRent": 0, "grossYield": 0, "netYield": 0,
-    "seismic": "grade2", "image": "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800",
-    "title": {"ja": "吹田市 新築同様 4LDK 戸建", "en": "Like-new 4LDK house in Suita", "vi": "Nhà phố 4LDK như mới tại Suita"},
-    "desc": {"ja": "耐震等級2、駐車場2台。", "en": "Seismic grade 2, parking for 2 cars.", "vi": "Chống động đất cấp 2, chỗ đỗ 2 xe."}
-  },
-  {
-    "id": "FK-003", "purpose": "invest", "type": "building", "city": "Fukuoka", "ward": "Hakata-ku",
-    "price": 148000000, "area": 312.0, "layout": "12 units", "yearBuilt": 2008, "structure": "RC",
-    "floor": "6F", "tenure": "freehold", "walkMin": 4, "station": "Hakata",
-    "mgmtFee": 0, "repairFund": 0, "annualRent": 11200000, "grossYield": 7.6, "netYield": 5.9,
-    "seismic": "shin", "image": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800",
-    "title": {"ja": "博多駅徒歩4分 一棟マンション 利回り7.6%", "en": "Whole building, 4 min to Hakata, 7.6% yield", "vi": "Nguyên tòa chung cư, 4 phút ga Hakata, lợi suất 7.6%"},
-    "desc": {"ja": "全12戸、稼働率95%。", "en": "12 units, 95% occupancy.", "vi": "12 căn, tỷ lệ lấp đầy 95%."}
-  }
-]
+{
+  "properties": [
+    {
+      "id": "tsuda-flat-207",
+      "name_jp": "ツダフラット 207号室",
+      "name_vi": "Căn hộ Tsuda Flat phòng 207",
+      "price": 9900000,
+      "price_label": "990万円",
+      "type": "buy",
+      "area": "Osaka",
+      "address": "大阪市鶴見区放出東2丁目 — Tsurumi, Osaka",
+      "size_m2": 37.45,
+      "balcony_m2": 4.18,
+      "layout": "1LDK",
+      "station": "JR学研都市線「放出」, đi bộ 7 phút",
+      "management_fee": 9240,
+      "repair_fund": 7000,
+      "year_built": 1974,
+      "structure": "Bê tông cốt thép (RC), 6 tầng",
+      "renovation": "Full renovation tháng 9/2026",
+      "images": [
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&auto=format&fit=crop"
+      ],
+      "status": "available",
+      "featured": true,
+      "notes": "Căn hộ đã hoàn tất full renovation tháng 9/2026. Bố cục 1LDK sáng thoáng, vị trí thuận tiện cách ga Hanaten chỉ 7 phút đi bộ. Thích hợp vừa ở vừa đầu tư dòng tiền."
+    },
+    {
+      "id": "katsura-201",
+      "name_jp": "桂離宮北 201",
+      "name_vi": "Phòng trọ Katsura Rikyu Kita 201",
+      "price": 37000,
+      "price_label": "¥37,000/tháng",
+      "type": "rent",
+      "area": "Kyoto",
+      "address": "京都市西京区桂 — Katsura, Nishikyo, Kyoto",
+      "size_m2": 17.0,
+      "layout": "1K",
+      "station": "阪急京都線「桂」 đi bộ 10 phút",
+      "management_fee": 3000,
+      "repair_fund": 0,
+      "year_built": 1989,
+      "structure": "Khung thép (S), 3 tầng",
+      "renovation": "Cọc / lễ / bảo lãnh: ¥0",
+      "images": [
+        "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800&auto=format&fit=crop"
+      ],
+      "status": "available",
+      "featured": false,
+      "notes": "Khu vực yên tĩnh gần Katsura Rikyu, không mất tiền cọc lễ ban đầu, chi phí vào nhà cực kỳ tiết kiệm cho du học sinh và người đi làm."
+    },
+    {
+      "id": "maison-olivia-305",
+      "name_jp": "メゾン オリビア 出島 305号室",
+      "name_vi": "Maison Olivia Dejima 305",
+      "price": 40000,
+      "price_label": "¥40,000/tháng",
+      "type": "rent",
+      "area": "Osaka",
+      "address": "堺市堺区出島海岸通 — Sakai, Osaka",
+      "size_m2": 18.5,
+      "layout": "1R",
+      "station": "南海本線「出島」 đi bộ 4 phút",
+      "management_fee": 0,
+      "repair_fund": 0,
+      "year_built": 1993,
+      "structure": "Bê tông cốt thép (RC), 5 tầng",
+      "renovation": "Đã gồm ¥2,000 tiền nước trong tiền thuê",
+      "images": [
+        "https://images.unsplash.com/photo-1502005229762-ae1b464a7c0d?w=800&auto=format&fit=crop"
+      ],
+      "status": "available",
+      "featured": false,
+      "notes": "Vị trí sát ga Dejima 4 phút, di chuyển thuận tiện vào trung tâm Namba. Tiền thuê đã bao gồm ¥2,000 tiền nước cố định hàng tháng."
+    }
+  ],
+  "articles": [
+    {
+      "id": "loan-tax-5-questions",
+      "category": "Hướng dẫn · ローン",
+      "title": "住宅ローン減税 là gì? 5 câu hỏi người mua nhà lần đầu hay hỏi nhất",
+      "summary": "Chế độ giảm thuế vay mua nhà (Mortgage Tax Deduction) giúp khấu trừ trực tiếp thuế thu nhập cá nhân tại Nhật. Tổng hợp 5 thắc mắc phổ biến nhất.",
+      "body": "<p><strong>住宅ローン減税 (Chế độ giảm trừ thuế vay mua nhà)</strong> là một trong những chính sách ưu đãi tài chính lớn nhất của chính phủ Nhật Bản dành cho người mua nhà để ở.</p><p>Dưới đây là 5 câu hỏi then chốt bạn cần nắm rõ:</p><ul><li><strong>1. Điều kiện diện tích:</strong> Căn hộ/nhà phải có diện tích sàn đăng ký trên sổ bách khoa (登記簿面積) từ <strong>50㎡ trở lên</strong> (một số trường hợp thu nhập thấp được giảm xuống 40㎡).</li><li><strong>2. Tiêu chuẩn kháng chấn:</strong> Bắt buộc xây dựng theo tiêu chuẩn chống động đất mới (xây sau ngày 1 tháng 6 năm 1981) hoặc có chứng nhận kháng chấn đạt chuẩn.</li><li><strong>3. Trần thu nhập:</strong> Thu nhập tổng hàng năm của người đứng tên vay không vượt quá 20 triệu yên.</li><li><strong>4. Mức khấu trừ hàng năm:</strong> Thường khấu trừ 0.7% trên dư nợ vay cuối năm, kéo dài trong 13 năm đối với nhà mới đạt chuẩn tiết kiệm năng lượng, hoặc 10 năm đối với nhà cũ.</li><li><strong>5. Ưu đãi nhà tiết kiệm năng lượng:</strong> Các căn đạt chuẩn ZEH, Long-life Quality Housing (長期優良住宅) sẽ có trần dư nợ được khấu trừ cao hơn đáng kể.</li></ul>",
+      "date": "2026-11-07",
+      "image": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&auto=format&fit=crop"
+    },
+    {
+      "id": "mirai-eco-housing-2026",
+      "category": "Chính sách · 支援制度",
+      "title": "みらいエコ住宅2026 — hỗ trợ nhà tiết kiệm năng lượng, hạn đăng ký 16/11",
+      "summary": "Gói trợ cấp của chính phủ cho việc mua hoặc cải tạo nhà đạt chuẩn tiết kiệm năng lượng sinh thái. Lưu ý thời hạn đăng ký giữ chỗ sắp đóng.",
+      "body": "<p>Chương trình <strong>みらいエコ住宅 (Nhà ở sinh thái tương lai)</strong> năm 2026 tiếp tục hỗ trợ từ vài trăm ngàn đến cả triệu yên cho các chủ nhà đầu tư hệ thống cách nhiệt, kính hộp chống thất thoát nhiệt, thiết bị đun nước hiệu suất cao.</p><p><strong>Điểm quan trọng cần lưu ý:</strong></p><ul><li>Hạn đăng ký giữ chỗ (予約申請) kết thúc vào ngày <strong>16/11</strong>.</li><li>Chương trình có ngân sách hữu hạn và sẽ <em>đóng sớm ngay khi đạt 100% ngân sách</em> phân bổ, do đó hồ sơ nộp sớm là yếu tố quyết định.</li><li>Áp dụng cho cả mua nhà mới đạt chuẩn và các gói cải tạo (renovation) nâng cấp thiết bị xanh.</li></ul>",
+      "date": "2026-11-07",
+      "image": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop"
+    },
+    {
+      "id": "kansai-condo-market-peak",
+      "category": "Thị trường · 市場",
+      "title": "Giá chung cư mới ở Kansai lập đỉnh ¥60.1M — người mua cần biết gì",
+      "summary": "Giá trung bình căn hộ chung cư mới xây tại khu vực Kinki trong nửa đầu năm tài chính đạt mức kỷ lục mới, cùng sự phân hóa về tỷ lệ chốt cọc.",
+      "body": "<p>Theo số liệu thống kê thị trường bất động sản vùng Kinki (Osaka, Hyogo, Kyoto,...), giá trung bình mỗi căn chung cư mới xây nửa đầu năm tài chính đã đạt mốc kỷ lục <strong>6,010万円 (¥60.1M)</strong>.</p><p><strong>Góc nhìn phân tích cho người mua:</strong></p><ul><li><strong>Chi phí xây dựng và giá đất tăng cao:</strong> Các khu trung tâm như Umeda, Namba, Chuo-ku giữ giá rất vững do nhu cầu của cả khách nước ngoài lẫn giới đầu tư nội địa.</li><li><strong>Tỷ lệ ký hợp đồng (契約率):</strong> Đã giảm xuống dưới mốc 70% ở phân khúc cao cấp, cho thấy người mua đang thận trọng hơn và cân nhắc kỹ lưỡng giữa nhà mới và nhà cũ vừa renovation.</li><li><strong>Cơ hội ở phân khúc Re-sale / Renovation:</strong> Nhà cũ vị trí đắc địa (cách ga dưới 7 phút) được full renovation đang là lựa chọn có thanh khoản và tỷ suất sinh lời thực tế tối ưu hơn nhà mới 100%.</li></ul>",
+      "date": "2026-11-07",
+      "image": "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=800&auto=format&fit=crop"
+    }
+  ]
+}
