@@ -199,7 +199,23 @@ section.hero {
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
-  margin-bottom: 40px;
+  margin-bottom: 8px;
+}
+
+.lang-select {
+  background-color: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+}
+.lang-select:focus {
+  border-color: var(--accent);
 }
 .hero-metrics {
   display: flex;
@@ -886,10 +902,287 @@ footer.site-footer {
 }
 .dialog-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   margin-top: 24px;
   padding-top: 18px;
   border-top: 1px solid var(--line);
+}
+
+/* ==========================================================================
+   ĐỢT 2 — CHUẨN SALE: NHÃN GÓC THẺ NHÀ, BỘ LỌC NÂNG CAO, CTA GIỮA TRANG,
+   MÁY TÍNH KHOẢN VAY, KÊNH LIÊN HỆ TRỰC TIẾP, PHÁP LÝ FOOTER & STICKY MOBILE
+   ========================================================================== */
+
+/* Nhãn góc dán trên ảnh thẻ nhà (tối đa 1 nhãn theo thứ tự ưu tiên) */
+.card-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 4;
+  padding: 4px 11px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+.card-badge-sold {
+  background-color: var(--accent);
+  color: var(--bg);
+}
+.card-badge-featured {
+  background-color: var(--amber);
+  color: var(--cta-ink);
+}
+.card-badge-new {
+  background-color: var(--ink);
+  color: var(--cta-ink);
+}
+
+/* Phụ đề tên căn (ngôn ngữ thứ 2 nhỏ bên dưới tiêu đề thẻ) */
+.card-name-sub {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: -2px;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+/* Bộ lọc nâng cao & sắp xếp trong Danh sách nhà */
+.portfolio-filter-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 16px 18px;
+  margin-bottom: 28px;
+}
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.filter-field label {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.filter-field .form-control {
+  padding: 7px 10px;
+  font-size: 13px;
+}
+
+/* Dải CTA giữa trang (Nền chàm, chữ trắng, đúng bảng màu STYLE_GUIDE.md) */
+.mid-cta-band {
+  background-color: var(--ink);
+  color: var(--cta-ink);
+  border-radius: 6px;
+  padding: 28px 32px;
+  margin-top: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.mid-cta-copy {
+  max-width: 680px;
+}
+.mid-cta-kicker {
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--amber-soft);
+  margin-bottom: 4px;
+}
+.mid-cta-title {
+  color: var(--cta-ink);
+  font-size: 20px;
+  line-height: 1.35;
+}
+.btn-mid-cta {
+  display: inline-block;
+  background-color: var(--cta);
+  color: var(--cta-ink);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 11px 22px;
+  border-radius: 4px;
+  border: 1px solid var(--amber);
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+.btn-mid-cta:hover {
+  opacity: 0.92;
+}
+
+/* Nút liên hệ trực tiếp (tel:, WhatsApp, Zalo, LINE) */
+.direct-contact-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+.channel-card-link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+.channel-card-link:hover {
+  border-color: var(--amber);
+  background-color: var(--amber-soft);
+}
+
+/* Công cụ tính khoản vay trong Hộp chi tiết (Chỉ hiện với căn type === "buy") */
+.loan-calc-box {
+  background-color: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 18px 20px;
+  margin-top: 18px;
+  margin-bottom: 18px;
+}
+.loan-calc-title {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: var(--ink);
+}
+.loan-calc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.loan-calc-field label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.loan-calc-result {
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 12px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.loan-monthly-val {
+  font-size: 22px;
+  color: var(--amber-ink);
+  font-family: 'Shippori Mincho B1', serif;
+  font-weight: 600;
+}
+.loan-disclaimer {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+/* Khối công ty & pháp lý + Chính sách riêng tư thu gọn ở Footer */
+.footer-legal-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+  padding-top: 8px;
+  border-bottom: 1px solid rgba(228, 220, 203, 0.15);
+  padding-bottom: 24px;
+}
+.footer-company-info {
+  font-size: 13px;
+  color: #E9E6DA;
+  line-height: 1.75;
+}
+.footer-company-info strong {
+  color: #FFFFFF;
+}
+.footer-company-info a {
+  color: #DFA243;
+}
+.footer-privacy-details {
+  background-color: rgba(34, 48, 74, 0.55);
+  border: 1px solid rgba(228, 220, 203, 0.2);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 12.5px;
+  color: #E9E6DA;
+}
+.footer-privacy-details summary {
+  cursor: pointer;
+  font-weight: 500;
+  color: #FFFFFF;
+  outline: none;
+}
+.footer-privacy-body {
+  margin-top: 10px;
+  color: var(--faint);
+  line-height: 1.65;
+}
+.footer-privacy-body p {
+  margin-bottom: 6px;
+}
+
+/* Thanh liên hệ dính dưới đáy trên di động (<= 920px) */
+.mobile-sticky-bar {
+  display: none;
+}
+
+@media (max-width: 920px) {
+  body.has-mobile-sticky {
+    padding-bottom: 72px;
+  }
+  .mobile-sticky-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 950;
+    background-color: var(--card);
+    border-top: 1px solid var(--line);
+    padding: 10px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+  }
+  .mobile-sticky-bar.is-hidden {
+    display: none !important;
+  }
+  .mobile-sticky-btn {
+    flex: 1;
+    text-align: center;
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+  .portfolio-filter-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .footer-legal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .portfolio-filter-bar,
+  .loan-calc-grid {
+    grid-template-columns: 1fr;
+  }
+  .mid-cta-band {
+    padding: 22px 20px;
+  }
 }
 
 /* ==========================================================================

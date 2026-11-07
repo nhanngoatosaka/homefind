@@ -13,7 +13,7 @@ let PROTECTED_IDS = new Set();
 // 7 trường bắt buộc
 const REQUIRED_FIELDS = ['id', 'name_jp', 'price', 'type', 'area', 'size_m2', 'station'];
 
-// 22 trường chuẩn + 5 trường tùy chọn hợp pháp (tổng cộng 27 trường được phép trong schema)
+// 22 trường chuẩn + 7 trường tùy chọn hợp pháp (tổng cộng 29 trường được phép trong schema)
 const CORE_FIELDS = [
   'id', 'name_jp', 'name_vi', 'price', 'price_label', 'type', 'area',
   'address', 'size_m2', 'land_m2', 'balcony_m2', 'layout', 'station',
@@ -21,6 +21,7 @@ const CORE_FIELDS = [
   'images', 'status', 'featured', 'notes'
 ];
 const OPTIONAL_META_FIELDS = [
+  'annual_rent', 'gross_yield',
   'source_url', 'source_agency', 'imported_at', 'last_verified_at', 'image_rights'
 ];
 const ALLOWED_FIELDS_SET = new Set([...CORE_FIELDS, ...OPTIONAL_META_FIELDS]);
@@ -56,6 +57,7 @@ Hãy đọc tờ Maisoku (マイソク) đính kèm và trích xuất thông tin
   "station": "Tên tuyến + tên ga tiếng Nhật + số phút đi bộ (ví dụ: 阪急京都線「上新庄」 đi bộ 7 phút)",
   "management_fee": 0,
   "repair_fund": 0,
+  "annual_rent": 0,
   "year_built": 0,
   "structure": "Kết cấu tòa nhà + số tầng + quyền sở hữu đất (ví dụ: Bê tông cốt thép (RC), 6 tầng · Sở hữu vĩnh viễn (所有権))",
   "renovation": "Thông tin cải tạo / reform hoặc điều kiện cọc lễ nổi bật",
@@ -66,7 +68,7 @@ Hãy đọc tờ Maisoku (マイソク) đính kèm và trích xuất thông tin
   "source_agency": "Tên công ty BĐS trên tờ Maisoku nếu có"
 }
 Quy tắc bắt buộc:
-1. price, management_fee, repair_fund là số nguyên tính bằng JPY (ví dụ 3480万円 -> 34800000).
+1. price, management_fee, repair_fund, annual_rent là số nguyên tính bằng JPY (ví dụ 3480万円 -> 34800000). Trường annual_rent chỉ điền khi tờ Maisoku của căn nhà bán (buy) có ghi rõ thu nhập cho thuê hàng năm; nếu không có thì bắt buộc để 0, không tự suy diễn và không tự tính lợi suất.
 2. year_built là năm dương lịch 4 chữ số (tự động đổi từ niên hiệu Nhật: 昭和 year + 1925, 平成 year + 1988, 令和 year + 2018).
 3. Chỉ trả về đúng các khóa đã khai báo trong cấu trúc JSON ở trên; tuyệt đối không tự sinh nhãn giá và không thêm bất kỳ khóa nào khác ngoài danh sách.
 4. Số liệu không có trên tài liệu thì để 0 (với số) hoặc "" (với chuỗi). Tuyệt đối KHÔNG bịa số liệu. Chỉ trả về JSON hợp lệ.`;
@@ -329,6 +331,8 @@ function resetFormToBlankDraft() {
     station: '',
     management_fee: 0,
     repair_fund: 0,
+    annual_rent: '',
+    gross_yield: '',
     year_built: '',
     structure: '',
     renovation: '',
@@ -347,16 +351,32 @@ function resetFormToBlankDraft() {
   if ($('select-existing')) $('select-existing').value = '';
 }
 
+function toggleYieldFieldsByType(typeVal) {
+  const isRent = typeVal === 'rent';
+  const grpAnnual = $('grp-annual_rent');
+  const grpYield = $('grp-gross_yield');
+  const inpAnnual = $('f-annual_rent');
+  const inpYield = $('f-gross_yield');
+
+  if (grpAnnual) grpAnnual.style.display = isRent ? 'none' : '';
+  if (grpYield) grpYield.style.display = isRent ? 'none' : '';
+  if (inpAnnual) inpAnnual.disabled = isRent;
+  if (inpYield) inpYield.disabled = isRent;
+}
+
 function populateFormFromObject(obj, lifecycleMode = 'draft') {
   currentLifecycleState = lifecycleMode;
   previewActiveImageIdx = 0;
 
+  const typeVal = obj.type === 'rent' ? 'rent' : 'buy';
   $('f-id').value = obj.id || '';
-  $('f-type').value = obj.type === 'rent' ? 'rent' : 'buy';
+  $('f-type').value = typeVal;
+  toggleYieldFieldsByType(typeVal);
+
   $('f-name_jp').value = obj.name_jp || '';
   $('f-name_vi').value = obj.name_vi || '';
   $('f-price').value = obj.price !== undefined && obj.price !== null && obj.price !== '' ? obj.price : '';
-  $('f-price_label').value = computePriceLabel($('f-price').value, $('f-type').value);
+  $('f-price_label').value = computePriceLabel($('f-price').value, typeVal);
   $('f-area').value = obj.area || '';
   $('f-layout').value = obj.layout || '';
   $('f-address').value = obj.address || '';
@@ -367,6 +387,18 @@ function populateFormFromObject(obj, lifecycleMode = 'draft') {
   $('f-year_built').value = obj.year_built !== undefined && obj.year_built !== null && obj.year_built !== '' ? obj.year_built : '';
   $('f-management_fee').value = obj.management_fee !== undefined && obj.management_fee !== null ? obj.management_fee : 0;
   $('f-repair_fund').value = obj.repair_fund !== undefined && obj.repair_fund !== null ? obj.repair_fund : 0;
+
+  if ($('f-annual_rent')) {
+    $('f-annual_rent').value = (obj.annual_rent !== undefined && obj.annual_rent !== null && obj.annual_rent !== '' && Number(obj.annual_rent) > 0)
+      ? obj.annual_rent
+      : '';
+  }
+  if ($('f-gross_yield')) {
+    $('f-gross_yield').value = (obj.gross_yield !== undefined && obj.gross_yield !== null && obj.gross_yield !== '' && Number(obj.gross_yield) > 0)
+      ? obj.gross_yield
+      : '';
+  }
+
   $('f-structure').value = obj.structure || '';
   $('f-renovation').value = obj.renovation || '';
   $('f-images').value = Array.isArray(obj.images) ? obj.images.join('\n') : (obj.images || '');
@@ -375,7 +407,7 @@ function populateFormFromObject(obj, lifecycleMode = 'draft') {
   $('f-featured').checked = Boolean(obj.featured);
   $('f-notes').value = obj.notes || '';
 
-  // 5 trường tùy chọn
+  // 5 trường tùy chọn nguồn & kiểm chứng
   $('f-source_url').value = obj.source_url || '';
   $('f-source_agency').value = obj.source_agency || '';
   $('f-imported_at').value = obj.imported_at || todayISO();
@@ -389,6 +421,8 @@ function populateFormFromObject(obj, lifecycleMode = 'draft') {
 function readFormToObject() {
   const priceVal = Number($('f-price').value);
   const typeVal = $('f-type').value === 'rent' ? 'rent' : 'buy';
+  toggleYieldFieldsByType(typeVal);
+
   const autoPriceLabel = computePriceLabel(priceVal, typeVal);
   $('f-price_label').value = autoPriceLabel;
 
@@ -425,6 +459,31 @@ function readFormToObject() {
   const balVal = Number($('f-balcony_m2').value);
   if ($('f-balcony_m2').value !== '' && !Number.isNaN(balVal) && balVal > 0) {
     prop.balcony_m2 = balVal;
+  }
+
+  // annual_rent & gross_yield: chỉ áp dụng cho căn bán (type === "buy")
+  if (typeVal === 'buy') {
+    const annualRentEl = $('f-annual_rent');
+    const grossYieldEl = $('f-gross_yield');
+    const annualRentVal = annualRentEl && annualRentEl.value !== '' ? Math.round(Number(annualRentEl.value)) : 0;
+    if (!Number.isNaN(annualRentVal) && annualRentVal > 0) {
+      prop.annual_rent = annualRentVal;
+    }
+
+    const grossYieldRaw = grossYieldEl ? grossYieldEl.value.trim() : '';
+    const manualYieldVal = grossYieldRaw !== '' ? Number(grossYieldRaw) : 0;
+    if (grossYieldRaw !== '' && !Number.isNaN(manualYieldVal) && manualYieldVal > 0) {
+      prop.gross_yield = Number(manualYieldVal.toFixed(2));
+    } else if (prop.annual_rent > 0 && prop.price > 0) {
+      // Để trống gross_yield thì tự tính = annual_rent / price * 100
+      const autoYield = Number(((prop.annual_rent / prop.price) * 100).toFixed(2));
+      prop.gross_yield = autoYield;
+      if (grossYieldEl) {
+        grossYieldEl.placeholder = `Tự tính: ${autoYield}% (= annual_rent / price × 100)`;
+      }
+    } else if (grossYieldEl) {
+      grossYieldEl.placeholder = 'Tự tính khi có annual_rent & price';
+    }
   }
 
   // 5 trường tùy chọn hợp pháp
@@ -681,6 +740,7 @@ function renderLivePreview(p) {
   const typeLabelDetail = p.type === 'buy' ? 'Nhà bán · 売買' : 'Cho thuê · 賃貸';
 
   const extraSpecs = [];
+  if (p.type === 'buy' && p.gross_yield > 0) extraSpecs.push(`Lợi suất bề mặt ${p.gross_yield}%`);
   if (p.renovation) extraSpecs.push(p.renovation);
   if (p.management_fee) extraSpecs.push(`Phí QL ¥${p.management_fee.toLocaleString()}/tháng`);
   if (p.repair_fund) extraSpecs.push(`Quỹ SC ¥${p.repair_fund.toLocaleString()}/tháng`);
@@ -689,10 +749,27 @@ function renderLivePreview(p) {
   const layoutSize = [p.layout, p.size_m2 ? `${p.size_m2}㎡` : ''].filter(Boolean).join(' · ');
   const displayPrice = p.price_label || 'Chưa nhập giá';
 
+  // Nhãn góc trên ảnh (ĐÃ BÁN > NỔI BẬT > MỚI)
+  let cornerBadgeHtml = '';
+  if (isSold) {
+    cornerBadgeHtml = `<span class="card-badge card-badge-sold">ĐÃ BÁN</span>`;
+  } else if (p.featured) {
+    cornerBadgeHtml = `<span class="card-badge card-badge-featured">NỔI BẬT</span>`;
+  } else if (p.imported_at) {
+    const diffDays = (Date.now() - new Date(p.imported_at).getTime()) / (1000 * 60 * 60 * 24);
+    if (!Number.isNaN(diffDays) && diffDays >= -1 && diffDays <= 30) {
+      cornerBadgeHtml = `<span class="card-badge card-badge-new">MỚI</span>`;
+    }
+  }
+
+  const primaryTitle = p.name_vi || p.name_jp || 'Tên căn (name_vi / name_jp)';
+  const secondaryTitle = p.name_vi && p.name_jp ? p.name_jp : '';
+
   // 1. Thẻ nhà (.property-card)
   cardWrap.innerHTML = `
     <div class="property-card">
       <div class="card-image-wrap">
+        ${cornerBadgeHtml}
         ${illustrativeBannerHtml}
         <img src="${displayImages[0]}" alt="${p.name_jp || 'Xem trước'}">
       </div>
@@ -701,7 +778,8 @@ function renderLivePreview(p) {
           <span>${typeLabelCard}</span>
           <span>${p.area || 'Khu vực'} ${isSold ? '· (Đã giao dịch)' : (isHidden ? '· (Đang ẩn)' : '')}</span>
         </div>
-        <h3 class="card-name serif">${p.name_jp || 'Tên căn tiếng Nhật (name_jp)'}</h3>
+        <h3 class="card-name serif">${primaryTitle}</h3>
+        ${secondaryTitle ? `<div class="card-name-sub">${secondaryTitle}</div>` : ''}
         <div class="card-address">${p.station || p.address || 'Ga gần nhất / Địa chỉ'}</div>
         <div class="card-price-row">
           <span class="card-price">${displayPrice}</span>
@@ -752,6 +830,8 @@ function renderLivePreview(p) {
             ${(p.year_built || p.structure) ? `<tr><td>Năm xây &amp; Kết cấu</td><td>${p.year_built ? `Xây năm ${p.year_built}` : ''} ${p.structure ? `· ${p.structure}` : ''}</td></tr>` : ''}
             ${p.management_fee ? `<tr><td>Phí quản lý</td><td>¥${p.management_fee.toLocaleString()}/tháng</td></tr>` : ''}
             ${p.repair_fund ? `<tr><td>Quỹ sửa chữa</td><td>¥${p.repair_fund.toLocaleString()}/tháng</td></tr>` : ''}
+            ${(p.type === 'buy' && p.annual_rent > 0) ? `<tr><td>Thu nhập thuê / năm</td><td>¥${p.annual_rent.toLocaleString()}/năm</td></tr>` : ''}
+            ${(p.type === 'buy' && p.gross_yield > 0) ? `<tr><td>Lợi suất bề mặt (表面利回り)</td><td><strong style="color: var(--amber-ink);">${p.gross_yield}%</strong></td></tr>` : ''}
             ${p.renovation ? `<tr><td>Tình trạng / Ghi chú</td><td>${p.renovation}</td></tr>` : ''}
           </tbody>
         </table>

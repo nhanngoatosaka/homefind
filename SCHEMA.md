@@ -51,19 +51,21 @@ Tài liệu này quy định hợp đồng dữ kiện bắt buộc cho toàn b�
 | `featured` | `boolean` | Chuẩn | `true` nếu là căn nổi bật ở Khối 4. Chỉ đúng **một căn** là `true` tại một thời điểm. |
 | `notes` | `string` | Chuẩn (có thể `""`) | Đoạn ghi chú / điểm mạnh của căn. |
 
-### 2.2. Năm (05) trường tùy chọn mở rộng được phép
+### 2.2. Các trường tùy chọn mở rộng được phép
 
-Ngoài các trường chuẩn ở mục 2.1, mỗi property **chỉ được phép** có thêm tối đa 5 trường tùy chọn sau (tuyệt đối không tự thêm trường nào khác):
+Ngoài các trường chuẩn ở mục 2.1, mỗi property **chỉ được phép** có thêm các trường tùy chọn sau (tuyệt đối không tự thêm trường nào khác):
 
-| Tên trường | Kiểu dữ liệu | Quy tắc & Mô tả |
-| :--- | :--- | :--- |
-| `source_url` | `string` | Link nguồn của căn (ví dụ link SUUMO). Dùng để đối chiếu và cảnh báo trùng nguồn. |
-| `source_agency` | `string` | Công ty bất động sản đăng tin nguồn. |
-| `imported_at` | `string` | Ngày lấy dữ kiện lần đầu, định dạng `YYYY-MM-DD`. |
-| `last_verified_at` | `string` | Ngày kiểm tra / duyệt gần nhất, định dạng `YYYY-MM-DD` (tự động gán ngày hôm nay khi bấm Duyệt). |
-| `image_rights` | `boolean` | Đã có quyền sử dụng ảnh thật của căn hay chưa (`true` / `false`). Nếu `false`, bản xem trước bắt buộc hiển thị ảnh minh họa kèm nhãn `"Ảnh minh họa — Chưa xác nhận quyền ảnh"`. |
+| Tên trường | Kiểu dữ liệu | Phạm vi áp dụng | Quy tắc & Mô tả |
+| :--- | :--- | :--- | :--- |
+| `annual_rent` | `int` (number) | Chỉ áp dụng cho `type="buy"` | Thu nhập cho thuê mỗi năm, đơn vị JPY/năm. Chỉ điền khi tài liệu nguồn có con số thật, tuyệt đối không bịa. Không áp dụng cho căn `"rent"`. |
+| `gross_yield` | `number` | Chỉ áp dụng cho `type="buy"` | Lợi suất bề mặt (表面利回り) tính bằng `%`. Khi người nhập để trống mà đã có `annual_rent` (`> 0`) và `price` (`> 0`) thì Admin **tự tính**: `gross_yield = annual_rent / price * 100` (làm tròn 2 chữ số thập phân). Không áp dụng cho căn `"rent"`. |
+| `source_url` | `string` | Mọi loại căn | Link nguồn của căn (ví dụ link SUUMO). Dùng để đối chiếu và cảnh báo trùng nguồn. |
+| `source_agency` | `string` | Mọi loại căn | Công ty bất động sản đăng tin nguồn. |
+| `imported_at` | `string` | Mọi loại căn | Ngày lấy dữ kiện lần đầu, định dạng `YYYY-MM-DD`. |
+| `last_verified_at` | `string` | Mọi loại căn | Ngày kiểm tra / duyệt gần nhất, định dạng `YYYY-MM-DD` (tự động gán ngày hôm nay khi bấm Duyệt). |
+| `image_rights` | `boolean` | Mọi loại căn | Đã có quyền sử dụng ảnh thật của căn hay chưa (`true` / `false`). Nếu `false`, bản xem trước bắt buộc hiển thị ảnh minh họa kèm nhãn `"Ảnh minh họa — Chưa xác nhận quyền ảnh"`. |
 
-> **Cấm tuyệt đối**: Không sử dụng lại các trường thuộc schema thế hệ cũ (`purpose`, `city`, `ward`, `yearBuilt`, `walkMin`, `mgmtFee`, `repairFund`, `annualRent`, `grossYield`, `netYield`, `seismic`, `tenure`, `title{ja,en,vi}`, `desc{ja,en,vi}`). Nếu phát sinh nhu cầu thêm trường mới ngoài danh sách trên, phải dừng lại và hỏi chủ repo.
+> **Cấm tuyệt đối**: Không sử dụng lại các trường thuộc schema thế hệ cũ. Nếu phát sinh nhu cầu thêm trường mới ngoài danh sách trên, phải dừng lại và hỏi chủ repo.
 
 ---
 
@@ -73,11 +75,15 @@ Ngoài các trường chuẩn ở mục 2.1, mỗi property **chỉ được ph�
    - `id`, `name_jp`, `price`, `type`, `area`, `size_m2`, `station`.
    - Trên **Admin**: Thiếu hoặc rỗng bất kỳ trường nào trong 7 trường này thì báo đỏ ngay tại trường đó và khóa nút Duyệt / Xuất bản.
    - Trên **Trang công khai (`app.js`)**: Khi render lưới nhà, nếu có căn nào thiếu 1 trong 7 trường bắt buộc thì bỏ qua đúng căn đó kèm `console.warn` nêu rõ `id` và tên trường thiếu; các căn hợp lệ còn lại vẫn render bình thường.
-2. **Cảnh báo trùng**:
+2. **Quy tắc Lợi suất (`annual_rent`, `gross_yield`)**:
+   - Chỉ kích hoạt trên Form Admin khi `type === "buy"`; khi `type === "rent"` thì ẩn/vô hiệu hóa 2 ô này và không xuất vào JSON.
+   - Nếu `gross_yield` để trống mà `annual_rent > 0` và `price > 0`, Admin tự tính `gross_yield = Number((annual_rent / price * 100).toFixed(2))`.
+   - Trên trang công khai, chỉ hiển thị dòng lợi suất (`gross_yield`) và thu nhập thuê năm (`annual_rent`) khi căn có dữ kiện (`> 0`).
+3. **Cảnh báo trùng**:
    - So khớp `id` và `source_url` với danh sách căn hiện có trong `data/properties.json`. Nếu trùng thì hiển thị cảnh báo rõ ràng trên Admin.
-3. **Cờ lệch giá (Price Cross-check)**:
+4. **Cờ lệch giá (Price Cross-check)**:
    - Admin có ô nhập tùy chọn **"Giá đối chiếu (JPY)"** (không lưu vào JSON xuất bản, chỉ phục vụ kiểm soát). Nếu người dùng nhập giá đối chiếu khác với `price`, hệ thống bật cờ vàng cảnh báo lệch giá và bắt buộc người dùng tick xác nhận mới cho phép Duyệt.
-4. **Bảo toàn dữ liệu gốc**:
+5. **Bảo toàn dữ liệu gốc**:
    - Khi xuất bản `data/properties.json`, toàn bộ các căn đã duyệt trước đó và mảng `articles` phải được giữ nguyên vẹn.
 
 ---
