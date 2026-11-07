@@ -1,18 +1,407 @@
 <!DOCTYPE html>
-<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin – Maisoku AI</title><link rel="stylesheet" href="styles.css"></head><body>
-<header><h1>Admin · Maisoku AI</h1><a href="index.html" style="color:#fff">← Website</a></header>
-<div class="wrap">
-<div class="panel"><b>1. Gemini API Key</b> (lấy miễn phí tại aistudio.google.com/apikey – chỉ lưu trong trình duyệt của bạn)
-<input id="key" type="password" placeholder="AIza..."></div>
-<div class="panel"><b>2. Thả tờ Maisoku (PDF / ảnh)</b>
-<div class="drop" id="drop">Kéo thả hoặc bấm để chọn file (có thể chọn nhiều ảnh nhà)<input id="file" type="file" multiple accept="image/*,application/pdf" hidden></div>
-<p><label>Ảnh đại diện (URL, tuỳ chọn)</label><input id="img" placeholder="https://..."></p>
-<button class="btn" id="go">Đọc &amp; dịch bằng AI</button> <span id="status"></span></div>
-<div class="panel"><b>3. Kiểm tra &amp; chỉnh sửa (JSON)</b>
-<textarea id="out" rows="22" placeholder="Kết quả AI hiện ở đây, bạn có thể sửa trực tiếp"></textarea><br><br>
-<button class="btn" id="add">Thêm vào danh sách</button>
-<button class="btn" id="dl" style="background:#1f2a44">Tải properties.json</button>
-<p class="sub">Sau khi tải, thay file <code>data/properties.json</code> rồi commit lên GitHub → Cloudflare/GitHub Pages tự cập nhật.<br>Tổng số nhà hiện có: <b id="cnt">0</b></p></div>
-</div>
-<script src="admin.js"></script></body></html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Quản trị nhà — BIG不動産</title>
+  <link rel="stylesheet" href="styles.css?v=20261107d">
+</head>
+<body>
+
+  <!-- HEADER CHUẨN STYLE_GUIDE.md -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand-logo">
+        <a href="index.html" class="brand-name serif">BIG不動産 · Admin</a>
+        <span class="brand-sub">Quản trị &amp; Kiểm duyệt dữ kiện BĐS</span>
+      </div>
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="#intake-section" class="nav-link">1. Nguồn nhập</a></li>
+          <li><a href="#form-section" class="nav-link">2. Form &amp; Xem trước</a></li>
+          <li><a href="#publish-section" class="nav-link">3. Đã duyệt &amp; Xuất bản</a></li>
+          <li><a href="index.html" class="btn-outline-amber">← Trang công khai</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="admin-main container">
+
+    <!-- KHỐI 1: BA NGUỒN VÀO (MAISOKU AI / DÁN JSON TRÍCH SẴN / NHẬP TAY) -->
+    <section id="intake-section">
+      <div class="section-head" style="margin-bottom: 20px;">
+        <div class="kicker">データ入力 · Nguồn dữ kiện đầu vào</div>
+        <h1 class="section-title">Chọn nguồn khởi tạo bản nháp</h1>
+      </div>
+
+      <div class="admin-intake-grid">
+        <!-- (a) Nguồn 1: Maisoku PDF/ảnh qua Gemini AI -->
+        <div class="admin-panel" style="margin-bottom: 0;">
+          <h2 class="admin-panel-title serif">a. Đọc tờ Maisoku (Gemini AI)</h2>
+          <p class="admin-panel-sub">Thả PDF hoặc ảnh chụp tờ Maisoku, Gemini trích tự động vào Form kiểm soát.</p>
+          <div class="form-group">
+            <label for="gemini-key">Gemini API Key (chỉ lưu ở trình duyệt này)</label>
+            <input type="password" id="gemini-key" class="form-control" placeholder="AIza...">
+          </div>
+          <div class="admin-dropzone" id="maisoku-drop">
+            <span id="maisoku-drop-label">Kéo thả tờ Maisoku (PDF / Ảnh) hoặc bấm để chọn file</span>
+            <input type="file" id="maisoku-file" multiple accept="image/*,application/pdf" hidden>
+          </div>
+          <button type="button" class="btn-primary" id="btn-extract-maisoku" style="width: 100%;">Đọc Maisoku vào Form</button>
+          <div id="ai-status" style="margin-top: 8px; font-size: 12.5px; color: var(--amber-ink); font-weight: 500;"></div>
+        </div>
+
+        <!-- (b) Nguồn 2: Dán JSON đã trích sẵn (từ Muse / SUUMO) -->
+        <div class="admin-panel" style="margin-bottom: 0;">
+          <h2 class="admin-panel-title serif">b. Dán dữ kiện trích sẵn (Muse)</h2>
+          <p class="admin-panel-sub">Dán khối JSON do Muse trích từ link nguồn (ví dụ SUUMO) để nạp thẳng vào Form kiểm soát.</p>
+          <div class="form-group">
+            <label for="json-paste-input">Dữ kiện đầu vào (nạp xong sẽ chuyển hết sang Form)</label>
+            <textarea id="json-paste-input" class="form-control" style="min-height: 102px;" placeholder='{"id":"...", "name_jp":"...", "price":34800000, ...}'></textarea>
+          </div>
+          <button type="button" class="btn-secondary" id="btn-load-json" style="width: 100%;">Nạp dữ kiện vào Form</button>
+          <div id="paste-status" style="margin-top: 8px; font-size: 12.5px; color: var(--amber-ink); font-weight: 500;"></div>
+        </div>
+
+        <!-- (c) Nguồn 3: Nhập tay từ đầu hoặc chọn căn hiện có -->
+        <div class="admin-panel" style="margin-bottom: 0;">
+          <h2 class="admin-panel-title serif">c. Nhập tay / Sửa căn đã có</h2>
+          <p class="admin-panel-sub">Khởi tạo form trống để nhập tay từ đầu, hoặc nạp một căn đã duyệt lên để kiểm tra / đổi trạng thái.</p>
+          <div class="form-group">
+            <label for="select-existing">Nạp từ danh sách đã duyệt (`data/properties.json`)</label>
+            <select id="select-existing" class="form-control">
+              <option value="">— Chọn căn để nạp lên Form —</option>
+            </select>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px;">
+            <button type="button" class="btn-secondary" id="btn-new-manual" style="width: 100%;">+ Tạo nháp trắng (Nhập tay từ đầu)</button>
+            <button type="button" class="btn-outline-amber" id="btn-clear-draft" style="width: 100%;">Xóa bản nháp trong bộ nhớ trình duyệt</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THANH VÒNG ĐỜI (LIFECYCLE BAR) -->
+    <div class="admin-lifecycle-bar" id="form-section">
+      <div class="lifecycle-steps">
+        <span style="font-size: 12.5px; font-weight: 600; color: var(--ink); margin-right: 6px;">Vòng đời căn đang mở:</span>
+        <span class="lifecycle-pill current" id="lc-draft">1. Nháp (localStorage)</span>
+        <span class="lifecycle-pill" id="lc-approved">2. Đã duyệt</span>
+        <span class="lifecycle-pill" id="lc-available">3. Đang đăng (available)</span>
+        <span class="lifecycle-pill" id="lc-sold-hidden">4. Đã bán / Ẩn (sold · hidden)</span>
+      </div>
+      <div id="draft-autosave-indicator" style="font-size: 12.5px; color: var(--muted);">
+        Bản nháp tự lưu trong localStorage — không lọt vào data/properties.json khi chưa Duyệt.
+      </div>
+    </div>
+
+    <!-- KHỐI 2: WORKSPACE 2 CỘT (FORM KIỂM SOÁT + XEM TRƯỚC TRỰC TIẾP) -->
+    <div class="admin-workspace">
+
+      <!-- CỘT TRÁI: FORM TỪNG TRƯỜNG + KIỂM TRA TỰ ĐỘNG -->
+      <div class="admin-panel">
+        <h2 class="admin-panel-title serif">Form kiểm soát dữ kiện căn BĐS</h2>
+        <p class="admin-panel-sub">Các trường đánh dấu (*) là bắt buộc theo SCHEMA.md. Nhãn giá (`price_label`) tự sinh từ `price` và `type`.</p>
+
+        <!-- Hộp cảnh báo trùng id / source_url -->
+        <div class="admin-alert admin-alert-ink" id="alert-duplicate"></div>
+
+        <!-- Hộp Cờ lệch giá (Bắt buộc xác nhận nếu compare_price != price) -->
+        <div class="admin-alert admin-alert-amber" id="alert-price-mismatch">
+          <div style="font-weight: 600; margin-bottom: 6px;" id="price-mismatch-text">Cờ cảnh báo lệch giá!</div>
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: var(--ink);">
+            <input type="checkbox" id="confirm-price-mismatch">
+            <span>Tôi đã đối chiếu lại tài liệu nguồn và xác nhận mức giá chính thức (`price`) là đúng.</span>
+          </label>
+        </div>
+
+        <!-- Hộp tổng hợp lỗi bắt buộc -->
+        <div class="admin-alert admin-alert-amber" id="alert-validation-summary"></div>
+
+        <form id="property-form" novalidate>
+          <div class="admin-form-grid">
+
+            <!-- 1. id (Bắt buộc) -->
+            <div class="form-group" id="grp-id">
+              <label for="f-id">Mã căn (`id` — slug duy nhất) *</label>
+              <input type="text" id="f-id" class="form-control" placeholder="Ví dụ: namba-mansion-302" required>
+              <div class="field-error-msg">Bắt buộc nhập mã căn (`id`).</div>
+            </div>
+
+            <!-- 2. type (Bắt buộc) -->
+            <div class="form-group" id="grp-type">
+              <label for="f-type">Loại giao dịch (`type`) *</label>
+              <select id="f-type" class="form-control" required>
+                <option value="buy">Nhà bán · 売買 (buy)</option>
+                <option value="rent">Cho thuê · 賃貸 (rent)</option>
+              </select>
+              <div class="field-error-msg">Bắt buộc chọn loại giao dịch (`buy` hoặc `rent`).</div>
+            </div>
+
+            <!-- 3. name_jp (Bắt buộc) -->
+            <div class="form-group full-width" id="grp-name_jp">
+              <label for="f-name_jp">Tên căn tiếng Nhật (`name_jp`) *</label>
+              <input type="text" id="f-name_jp" class="form-control" placeholder="Nhập tên căn tiếng Nhật" required>
+              <div class="field-error-msg">Bắt buộc nhập tên căn tiếng Nhật (`name_jp`).</div>
+            </div>
+
+            <!-- 4. name_vi -->
+            <div class="form-group full-width" id="grp-name_vi">
+              <label for="f-name_vi">Tên căn tiếng Việt (`name_vi`)</label>
+              <input type="text" id="f-name_vi" class="form-control" placeholder="Nhập tên căn tiếng Việt (tùy chọn)">
+            </div>
+
+            <!-- 5. price (Bắt buộc) -->
+            <div class="form-group" id="grp-price">
+              <label for="f-price">Giá chính thức (`price` — số nguyên JPY) *</label>
+              <input type="number" id="f-price" class="form-control" min="1" step="1" placeholder="Nhập số nguyên JPY" required>
+              <div class="field-error-msg">Bắt buộc nhập giá JPY lớn hơn 0.</div>
+            </div>
+
+            <!-- 6. price_label (TỰ SINH, readonly) -->
+            <div class="form-group" id="grp-price_label">
+              <label for="f-price_label">Nhãn giá tự sinh (`price_label` — tự động)</label>
+              <input type="text" id="f-price_label" class="form-control" readonly placeholder="Tự sinh từ price">
+            </div>
+
+            <!-- Ô kiểm soát: Giá đối chiếu (tùy chọn) -->
+            <div class="form-group full-width" id="grp-compare_price">
+              <label for="f-compare_price">Giá đối chiếu (JPY — tùy chọn, ví dụ giá ở mục tính khoản vay trên SUUMO để kiểm tra lệch giá)</label>
+              <input type="number" id="f-compare_price" class="form-control" min="0" step="1" placeholder="Để trống nếu không có số giá thứ hai; nếu khác price sẽ bật cờ vàng bắt xác nhận">
+            </div>
+
+            <!-- 7. area (Bắt buộc) -->
+            <div class="form-group" id="grp-area">
+              <label for="f-area">Khu vực (`area`) *</label>
+              <input type="text" id="f-area" list="area-options" class="form-control" placeholder="Ví dụ: Osaka, Kyoto" required>
+              <datalist id="area-options">
+                <option value="Osaka"></option>
+                <option value="Kyoto"></option>
+                <option value="Tokyo"></option>
+                <option value="Fukuoka"></option>
+              </datalist>
+              <div class="field-error-msg">Bắt buộc nhập khu vực (`area`).</div>
+            </div>
+
+            <!-- 8. layout -->
+            <div class="form-group" id="grp-layout">
+              <label for="f-layout">Bố cục phòng (`layout`)</label>
+              <input type="text" id="f-layout" class="form-control" placeholder="Ví dụ: 3LDK, 1LDK, 1K">
+            </div>
+
+            <!-- 9. address -->
+            <div class="form-group full-width" id="grp-address">
+              <label for="f-address">Địa chỉ hiển thị (`address`)</label>
+              <input type="text" id="f-address" class="form-control" placeholder="Ví dụ: 大阪市鶴見区放出東2丁目 — Tsurumi, Osaka">
+            </div>
+
+            <!-- 10. station (Bắt buộc) -->
+            <div class="form-group full-width" id="grp-station">
+              <label for="f-station">Ga gần nhất &amp; Phút đi bộ (`station`) *</label>
+              <input type="text" id="f-station" class="form-control" placeholder="Ví dụ: 阪急京都線「上新庄」 đi bộ 7 phút" required>
+              <div class="field-error-msg">Bắt buộc nhập thông tin ga gần nhất (`station`).</div>
+            </div>
+
+            <!-- 11. size_m2 (Bắt buộc) -->
+            <div class="form-group" id="grp-size_m2">
+              <label for="f-size_m2">Diện tích sàn (`size_m2` — ㎡) *</label>
+              <input type="number" id="f-size_m2" class="form-control" min="0.01" step="0.01" placeholder="Ví dụ: 94.25" required>
+              <div class="field-error-msg">Bắt buộc nhập diện tích sàn (`size_m2` &gt; 0).</div>
+            </div>
+
+            <!-- 12. land_m2 -->
+            <div class="form-group" id="grp-land_m2">
+              <label for="f-land_m2">Diện tích đất (`land_m2` — ㎡)</label>
+              <input type="number" id="f-land_m2" class="form-control" min="0" step="0.01" placeholder="0 nếu là chung cư">
+            </div>
+
+            <!-- 13. balcony_m2 (Tùy chọn) -->
+            <div class="form-group" id="grp-balcony_m2">
+              <label for="f-balcony_m2">Diện tích ban công (`balcony_m2` — ㎡, tùy chọn)</label>
+              <input type="number" id="f-balcony_m2" class="form-control" min="0" step="0.01" placeholder="Để trống nếu không có">
+            </div>
+
+            <!-- 14. year_built -->
+            <div class="form-group" id="grp-year_built">
+              <label for="f-year_built">Năm xây dương lịch (`year_built`)</label>
+              <input type="number" id="f-year_built" class="form-control" min="0" max="2100" step="1" placeholder="Ví dụ: 2007">
+            </div>
+
+            <!-- 15. management_fee -->
+            <div class="form-group" id="grp-management_fee">
+              <label for="f-management_fee">Phí quản lý / tháng (`management_fee` — JPY)</label>
+              <input type="number" id="f-management_fee" class="form-control" min="0" step="1" placeholder="0 nếu không có">
+            </div>
+
+            <!-- 16. repair_fund -->
+            <div class="form-group" id="grp-repair_fund">
+              <label for="f-repair_fund">Quỹ sửa chữa / tháng (`repair_fund` — JPY)</label>
+              <input type="number" id="f-repair_fund" class="form-control" min="0" step="1" placeholder="0 nếu không có">
+            </div>
+
+            <!-- 17. structure -->
+            <div class="form-group full-width" id="grp-structure">
+              <label for="f-structure">Kết cấu &amp; Quyền sở hữu (`structure`)</label>
+              <input type="text" id="f-structure" class="form-control" placeholder="Ví dụ: Nhà gỗ 3 tầng (木造3階建) · Sở hữu vĩnh viễn (所有権)">
+            </div>
+
+            <!-- 18. renovation -->
+            <div class="form-group full-width" id="grp-renovation">
+              <label for="f-renovation">Ghi chú cải tạo / Điều kiện nổi bật (`renovation`)</label>
+              <input type="text" id="f-renovation" class="form-control" placeholder="Ví dụ: Full renovation tháng 9/2026">
+            </div>
+
+            <!-- 19. images -->
+            <div class="form-group full-width" id="grp-images">
+              <label for="f-images">Danh sách đường dẫn ảnh (`images` — mỗi dòng 1 ảnh, dòng đầu là ảnh chính)</label>
+              <textarea id="f-images" class="form-control" style="min-height: 84px;" placeholder="assets/properties/ma-can/01.jpg"></textarea>
+            </div>
+
+            <!-- 20. image_rights (Quyền ảnh) -->
+            <div class="form-group full-width" style="background-color: var(--bg-soft); padding: 12px 14px; border-radius: 4px; border: 1px solid var(--line);">
+              <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 0;">
+                <input type="checkbox" id="f-image_rights">
+                <span><strong>Đã có quyền sử dụng ảnh thật (`image_rights`)</strong> — Nếu chưa tick, phần xem trước sẽ dùng ảnh minh họa kèm nhãn cảnh báo rõ ràng.</span>
+              </label>
+            </div>
+
+            <!-- 21. status -->
+            <div class="form-group" id="grp-status">
+              <label for="f-status">Trạng thái hiển thị (`status`)</label>
+              <select id="f-status" class="form-control">
+                <option value="available">Đang đăng (available)</option>
+                <option value="sold">Đã bán / Đã thuê (sold)</option>
+                <option value="hidden">Ẩn khỏi trang công khai (hidden)</option>
+              </select>
+            </div>
+
+            <!-- 22. featured -->
+            <div class="form-group" style="display: flex; align-items: center; padding-top: 22px;">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 0;">
+                <input type="checkbox" id="f-featured">
+                <span><strong>Đặt làm Căn nổi bật (`featured: true`)</strong></span>
+              </label>
+            </div>
+
+            <!-- 23. notes -->
+            <div class="form-group full-width" id="grp-notes">
+              <label for="f-notes">Đoạn ghi chú / Điểm mạnh của căn (`notes`)</label>
+              <textarea id="f-notes" class="form-control" placeholder="Mô tả ngắn gọn, trung thực về tình trạng căn nhà, vị trí, tiện ích..."></textarea>
+            </div>
+
+            <!-- 5 TRƯỜNG TÙY CHỌN MỞ RỘNG TRONG HỢP ĐỒNG -->
+            <div class="form-group full-width" style="border-top: 1px solid var(--line); padding-top: 12px; margin-top: 4px;">
+              <div class="kicker" style="margin-bottom: 4px;">Metadata Nguồn &amp; Kiểm증 (Tùy chọn theo SCHEMA.md)</div>
+            </div>
+
+            <div class="form-group" id="grp-source_url">
+              <label for="f-source_url">Link nguồn (`source_url`)</label>
+              <input type="url" id="f-source_url" class="form-control" placeholder="https://suumo.jp/...">
+            </div>
+
+            <div class="form-group" id="grp-source_agency">
+              <label for="f-source_agency">Công ty đăng tin nguồn (`source_agency`)</label>
+              <input type="text" id="f-source_agency" class="form-control" placeholder="Ví dụ: センチュリー21...">
+            </div>
+
+            <div class="form-group" id="grp-imported_at">
+              <label for="f-imported_at">Ngày lấy dữ kiện (`imported_at` — YYYY-MM-DD)</label>
+              <input type="date" id="f-imported_at" class="form-control">
+            </div>
+
+            <div class="form-group" id="grp-last_verified_at">
+              <label for="f-last_verified_at">Ngày duyệt gần nhất (`last_verified_at` — tự gán khi Duyệt)</label>
+              <input type="text" id="f-last_verified_at" class="form-control" readonly placeholder="Tự gán YYYY-MM-DD khi bấm Duyệt">
+            </div>
+
+          </div>
+
+          <div style="margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+            <button type="button" class="btn-primary" id="btn-approve">
+              ✓ Duyệt căn này &amp; Đưa vào danh sách xuất bản
+            </button>
+            <span id="approve-feedback" style="font-size: 13px; color: var(--amber-ink); font-weight: 500;"></span>
+          </div>
+        </form>
+      </div>
+
+      <!-- CỘT PHẢI: XEM TRƯỚC TRỰC TIẾP (DÙNG ĐÚNG CLASS TRANG CÔNG KHAI) -->
+      <div class="admin-preview-sticky">
+        <div class="admin-panel">
+          <div class="kicker" style="margin-bottom: 4px;">リアルタイムプレビュー · Live Preview</div>
+          <h2 class="admin-panel-title serif">Xem trước hiển thị thực tế</h2>
+          <p class="admin-panel-sub">Dựng bằng đúng class `.property-card` và `.dialog-box` của trang công khai.</p>
+
+          <div style="margin-bottom: 24px;">
+            <div style="font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 8px; text-transform: uppercase;">1. Thẻ nhà trên lưới Portfolio</div>
+            <div id="preview-card-container"></div>
+          </div>
+
+          <div>
+            <div style="font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 8px; text-transform: uppercase;">2. Bảng chi tiết căn (Dialog / Featured)</div>
+            <div id="preview-detail-container"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- KHỐI 3: DANH SÁCH CĂN ĐÃ DUYỆT & XUẤT BẢN FILE data/properties.json -->
+    <section class="admin-panel" id="publish-section" style="margin-top: 16px;">
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px;">
+        <div>
+          <div class="kicker" style="margin-bottom: 4px;">公開データ · Xuất bản chính thức</div>
+          <h2 class="admin-panel-title serif" style="margin-bottom: 2px;">Danh sách căn ĐÃ DUYỆT trong `data/properties.json` (<span id="approved-count">0</span> căn)</h2>
+          <p class="admin-panel-sub" style="margin-bottom: 0;">Chỉ chứa các căn đã duyệt. Bản nháp trong localStorage tuyệt đối không lọt vào danh sách này. Giữ nguyên vẹn 4 căn gốc và <span id="articles-count">0</span> bài viết (`articles`).</p>
+        </div>
+        <button type="button" class="btn-primary" id="btn-download-json">
+          ↓ Xuất bản — Tải data/properties.json
+        </button>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="admin-approved-list">
+          <thead>
+            <tr>
+              <th>Mã (`id`)</th>
+              <th>Tên căn (`name_jp`)</th>
+              <th>Loại · Khu vực</th>
+              <th>Nhãn giá (`price_label`)</th>
+              <th>Trạng thái (`status`)</th>
+              <th>Featured</th>
+              <th>Kiểm duyệt (`last_verified_at`)</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="approved-table-body">
+            <!-- Render danh sách căn đã duyệt -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <h3 class="serif">BIG不動産 · Admin</h3>
+          <p>Chuẩn dữ kiện SCHEMA.md &amp; STYLE_GUIDE.md</p>
+        </div>
+        <ul class="footer-links">
+          <li><a href="index.html" class="footer-link">Trang công khai</a></li>
+          <li><a href="#intake-section" class="footer-link">Nguồn nhập</a></li>
+          <li><a href="#form-section" class="footer-link">Form kiểm soát</a></li>
+          <li><a href="#publish-section" class="footer-link">Xuất bản</a></li>
+        </ul>
+      </div>
+      <div class="footer-copy">© 2026 BIG不動産. Nguồn dữ kiện duy nhất: data/properties.json.</div>
+    </div>
+  </footer>
+
+  <script src="config.js?v=20261107d"></script>
+  <script src="admin.js?v=20261107d"></script>
+</body>
+</html>

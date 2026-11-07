@@ -18,25 +18,47 @@ document.addEventListener('DOMContentLoaded', () => {
   setupDialogClose();
 });
 
+const REQUIRED_PROPERTY_FIELDS = ['id', 'name_jp', 'price', 'type', 'area', 'size_m2', 'station'];
+
+function validateProperty(p, index, logWarn = true) {
+  if (!p || typeof p !== 'object') {
+    if (logWarn) console.warn(`[BIG不動産] Bỏ qua căn tại vị trí #${index}: dữ liệu không phải object.`);
+    return false;
+  }
+  const missing = REQUIRED_PROPERTY_FIELDS.filter(field => {
+    const val = p[field];
+    if (val === undefined || val === null) return true;
+    if (typeof val === 'string' && val.trim() === '') return true;
+    if ((field === 'price' || field === 'size_m2') && (typeof val !== 'number' || Number.isNaN(val) || val <= 0)) return true;
+    return false;
+  });
+  if (missing.length > 0) {
+    if (logWarn) console.warn(`[BIG不動産] Bỏ qua căn "${p.id || `#${index}`}" vì thiếu trường bắt buộc: ${missing.join(', ')}`);
+    return false;
+  }
+  return true;
+}
+
+function getValidPublicProperties(logWarn = true) {
+  if (!APP_DATA || !Array.isArray(APP_DATA.properties)) return [];
+  return APP_DATA.properties.filter((p, idx) => {
+    if (!validateProperty(p, idx, logWarn)) return false;
+    if (p.status === 'hidden') return false;
+    return true;
+  });
+}
+
 async function loadData() {
-  const ts = Date.now();
-  const urls = [
-    `data/properties.json?v=${ts}`,
-    `properties.json?v=${ts}`,
-    `https://nhanngoatosaka.github.io/homefind/data/properties.json?v=${ts}`
-  ];
-  for (const url of urls) {
-    try {
-      const res = await fetch(url, { cache: 'no-store' });
-      if (!res.ok) continue;
-      const json = await res.json();
-      if (json && Array.isArray(json.properties)) {
-        APP_DATA = json;
-        break;
-      }
-    } catch (err) {
-      // Thử URL tiếp theo (ví dụ khi mở trực tiếp file:// trên máy)
+  try {
+    const ts = Date.now();
+    const res = await fetch(`data/properties.json?v=${ts}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}: Không thể tải data/properties.json`);
+    const json = await res.json();
+    if (json && Array.isArray(json.properties)) {
+      APP_DATA = json;
     }
+  } catch (err) {
+    console.error('Lỗi nạp dữ liệu:', err);
   }
 
   renderFeatured();
@@ -51,7 +73,8 @@ function renderFeatured() {
   const container = document.getElementById('featured-content');
   if (!container) return;
 
-  const featured = APP_DATA.properties.find(p => p.featured === true) || APP_DATA.properties[0];
+  const validProps = getValidPublicProperties(false);
+  const featured = validProps.find(p => p.featured === true) || validProps[0];
   if (!featured) {
     container.innerHTML = '<p class="empty-message">Hiện chưa có căn nổi bật.</p>';
     return;
@@ -163,7 +186,9 @@ function renderPortfolio() {
   const grid = document.getElementById('property-grid');
   if (!grid) return;
 
-  let filtered = APP_DATA.properties.filter(p => {
+  const validProps = getValidPublicProperties(true);
+
+  let filtered = validProps.filter(p => {
     if (currentFilter === 'all') return true;
     if (currentFilter === 'buy') return p.type === 'buy';
     if (currentFilter === 'rent-osaka') return p.type === 'rent' && p.area === 'Osaka';
