@@ -19,17 +19,29 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function loadData() {
-  try {
-    const res = await fetch('data/properties.json');
-    if (!res.ok) throw new Error('Không thể tải file properties.json');
-    APP_DATA = await res.json();
-
-    renderFeatured();
-    renderPortfolio();
-    renderArticles();
-  } catch (err) {
-    console.error('Lỗi nạp dữ liệu:', err);
+  const ts = Date.now();
+  const urls = [
+    `data/properties.json?v=${ts}`,
+    `properties.json?v=${ts}`,
+    `https://nhanngoatosaka.github.io/homefind/data/properties.json?v=${ts}`
+  ];
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) continue;
+      const json = await res.json();
+      if (json && Array.isArray(json.properties)) {
+        APP_DATA = json;
+        break;
+      }
+    } catch (err) {
+      // Thử URL tiếp theo (ví dụ khi mở trực tiếp file:// trên máy)
+    }
   }
+
+  renderFeatured();
+  renderPortfolio();
+  renderArticles();
 }
 
 // --------------------------------------------------------------------------
