@@ -18,7 +18,7 @@
   <meta name="twitter:description" content="Danh mục nhà phố, căn hộ chọn lọc tại Osaka &amp; vùng Kansai. Thông tin minh bạch, tính khoản vay trực tiếp và hỗ trợ pháp lý trọn gói.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1600&auto=format&fit=crop">
 
-  <link rel="stylesheet" href="styles.css?v=20261107e">
+  <link rel="stylesheet" href="styles.css?v=20261107f">
 </head>
 <body>
 
@@ -132,9 +132,16 @@
         </div>
       </div>
 
-      <!-- Lưới thẻ nhà -->
-      <div class="property-grid" id="property-grid">
+      <!-- Lưới thẻ nhà (Trang chủ hiển thị 3 căn đại diện / mới nhất) -->
+      <div class="property-grid" id="property-grid" data-limit="3">
         <!-- Render động từ data/properties.json -->
+      </div>
+
+      <!-- Nút dẫn sang trang 2: Toàn bộ nhà đang đăng -->
+      <div class="section-more-bar" id="portfolio-more-wrap">
+        <a href="properties.html" class="btn-secondary" id="btn-view-all-properties">
+          Xem toàn bộ danh sách nhà →
+        </a>
       </div>
 
       <!-- DẢI CTA GIỮA TRANG #1 (Sau danh sách nhà) -->
@@ -167,8 +174,15 @@
         <div class="kicker">読みもの</div>
         <h2 class="section-title">Kinh nghiệm &amp; Cập nhật thị trường</h2>
       </div>
-      <div class="article-grid" id="article-grid">
+      <div class="article-grid" id="article-grid" data-limit="3">
         <!-- Render động từ articles trong data/properties.json -->
+      </div>
+
+      <!-- Nút dẫn sang trang Cẩm nang & Bài chia sẻ đầy đủ -->
+      <div class="section-more-bar" id="articles-more-wrap">
+        <a href="articles.html" class="btn-secondary" id="btn-view-all-articles">
+          Xem toàn bộ bài chia sẻ &amp; cẩm nang →
+        </a>
       </div>
 
       <!-- DẢI CTA GIỮA TRANG #2 (Sau mục bài viết) -->
@@ -336,10 +350,17 @@
     </div>
   </footer>
 
-  <!-- HỘP THOẠI CHI TIẾT (DIALOG) -->
+  <!-- HỘP THOẠI CHI TIẾT NHÀ (DIALOG) -->
   <div class="dialog-overlay" id="property-dialog">
     <div class="dialog-box" id="dialog-content">
       <!-- Render chi tiết căn hộ + máy tính khoản vay + nút liên hệ trực tiếp -->
+    </div>
+  </div>
+
+  <!-- HỘP THOẠI ĐỌC BÀI CHIA SẺ (ARTICLE READER DIALOG) -->
+  <div class="dialog-overlay" id="article-dialog">
+    <div class="dialog-box article-dialog-box" id="article-dialog-content">
+      <!-- Render nội dung đầy đủ của bài viết khi bấm Đọc bài -->
     </div>
   </div>
 
@@ -348,8 +369,8 @@
     <!-- Render động từ window.SITE trong app.js -->
   </div>
 
-  <script src="config.js?v=20261107e"></script>
-  <script src="i18n.js?v=20261107e"></script>
-  <script src="app.js?v=20261107e"></script>
+  <script src="config.js?v=20261107f"></script>
+  <script src="i18n.js?v=20261107f"></script>
+  <script src="app.js?v=20261107f"></script>
 </body>
 </html>

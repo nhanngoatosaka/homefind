@@ -978,6 +978,56 @@ footer.site-footer {
   font-size: 13px;
 }
 
+/* Thanh nút "Xem toàn bộ" dưới lưới 3 mục ở trang chủ */
+.section-more-bar {
+  margin-top: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Thanh lọc & tìm kiếm bài viết trên trang articles.html */
+.article-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.article-search-wrap {
+  min-width: 260px;
+  flex: 1;
+  max-width: 360px;
+}
+
+/* Hộp đọc bài viết (Article Reader Modal) */
+.article-dialog-box {
+  max-width: 720px;
+}
+.article-reader-body {
+  font-size: 15px;
+  color: var(--ink);
+  line-height: 1.8;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.article-reader-body p {
+  margin-bottom: 14px;
+}
+.article-reader-body ul {
+  padding-left: 20px;
+  margin-bottom: 16px;
+}
+.article-reader-body li {
+  margin-bottom: 8px;
+}
+.article-reader-body strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
 /* Dải CTA giữa trang (Nền chàm, chữ trắng, đúng bảng màu STYLE_GUIDE.md) */
 .mid-cta-band {
   background-color: var(--ink);

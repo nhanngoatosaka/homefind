@@ -190,6 +190,7 @@ async function loadData() {
   }
 
   populateLayoutFilterOptions();
+  initArticleFilters();
   renderFeatured();
   renderPortfolio();
   renderArticles();
@@ -724,12 +725,21 @@ function renderPortfolio() {
 
   const sorted = sortPropertiesList(filtered, currentSort);
 
+  // Cập nhật nút "Xem toàn bộ danh sách nhà" ở trang chủ (nếu có)
+  const viewAllPropsBtn = document.getElementById('btn-view-all-properties');
+  if (viewAllPropsBtn) {
+    viewAllPropsBtn.textContent = `Xem toàn bộ danh sách nhà (${validProps.length} căn) →`;
+  }
+
   if (sorted.length === 0) {
     grid.innerHTML = `<p class="empty-message">${t('empty_portfolio')}</p>`;
     return;
   }
 
-  grid.innerHTML = sorted.map(p => {
+  const limitVal = Number(grid.getAttribute('data-limit')) || 0;
+  const displayList = limitVal > 0 ? sorted.slice(0, limitVal) : sorted;
+
+  grid.innerHTML = displayList.map(p => {
     const isSold = p.status === 'sold';
     const typeLabel = p.type === 'buy' ? 'Bán · 売買' : 'Cho thuê · 賃貸';
     const mainImg = (p.images && p.images.length > 0)
@@ -780,34 +790,163 @@ function renderPortfolio() {
 }
 
 // --------------------------------------------------------------------------
-// 6. Render BÀI CHIA SẺ (#articles)
+// 6. Render BÀI CHIA SẺ (#articles) + LỌC CHUYÊN MỤC + HỘP ĐỌC BÀI (Modal)
 // --------------------------------------------------------------------------
+let currentArticleCat = 'all';
+let currentArticleQuery = '';
+
+function initArticleFilters() {
+  const catWrap = document.getElementById('article-category-pills');
+  const searchInput = document.getElementById('article-search-input');
+  const articles = APP_DATA.articles || [];
+
+  if (catWrap) {
+    const categories = [];
+    articles.forEach(a => {
+      const c = (a.category || '').trim();
+      if (c && !categories.includes(c)) categories.push(c);
+    });
+
+    const btns = [`<button type="button" class="filter-btn active" data-art-cat="all">Tất cả (${articles.length})</button>`];
+    categories.forEach(cat => {
+      const count = articles.filter(a => (a.category || '').trim() === cat).length;
+      btns.push(`<button type="button" class="filter-btn" data-art-cat="${cat}">${cat} (${count})</button>`);
+    });
+    catWrap.innerHTML = btns.join('');
+
+    catWrap.querySelectorAll('button[data-art-cat]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        catWrap.querySelectorAll('button[data-art-cat]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentArticleCat = btn.getAttribute('data-art-cat') || 'all';
+        renderArticles();
+      });
+    });
+  }
+
+  if (searchInput && !searchInput._bound) {
+    searchInput._bound = true;
+    searchInput.addEventListener('input', () => {
+      currentArticleQuery = searchInput.value.trim().toLowerCase();
+      renderArticles();
+    });
+  }
+}
+
 function renderArticles() {
   const grid = document.getElementById('article-grid');
   if (!grid) return;
 
-  if (!APP_DATA.articles || APP_DATA.articles.length === 0) {
+  const allArticles = APP_DATA.articles || [];
+
+  // Cập nhật nút "Xem toàn bộ bài chia sẻ" ở trang chủ (nếu có)
+  const viewAllArtBtn = document.getElementById('btn-view-all-articles');
+  if (viewAllArtBtn) {
+    viewAllArtBtn.textContent = `Xem toàn bộ bài chia sẻ & cẩm nang (${allArticles.length} bài) →`;
+  }
+
+  if (allArticles.length === 0) {
     grid.innerHTML = '<p class="empty-message">Chưa có bài viết mới.</p>';
     return;
   }
 
-  grid.innerHTML = APP_DATA.articles.map(a => `
+  const filtered = allArticles.filter(a => {
+    if (currentArticleCat !== 'all' && (a.category || '').trim() !== currentArticleCat) {
+      return false;
+    }
+    if (currentArticleQuery) {
+      const hay = `${a.title || ''} ${a.summary || ''} ${a.body || ''} ${a.category || ''}`.toLowerCase();
+      if (!hay.includes(currentArticleQuery)) return false;
+    }
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<p class="empty-message">Không tìm thấy bài chia sẻ nào khớp với từ khóa của bạn.</p>';
+    return;
+  }
+
+  const limitVal = Number(grid.getAttribute('data-limit')) || 0;
+  const displayArticles = limitVal > 0 ? filtered.slice(0, limitVal) : filtered;
+
+  grid.innerHTML = displayArticles.map(a => `
     <article class="article-card">
       <div class="article-img-wrap">
         <img src="${a.image || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800'}" alt="${a.title}" loading="lazy">
       </div>
       <div class="article-body">
-        <span class="article-cat">${a.category || 'Chia sẻ'}</span>
+        <span class="article-cat">${a.category || 'Chia sẻ'}${a.date ? ` · ${a.date}` : ''}</span>
         <h3 class="article-title serif">${a.title}</h3>
         <p class="article-summary">${a.summary}</p>
         <div class="article-content-full" id="article-body-${a.id}">
           ${a.body}
         </div>
-        <button class="article-read-btn" id="article-btn-${a.id}" onclick="toggleArticle('${a.id}')">Đọc bài</button>
+        <button class="article-read-btn" id="article-btn-${a.id}" onclick="openArticleDialog('${a.id}')">Đọc bài →</button>
       </div>
     </article>
   `).join('');
 }
+
+window.openArticleDialog = function(id) {
+  const a = (APP_DATA.articles || []).find(x => x.id === id);
+  if (!a) return;
+
+  const overlay = document.getElementById('article-dialog');
+  const content = document.getElementById('article-dialog-content');
+  if (!overlay || !content) {
+    window.toggleArticle(id);
+    return;
+  }
+
+  content.innerHTML = `
+    ${a.image ? `<img src="${a.image}" alt="${a.title}" class="dialog-image" style="height: 220px;">` : ''}
+    <div class="dialog-body">
+      <div class="dialog-header-meta">
+        <span class="status-pill">${a.category || 'Chia sẻ'}</span>
+        ${a.date ? `<span style="font-size: 13px; color: var(--faint);">${a.date}</span>` : ''}
+      </div>
+      <h2 class="dialog-title serif" style="line-height: 1.35;">${a.title}</h2>
+      <div class="article-reader-body">
+        ${a.body}
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="btn-primary" onclick="consultAboutArticle('${a.id}')">
+          Nhắn hỏi BIG不動産 về chủ đề này
+        </button>
+        <button type="button" class="btn-secondary" onclick="closeArticleDialog()">${t('btn_close')}</button>
+      </div>
+    </div>
+  `;
+
+  overlay.classList.add('open');
+  isDialogOpen = true;
+  updateMobileStickyVisibility();
+};
+
+window.closeArticleDialog = function() {
+  const overlay = document.getElementById('article-dialog');
+  if (overlay) overlay.classList.remove('open');
+  isDialogOpen = false;
+  updateMobileStickyVisibility();
+};
+
+window.consultAboutArticle = function(articleId) {
+  const a = (APP_DATA.articles || []).find(x => x.id === articleId);
+  closeArticleDialog();
+  trackEvent('click_contact', { channel: 'form', property_id: articleId });
+  const inputProp = document.getElementById('form-property');
+  if (a && inputProp) {
+    inputProp.value = `Tư vấn chủ đề: ${a.title}`;
+  }
+  const contactSec = document.getElementById('contact');
+  if (contactSec) {
+    contactSec.scrollIntoView({ behavior: 'smooth' });
+  }
+  setTimeout(() => {
+    const nameInput = document.getElementById('form-name');
+    if (nameInput) nameInput.focus();
+  }, 450);
+};
 
 window.toggleArticle = function(id) {
   const contentEl = document.getElementById(`article-body-${id}`);
@@ -815,7 +954,7 @@ window.toggleArticle = function(id) {
   if (!contentEl || !btnEl) return;
 
   const isOpen = contentEl.classList.toggle('open');
-  btnEl.textContent = isOpen ? 'Thu gọn' : 'Đọc bài';
+  btnEl.textContent = isOpen ? 'Thu gọn' : 'Đọc bài →';
 };
 
 // --------------------------------------------------------------------------
@@ -1054,12 +1193,21 @@ window.closePropertyDialog = function() {
 
 function setupDialogClose() {
   const overlay = document.getElementById('property-dialog');
-  if (!overlay) return;
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) {
-      closePropertyDialog();
-    }
-  });
+  if (overlay) {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        closePropertyDialog();
+      }
+    });
+  }
+  const artOverlay = document.getElementById('article-dialog');
+  if (artOverlay) {
+    artOverlay.addEventListener('click', (e) => {
+      if (e.target === artOverlay) {
+        closeArticleDialog();
+      }
+    });
+  }
 }
 
 // --------------------------------------------------------------------------

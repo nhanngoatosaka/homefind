@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cẩm nang &amp; Kinh nghiệm Mua nhà tại Nhật — BIG不動産</title>
+  <meta name="description" content="Thư viện bài chia sẻ thực chiến từ BIG不動産: Kinh nghiệm vay mua nhà ngân hàng Nhật Bản (Resona), điều khoản tiền cọc 手付金, giảm trừ thuế 120 lần trả và cập nhật thị trường Kansai.">
+
+  <!-- Open Graph / Facebook / Zalo -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Cẩm nang Vay mua nhà &amp; Pháp lý BĐS Nhật Bản — BIG不動産">
+  <meta property="og:description" content="Trọn bộ kinh nghiệm vay mua nhà, bảo hiểm 団信, quy tắc tiền cọc 手付金, điều khoản ローン特約 và chính sách thuế nhà đất tại Nhật.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1600&auto=format&fit=crop">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Cẩm nang Vay mua nhà &amp; Pháp lý BĐS Nhật Bản — BIG不動産">
+  <meta name="twitter:description" content="Trọn bộ kinh nghiệm vay mua nhà, bảo hiểm 団信, quy tắc tiền cọc 手付金, điều khoản ローン特約 và chính sách thuế nhà đất tại Nhật.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1600&auto=format&fit=crop">
+
+  <link rel="stylesheet" href="styles.css?v=20261107f">
+</head>
+<body>
+
+  <!-- 1. HEADER TỐI GIẢN -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand-logo">
+        <a href="index.html" class="brand-name serif">BIG不動産</a>
+        <span class="brand-sub">Big Real Estate · Osaka</span>
+      </div>
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link">← Trang chủ</a></li>
+          <li><a href="properties.html" class="nav-link" data-i18n="nav_portfolio">Danh sách nhà</a></li>
+          <li><a href="articles.html" class="nav-link" style="color: var(--ink); font-weight: 500;" data-i18n="nav_articles">Bài chia sẻ</a></li>
+          <li><a href="index.html#process" class="nav-link" data-i18n="nav_process">Hướng dẫn</a></li>
+          <li>
+            <select id="lang-select" class="lang-select" aria-label="Ngôn ngữ hiển thị">
+              <option value="vi">VI · Tiếng Việt</option>
+              <option value="ja">JA · 日本語</option>
+              <option value="en">EN · English</option>
+            </select>
+          </li>
+          <li><a href="#contact" class="btn-outline-amber" data-i18n="nav_contact">Liên hệ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 2. TOÀN BỘ KHO BÀI CHIA SẺ & CẨM NANG -->
+  <section class="articles-section" id="articles" style="border-top: none; padding-top: 48px;">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker">読みもの · Cẩm nang thực chiến</div>
+        <h1 class="section-title serif" style="font-size: clamp(26px, 3.5vw, 36px); margin-bottom: 8px;">Kinh nghiệm vay mua nhà, hợp đồng đặt cọc &amp; thị trường Nhật Bản</h1>
+        <p style="font-size: 14.5px; color: var(--muted);">Chưng cất từ tài liệu hướng dẫn vay mua nhà của Ngân hàng Resona, hồ sơ hợp đồng mua bán thực tế (売買契約書 · 重要事項説明書) và kinh nghiệm làm nghề tại Osaka — Kansai.</p>
+      </div>
+
+      <!-- Thanh công cụ: Lọc theo chuyên mục + Tìm kiếm từ khóa -->
+      <div class="article-toolbar">
+        <div class="filter-pills" id="article-category-pills" style="margin-bottom: 0;">
+          <button type="button" class="filter-btn active" data-art-cat="all">Tất cả bài viết</button>
+        </div>
+        <div class="article-search-wrap">
+          <input type="search" id="article-search-input" class="form-control" placeholder="Tìm nhanh: tiền cọc, 団信, 120 lần, lãi suất...">
+        </div>
+      </div>
+
+      <!-- Lưới bài viết (Hiển thị toàn bộ không giới hạn) -->
+      <div class="article-grid" id="article-grid">
+        <!-- Render động toàn bộ articles từ data/properties.json -->
+      </div>
+
+      <!-- DẢI CTA GIỮA TRANG -->
+      <div class="mid-cta-band">
+        <div class="mid-cta-copy">
+          <div class="mid-cta-kicker">無料相談 · Tư vấn chọn căn &amp; Hồ sơ vay</div>
+          <h3 class="mid-cta-title serif" data-i18n="mid_cta_title">Chưa thấy căn ưng ý? Đăng ký nhận nhà mới theo nhu cầu</h3>
+        </div>
+        <button type="button" class="btn-mid-cta" onclick="requestCustomPropertyDemand()" data-i18n="mid_cta_btn">
+          Đăng ký nhận nhà mới →
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. KHỐI LIÊN HỆ HÀNH ĐỘNG THẬT & FORM DỰ PHÒNG -->
+  <section class="contact-section" id="contact">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-channels" id="contact-channels-container">
+          <div class="kicker">お問い合わせ</div>
+          <h2 class="section-title" style="margin-bottom: 12px;">Liên hệ trực tiếp với BIG不動産</h2>
+          <p style="font-size: 13.5px; color: var(--muted); margin-bottom: 14px;">
+            Bấm trực tiếp vào kênh liên lạc bên dưới để gọi điện hoặc gửi tin nhắn tư vấn ngay.
+          </p>
+          <div id="dynamic-contact-channels" class="contact-channels"></div>
+        </div>
+
+        <div class="contact-form-card">
+          <h3 class="form-title serif">Gửi yêu cầu xem nhà / Tư vấn hồ sơ vay</h3>
+          <p class="form-sub">Điền thông tin bên dưới để gửi yêu cầu trực tiếp hoặc tạo sẵn nội dung tư vấn chi tiết.</p>
+
+          <form id="contact-form">
+            <div class="form-group">
+              <label for="form-name">Họ và tên của bạn</label>
+              <input type="text" id="form-name" class="form-control" placeholder="Ví dụ: Nguyễn Văn An" required>
+            </div>
+            <div class="form-group">
+              <label for="form-contact">Số điện thoại / ID Zalo / ID LINE</label>
+              <input type="text" id="form-contact" class="form-control" placeholder="Ví dụ: 080-xxxx-xxxx hoặc Zalo SĐT" required>
+            </div>
+            <div class="form-group">
+              <label for="form-channel">Kênh bạn muốn nhận phản hồi</label>
+              <select id="form-channel" class="form-control">
+                <option value="Điện thoại">Điện thoại</option>
+                <option value="Zalo">Zalo</option>
+                <option value="LINE">LINE</option>
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Email">Email</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="form-property">Căn nhà hoặc chủ đề cần tư vấn</label>
+              <input type="text" id="form-property" class="form-control" placeholder="Ví dụ: Tư vấn hồ sơ vay / Kiểm tra điều khoản tiền cọc">
+            </div>
+            <div class="form-group">
+              <label for="form-message">Nhu cầu hoặc thắc mắc cụ thể</label>
+              <textarea id="form-message" class="form-control" placeholder="Ví dụ: Mình muốn hỏi thêm về gói vay hoặc nhờ đọc giúp điều khoản hợp đồng..."></textarea>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%;" data-i18n="btn_request_viewing">Gửi yêu cầu xem nhà</button>
+          </form>
+
+          <div class="ready-message-box" id="ready-message-box">
+            <div class="ready-message-title">Đoạn tin nhắn yêu cầu đã sẵn sàng:</div>
+            <div class="ready-message-text" id="ready-message-text"></div>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+              <button type="button" class="btn-primary" id="btn-copy-message">Sao chép nội dung</button>
+              <span id="ready-direct-links" style="display: inline-flex; flex-wrap: wrap; gap: 8px;"></span>
+              <span id="copy-status" style="font-size: 13px; color: var(--amber-ink);"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <h3 class="serif">BIG不動産株式会社</h3>
+          <p>Big Real Estate Co., Ltd. · Osaka, Japan</p>
+        </div>
+        <ul class="footer-links">
+          <li><a href="index.html" class="footer-link">Trang chủ</a></li>
+          <li><a href="properties.html" class="footer-link">Danh sách nhà</a></li>
+          <li><a href="articles.html" class="footer-link">Bài chia sẻ</a></li>
+          <li><a href="index.html#process" class="footer-link">Quy trình mua</a></li>
+          <li><a href="#contact" class="footer-link">Liên hệ tư vấn</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-legal-grid">
+        <div class="footer-company-info" id="footer-company-info">
+          <div><strong>BIG不動産株式会社</strong></div>
+          <div>〒577-0057 大阪府東大阪市足代新町4-12 テレビル5F</div>
+          <div id="footer-tel-row"></div>
+          <div id="footer-email-row"></div>
+          <div id="footer-license-row" style="display: none;"></div>
+        </div>
+
+        <div>
+          <details class="footer-privacy-details">
+            <summary>プライバシーポリシー · Chính sách bảo mật thông tin (Bản mẫu)</summary>
+            <div class="footer-privacy-body">
+              <p><strong>1. Thông tin thu thập:</strong> BIG不動産株式会社 chỉ tiếp nhận các thông tin liên hệ do khách hàng chủ động cung cấp (họ tên, số điện thoại, ID liên lạc, nhu cầu tìm mua/thuê bất động sản).</p>
+              <p><strong>2. Mục đích sử dụng:</strong> Dùng để phản hồi yêu cầu tư vấn, sắp xếp lịch xem nhà thực tế, hỗ trợ thẩm định hồ sơ vay ngân hàng và thủ tục pháp lý giao dịch bất động sản.</p>
+              <p><strong>3. Cam kết bảo mật:</strong> Tuyệt đối không bán, chia sẻ hoặc cung cấp thông tin cá nhân của khách hàng cho bên thứ ba vì mục đích thương mại khi chưa có sự đồng ý của khách hàng (trừ trường hợp theo yêu cầu pháp luật Nhật Bản).</p>
+              <p id="footer-privacy-contact"><strong>4. Liên hệ về dữ liệu cá nhân:</strong> BIG不動産株式会社 — 〒577-0057 大阪府東大阪市足代新町4-12 テレビル5F.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <p class="footer-desc">
+        BIG不動産 chuyên tư vấn mua bán, thuê và quản lý bất động sản tại Osaka và khu vực Kansai. Đồng hành cùng khách hàng từ bước khảo sát quy hoạch, thẩm định hồ sơ vay ngân hàng Nhật Bản đến bàn giao quyết toán và hoàn tất thủ tục đăng ký quyền sở hữu.
+      </p>
+      <div class="footer-copy">© 2026 BIG不動産株式会社. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <!-- HỘP THOẠI ĐỌC BÀI CHIA SẺ -->
+  <div class="dialog-overlay" id="article-dialog">
+    <div class="dialog-box article-dialog-box" id="article-dialog-content"></div>
+  </div>
+
+  <!-- THANH LIÊN HỆ DÍNH TRÊN DI ĐỘNG -->
+  <div class="mobile-sticky-bar is-hidden" id="mobile-sticky-bar" aria-label="Liên hệ nhanh trên di động"></div>
+
+  <script src="config.js?v=20261107f"></script>
+  <script src="i18n.js?v=20261107f"></script>
+  <script src="app.js?v=20261107f"></script>
+</body>
+</html>
