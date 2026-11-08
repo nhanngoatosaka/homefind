@@ -5,20 +5,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Shippori+Mincho+B1:wght@400;500;600;700&display=swap');
 
 :root {
-  --bg: #FAF7F1;
-  --bg-soft: #F3ECDD;
-  --card: #FFFDF8;
-  --ink: #22304A;
-  --muted: #5A6070;
-  --faint: #8F93A3;
-  --line: #E4DCCB;
-  --accent: #2E4057;
-  --accent-ink: #22304A;
-  --accent-soft: #E7EAF0;
-  --amber: #C97E2C;
-  --amber-ink: #9A5C13;
-  --amber-soft: #F8ECD6;
-  --cta: #A5661F;
+  /* Phong cách Modern Japandi & Kiến trúc Nhật Bản (Lấy cảm hứng từ cửa gỗ sồi & khối than chì) */
+  --bg: #F7F5F0;          /* Trắng ngà đá vôi (Limestone Off-White) */
+  --bg-soft: #ECE8E1;     /* Xám cát bê tông sáng (Light Sand / Concrete) */
+  --card: #FCFAF7;        /* Trắng kem nền thẻ sạch sẽ */
+  --ink: #25292E;         /* Xám than chì đậm (Deep Slate Charcoal) — tiêu đề, chữ chính */
+  --muted: #596068;       /* Xám trung tính — chữ phụ */
+  --faint: #8A9098;       /* Chữ mờ, ghi chú nhỏ */
+  --line: #DFDAD1;        /* Đường kẻ vữa mảnh tinh tế */
+  --accent: #383F47;      /* Xám than kiến trúc — khối đậm, nút phụ */
+  --accent-ink: #25292E;
+  --accent-soft: #EAE6DF;
+  --amber: #B87B41;       /* Nâu gỗ sồi mật ong (Warm Honey Oak) — điểm nhấn chính */
+  --amber-ink: #8F5724;   /* Nâu gỗ đậm cho chữ giá / nhãn trên nền sáng */
+  --amber-soft: #F6EDE2;  /* Nền gỗ sồi nhạt */
+  --amber-line: #E8D3BC;  /* Viền gỗ nhạt */
+  --cta: #A36427;         /* Nút chính — Nâu gỗ ấm tự nhiên */
   --cta-ink: #FFFFFF;
 }
 
@@ -124,7 +126,7 @@ header.site-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: rgba(250, 247, 241, 0.94);
+  background-color: rgba(247, 245, 240, 0.94);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--line);
   padding: 16px 0;
@@ -266,7 +268,7 @@ section.brand-banner {
   left: 0;
   right: 0;
   padding: 24px 28px 18px;
-  background: linear-gradient(to top, rgba(34, 48, 74, 0.75), transparent);
+  background: linear-gradient(to top, rgba(37, 41, 46, 0.78), transparent);
   color: #FFFFFF;
   font-family: 'Shippori Mincho B1', serif;
   font-size: 14px;
@@ -784,11 +786,11 @@ textarea.form-control {
 }
 
 /* ==========================================================================
-   9. FOOTER (Gradient chàm)
+   9. FOOTER (Xám than kiến trúc & Gỗ sồi)
    ========================================================================== */
 footer.site-footer {
-  background: linear-gradient(180deg, #2E4057 0%, #1B2436 100%);
-  color: #E9E6DA;
+  background: linear-gradient(180deg, #323840 0%, #1A1D20 100%);
+  color: #ECE8DF;
   padding: 56px 0 36px;
 }
 .footer-inner {
@@ -802,7 +804,7 @@ footer.site-footer {
   justify-content: space-between;
   align-items: flex-start;
   gap: 24px;
-  border-bottom: 1px solid rgba(228, 220, 203, 0.15);
+  border-bottom: 1px solid rgba(223, 218, 209, 0.15);
   padding-bottom: 28px;
 }
 .footer-brand h3 {
@@ -824,11 +826,11 @@ footer.site-footer {
 }
 .footer-link {
   font-size: 13.5px;
-  color: #E9E6DA;
+  color: #ECE8DF;
   transition: color 0.2s;
 }
 .footer-link:hover {
-  color: #DFA243;
+  color: #D49B5B;
 }
 .footer-desc {
   font-size: 13px;
@@ -848,7 +850,7 @@ footer.site-footer {
 .dialog-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(22, 28, 40, 0.65);
+  background-color: rgba(24, 27, 30, 0.72);
   backdrop-filter: blur(4px);
   display: none;
   align-items: center;
@@ -1430,15 +1432,15 @@ footer.site-footer {
   color: #FFFFFF;
 }
 .footer-company-info a {
-  color: #DFA243;
+  color: #D49B5B;
 }
 .footer-privacy-details {
-  background-color: rgba(34, 48, 74, 0.55);
-  border: 1px solid rgba(228, 220, 203, 0.2);
+  background-color: rgba(37, 41, 46, 0.65);
+  border: 1px solid rgba(223, 218, 209, 0.2);
   border-radius: 6px;
   padding: 12px 16px;
   font-size: 12.5px;
-  color: #E9E6DA;
+  color: #ECE8DF;
 }
 .footer-privacy-details summary {
   cursor: pointer;
@@ -1679,7 +1681,7 @@ footer.site-footer {
   top: 10px;
   left: 10px;
   right: 10px;
-  background-color: rgba(34, 48, 74, 0.88);
+  background-color: rgba(37, 41, 46, 0.92);
   color: var(--amber-soft);
   border: 1px solid var(--amber);
   padding: 6px 10px;

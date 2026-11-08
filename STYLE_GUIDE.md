@@ -30,29 +30,31 @@ cho mọi lần build sau.
   không sến. Ảnh nhà là nhân vật chính; chữ và màu chỉ làm nền cho ảnh.
 
 DESIGN TOKENS — DÙNG ĐÚNG CÁC BIẾN NÀY, KHÔNG TỰ CHẾ MÃ MÀU MỚI
+(Phong cách Modern Japandi & Kiến trúc Nhật Bản: Gỗ sồi ấm + Xám than đá phiến + Nền trắng ngà)
 :root{
-  --bg:#FAF7F1;         /* nền trắng ấm */
-  --bg-soft:#F3ECDD;    /* nền khối phụ, xám be nhạt */
-  --card:#FFFDF8;       /* nền thẻ */
-  --ink:#22304A;        /* chàm đậm — tiêu đề, chữ chính */
-  --muted:#5A6070;      /* chữ phụ */
-  --faint:#8F93A3;      /* chữ mờ, ghi chú nhỏ */
-  --line:#E4DCCB;       /* đường kẻ mảnh */
-  --accent:#2E4057;     /* chàm — khối đậm, nút phụ */
-  --accent-ink:#22304A;
-  --accent-soft:#E7EAF0;
-  --amber:#C97E2C;      /* vàng hổ phách — điểm nhấn */
-  --amber-ink:#9A5C13;  /* hổ phách đậm cho chữ giá/nhãn trên nền sáng */
-  --amber-soft:#F8ECD6;
-  --cta:#A5661F;        /* nền nút chính */
+  --bg:#F7F5F0;         /* trắng ngà đá vôi (Limestone Off-White) */
+  --bg-soft:#ECE8E1;    /* xám cát bê tông sáng (Light Sand / Concrete) */
+  --card:#FCFAF7;       /* nền thẻ trắng kem sạch sẽ */
+  --ink:#25292E;        /* xám than chì đậm (Deep Slate Charcoal) — tiêu đề, chữ chính */
+  --muted:#596068;      /* chữ phụ xám trung tính */
+  --faint:#8A9098;      /* chữ mờ, ghi chú nhỏ */
+  --line:#DFDAD1;       /* đường kẻ vữa mảnh tinh tế */
+  --accent:#383F47;     /* xám than kiến trúc — khối đậm, nút phụ */
+  --accent-ink:#25292E;
+  --accent-soft:#EAE6DF;
+  --amber:#B87B41;      /* nâu gỗ sồi mật ong (Warm Honey Oak) — điểm nhấn chính */
+  --amber-ink:#8F5724;  /* nâu gỗ đậm cho chữ giá/nhãn trên nền sáng */
+  --amber-soft:#F6EDE2; /* nền gỗ sồi nhạt */
+  --amber-line:#E8D3BC; /* viền gỗ nhạt */
+  --cta:#A36427;        /* nền nút chính — Nâu gỗ ấm tự nhiên */
   --cta-ink:#FFFFFF;
 }
-- Dải màu cho phép: nền ấm #FAF7F2–#F3EDE3; chàm #22304A, #2E4057, điểm sâu nhất
-  #1B2436; hổ phách từ #C97E2C đến #DFA243.
-- Footer: nền gradient dọc duy nhất trên trang, từ #2E4057 xuống #1B2436,
-  chữ sáng #E9E6DA.
-- Chế độ tối (nếu làm): nền chàm đêm #161C28 / #1D2536, thẻ #212B3F, chữ #ECE8DC,
-  hổ phách sáng #DFA243, nút chính nền #DFA243 chữ #1B2436.
+- Dải màu cho phép: nền ngà đá #F7F5F0–#ECE8E1; xám than chì #25292E, #383F47, điểm sâu nhất
+  #1A1D20; nâu gỗ sồi từ #B87B41 đến #A36427 / #8F5724.
+- Footer: nền gradient dọc duy nhất trên trang, từ #323840 xuống #1A1D20,
+  chữ sáng #ECE8DF.
+- Chế độ tối (nếu làm): nền than đêm #181B1E / #202428, thẻ #262B30, chữ #ECE8DF,
+  gỗ sồi sáng #C88D4E, nút chính nền #C88D4E chữ #1A1D20.
 - Font: tiêu đề dùng serif thanh mảnh "Shippori Mincho B1", dự phòng "Noto Serif"
   (họ Cormorant chấp nhận được nếu không tải được hai font trên); nội dung dùng
   sans gọn "Be Vietnam Pro", dự phòng system-ui. Không dùng font nào khác.
