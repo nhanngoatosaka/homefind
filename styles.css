@@ -5,17 +5,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Shippori+Mincho+B1:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Phong cách Modern Japandi & Kiến trúc Nhật Bản (Lấy cảm hứng từ cửa gỗ sồi & khối than chì) */
-  --bg: #F7F5F0;          /* Trắng ngà đá vôi (Limestone Off-White) */
-  --bg-soft: #ECE8E1;     /* Xám cát bê tông sáng (Light Sand / Concrete) */
+  /* Phong cách Modern Japandi & Kiến trúc Nhật Bản (Gỗ sồi ấm + Xám than kiến trúc + Nền gỗ mộc Wabi-sabi) */
+  --bg: #F4EFEB;          /* Nền màu gỗ mộc ngà ấm (Warm Hinoki / Sanded Timber) */
+  --bg-soft: #EAE3D9;     /* Xám cát bê tông gỗ sáng (Light Sand / Concrete) */
   --card: #FCFAF7;        /* Trắng kem nền thẻ sạch sẽ */
   --ink: #25292E;         /* Xám than chì đậm (Deep Slate Charcoal) — tiêu đề, chữ chính */
   --muted: #596068;       /* Xám trung tính — chữ phụ */
   --faint: #8A9098;       /* Chữ mờ, ghi chú nhỏ */
-  --line: #DFDAD1;        /* Đường kẻ vữa mảnh tinh tế */
+  --line: #DED6CB;        /* Đường kẻ vữa mảnh tinh tế */
   --accent: #383F47;      /* Xám than kiến trúc — khối đậm, nút phụ */
   --accent-ink: #25292E;
-  --accent-soft: #EAE6DF;
+  --accent-soft: #EAE4DC;
   --amber: #B87B41;       /* Nâu gỗ sồi mật ong (Warm Honey Oak) — điểm nhấn chính */
   --amber-ink: #8F5724;   /* Nâu gỗ đậm cho chữ giá / nhãn trên nền sáng */
   --amber-soft: #F6EDE2;  /* Nền gỗ sồi nhạt */
@@ -36,6 +36,10 @@ html {
 
 body {
   background-color: var(--bg);
+  background-image: 
+    radial-gradient(rgba(145, 110, 75, 0.035) 1px, transparent 0),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.038'/%3E%3C/svg%3E");
+  background-size: 24px 24px, 180px 180px;
   color: var(--ink);
   font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
   font-weight: 300;
@@ -120,16 +124,17 @@ img {
 }
 
 /* ==========================================================================
-   1. HEADER
+   1. HEADER (Xám than chì kiến trúc đồng điệu Footer)
    ========================================================================== */
 header.site-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: rgba(247, 245, 240, 0.94);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--line);
-  padding: 16px 0;
+  background-color: rgba(30, 34, 40, 0.96);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(223, 218, 209, 0.12);
+  padding: 15px 0;
+  transition: background-color 0.2s, box-shadow 0.2s;
 }
 .header-inner {
   display: flex;
@@ -144,28 +149,51 @@ header.site-header {
   font-size: 20px;
   letter-spacing: 0.05em;
   font-weight: 600;
-  color: var(--ink);
+  color: #FFFFFF;
 }
 .brand-sub {
   font-size: 11px;
-  color: var(--muted);
+  color: var(--faint);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 22px;
   list-style: none;
 }
 .nav-link {
   font-size: 14px;
-  color: var(--muted);
+  color: #ECE8DF;
   font-weight: 400;
   transition: color 0.2s;
 }
-.nav-link:hover {
-  color: var(--ink);
+.nav-link:hover,
+.nav-link.active {
+  color: #D49B5B;
+}
+
+.site-header .lang-select {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #ECE8DF;
+  border: 1px solid rgba(223, 218, 209, 0.22);
+  padding: 5px 9px;
+  border-radius: 4px;
+}
+.site-header .lang-select option {
+  background-color: #22262B;
+  color: #ECE8DF;
+}
+
+.site-header .btn-outline-amber {
+  color: #F6EDE2;
+  border-color: var(--amber);
+  background-color: rgba(184, 123, 65, 0.16);
+}
+.site-header .btn-outline-amber:hover {
+  background-color: var(--amber);
+  color: #FFFFFF;
 }
 
 /* ==========================================================================
@@ -533,6 +561,30 @@ section.portfolio-section {
   padding: 48px 0;
   color: var(--muted);
   font-size: 15px;
+}
+
+/* ==========================================================================
+   6 & 7. GUIDE & PROCESS (Cẩm nang & Quy trình sở hữu nhà — Gom chung)
+   ========================================================================== */
+section.guide-section {
+  padding: 56px 0 72px;
+  border-top: 1px solid var(--line);
+}
+.guide-subblock {
+  margin-bottom: 48px;
+}
+.guide-subblock:last-child {
+  margin-bottom: 0;
+}
+.guide-subblock-title {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: var(--ink);
+}
+.guide-divider-line {
+  height: 1px;
+  background: var(--line);
+  margin: 48px 0 52px;
 }
 
 /* ==========================================================================

@@ -49,44 +49,32 @@ DESIGN TOKENS — DÙNG ĐÚNG CÁC BIẾN NÀY, KHÔNG TỰ CHẾ MÃ MÀU MỚ
   --cta:#A36427;        /* nền nút chính — Nâu gỗ ấm tự nhiên */
   --cta-ink:#FFFFFF;
 }
-- Dải màu cho phép: nền ngà đá #F7F5F0–#ECE8E1; xám than chì #25292E, #383F47, điểm sâu nhất
+- Dải màu cho phép: nền gỗ mộc Wabi-Sabi #F4EFEB–#EAE3D9; xám than chì #25292E, #383F47, điểm sâu nhất
   #1A1D20; nâu gỗ sồi từ #B87B41 đến #A36427 / #8F5724.
-- Footer: nền gradient dọc duy nhất trên trang, từ #323840 xuống #1A1D20,
-  chữ sáng #ECE8DF.
-- Chế độ tối (nếu làm): nền than đêm #181B1E / #202428, thẻ #262B30, chữ #ECE8DF,
-  gỗ sồi sáng #C88D4E, nút chính nền #C88D4E chữ #1A1D20.
+- Header & Footer: đóng khung kiến trúc xám than chì sẫm (rgba(30, 34, 40, 0.96) và gradient
+  #323840 xuống #1A1D20), chữ sáng #ECE8DF, logo trắng ngà.
+- Nền trang (body): màu gỗ mộc ấm #F4EFEB kết hợp lớp hạt thô Wabi-sabi vi mô (subtle noise).
 - Font: tiêu đề dùng serif thanh mảnh "Shippori Mincho B1", dự phòng "Noto Serif"
   (họ Cormorant chấp nhận được nếu không tải được hai font trên); nội dung dùng
   sans gọn "Be Vietnam Pro", dự phòng system-ui. Không dùng font nào khác.
 
-CẤU TRÚC TRANG CHỦ — GIỮ ĐÚNG THỨ TỰ NÀY
-1. Header tối giản, dính trên cùng: logo BIG不動産 + menu (Căn nổi bật, Danh sách
-   nhà, Bài chia sẻ, Hướng dẫn, Liên hệ) + nút liên hệ viền hổ phách.
-2. Hero: nhãn kicker tiếng Nhật/địa danh màu hổ phách, tiêu đề serif lớn, đoạn mở
-   đầu ngắn, 2 nút (nút chính hổ phách, nút phụ viền chàm), hàng số liệu ngắn.
-3. Dải ảnh thương hiệu hoàng hôn ngay dưới hero: một ảnh ngang lớn (ảnh
-   Kiyomizu-dera lúc hoàng hôn là ảnh mẫu) kèm chú thích tiếng Nhật dạng
-   "清水寺 — Kyoto, lúc hoàng hôn".
-4. Căn nổi bật: nền be nhạt; bên trái là thư viện ảnh (ảnh lớn + hàng ảnh nhỏ,
-   bấm ảnh nhỏ để đổi ảnh lớn, ảnh đang chọn có viền hổ phách); bên phải là nhãn
-   trạng thái, tên căn, địa chỉ, giá lớn màu hổ phách, bảng thông số, đoạn ghi
-   chú và nút đặt lịch xem nhà.
-5. Lưới portfolio các căn: nút lọc dạng viên tròn — Tất cả / Nhà bán /
-   Thuê · Osaka / Thuê · Kyoto (nút đang chọn nền chàm, chữ sáng). Lọc phải chạy
-   thật, lưới tự rút lại đúng nhóm; nhóm trống thì hiện dòng "Chưa có căn nào
-   trong mục này."
-6. Mục bài chia sẻ, tip, hướng dẫn: lưới bài viết gồm ảnh, nhãn chuyên mục,
-   tiêu đề serif, tóm tắt; bấm "Đọc bài" thì nội dung đầy đủ mở rộng ngay tại
-   chỗ (không chuyển trang) và nút đổi thành "Thu gọn".
-7. Quy trình mua nhà 4 bước: 4 cột, mỗi bước có gạch trên màu hổ phách, số bước
-   và mô tả ngắn — 01 Tư vấn & xem nhà; 02 Thẩm định vay sơ bộ; 03 Đặt mua &
-   hợp đồng; 04 Quyết toán & nhận nhà.
-8. Khối liên hệ: nền be nhạt; bên trái là 4 kênh Form trên web / Zalo / LINE /
-   WhatsApp; bên phải là form (họ tên, liên lạc, kênh mong muốn, căn quan tâm,
-   nội dung). Gửi form KHÔNG gửi dữ liệu đi đâu: form soạn sẵn một đoạn nội dung
-   liên hệ, hiển thị trong khung viền đứt nét màu hổ phách kèm nút "Sao chép
-   nội dung" để khách tự dán vào kênh đã chọn.
-9. Footer chàm đậm (gradient #2E4057 → #1B2436): logo, menu, dòng mô tả ngắn.
+CẤU TRÚC TRANG CHỦ — CHUẨN GỌN GÀNG 4 BƯỚC PHỄU
+1. Header xám than kiến trúc dính trên cùng: logo BIG不動産 trắng ngà + menu tinh gọn
+   (Danh sách nhà, Tính tiền nhà, Cẩm nang & Quy trình, Liên hệ) + nút liên hệ viền gỗ sồi.
+2. Hero: nhãn kicker tiếng Nhật/địa danh màu gỗ sồi, tiêu đề serif lớn, đoạn mở
+   đầu ngắn, 2 nút CTA.
+3. Lưới portfolio các căn: nút lọc dạng viên tròn + bộ lọc nâng cao (ngân sách, diện tích,
+   layout, sắp xếp), hiển thị 3 căn đại diện kèm nút "Xem toàn bộ danh sách nhà →".
+4. Bảng tính tiền trả góp mua nhà & So sánh tiền thuê (Chuẩn công thức Keisan.site):
+   tính gốc/lãi, kỳ Bonus, 2 giai đoạn lãi suất và đối chiếu trực tiếp tiền thuê hiện tại.
+5. Dải ảnh thương hiệu hoàng hôn: ảnh ngang lớn (Kiyomizu-dera lúc hoàng hôn) làm dải nghỉ
+   mắt kiến trúc trước khi bước vào khu tri thức.
+6. Cẩm nang & Quy trình sở hữu nhà (Gom chung Hướng dẫn + Bài chia sẻ làm một khối #guide):
+   - Phần 1: Quy trình 4 bước tổng quan + Nút mở Cẩm nang VIP 7 giai đoạn & Checklist (mã 2720).
+   - Đường phân cách mảnh.
+   - Phần 2: Thư viện bài viết & kinh nghiệm thực chiến (3 bài nổi bật + nút xem tất cả + CTA).
+7. Khối liên hệ hành động thật & Form dự phòng: các kênh gọi/chat Zalo/LINE/WhatsApp + form soạn sẵn.
+8. Footer xám than kiến trúc: logo, menu, thông tin công ty, pháp lý và chính sách bảo mật.
 
 THẺ NHÀ — COMPONENT BẮT BUỘC
 - Ảnh lớn ở trên, chiếm vai chính của thẻ; tỉ lệ ảnh đồng nhất trong toàn lưới.

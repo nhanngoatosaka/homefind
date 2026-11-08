@@ -18,7 +18,7 @@
   <meta name="twitter:description" content="Danh mục nhà phố, căn hộ chọn lọc tại Osaka &amp; vùng Kansai. Thông tin minh bạch, tính khoản vay trực tiếp và hỗ trợ pháp lý trọn gói.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1600&auto=format&fit=crop">
 
-  <link rel="stylesheet" href="styles.css?v=20261109a">
+  <link rel="stylesheet" href="styles.css?v=20261109b">
 </head>
 <body>
 
@@ -32,9 +32,8 @@
       <nav>
         <ul class="nav-menu">
           <li><a href="#portfolio" class="nav-link" data-i18n="nav_portfolio">Danh sách nhà</a></li>
-          <li><a href="#articles" class="nav-link" data-i18n="nav_articles">Bài chia sẻ</a></li>
           <li><a href="#featured" class="nav-link">Tính tiền nhà · ローン計算</a></li>
-          <li><a href="#process" class="nav-link" data-i18n="nav_process">Hướng dẫn</a></li>
+          <li><a href="#guide" class="nav-link" data-i18n="nav_guide">Cẩm nang &amp; Quy trình</a></li>
           <li>
             <select id="lang-select" class="lang-select" aria-label="Ngôn ngữ hiển thị">
               <option value="vi">VI · Tiếng Việt</option>
@@ -148,48 +147,7 @@
     </div>
   </section>
 
-  <!-- 4. DẢI ẢNH THƯƠNG HIỆU HOÀNG HÔN (Dải nghỉ mắt giữa Danh sách nhà và Bài viết) -->
-  <section class="brand-banner">
-    <div class="container">
-      <div class="banner-frame">
-        <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1600&auto=format&fit=crop" alt="清水寺 — Kyoto, lúc hoàng hôn" loading="lazy">
-        <div class="banner-caption">清水寺 — Kyoto, lúc hoàng hôn</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 5. BÀI CHIA SẺ, TIP, HƯỚNG DẪN (Kèm CTA giữa trang #2) -->
-  <section class="articles-section" id="articles">
-    <div class="container">
-      <div class="section-head">
-        <div class="kicker">読みもの</div>
-        <h2 class="section-title">Kinh nghiệm &amp; Cập nhật thị trường</h2>
-      </div>
-      <div class="article-grid" id="article-grid" data-limit="3">
-        <!-- Render động từ articles trong data/properties.json -->
-      </div>
-
-      <!-- Nút dẫn sang trang Cẩm nang & Bài chia sẻ đầy đủ -->
-      <div class="section-more-bar" id="articles-more-wrap">
-        <a href="articles.html" class="btn-secondary" id="btn-view-all-articles">
-          Xem toàn bộ bài chia sẻ &amp; cẩm nang →
-        </a>
-      </div>
-
-      <!-- DẢI CTA GIỮA TRANG #2 (Sau mục bài viết) -->
-      <div class="mid-cta-band">
-        <div class="mid-cta-copy">
-          <div class="mid-cta-kicker">無料相談 · Tư vấn chọn căn &amp; Hồ sơ vay</div>
-          <h3 class="mid-cta-title serif" data-i18n="mid_cta_title">Chưa thấy căn ưng ý? Đăng ký nhận nhà mới theo nhu cầu</h3>
-        </div>
-        <button type="button" class="btn-mid-cta" onclick="requestCustomPropertyDemand()" data-i18n="mid_cta_btn">
-          Đăng ký nhận nhà mới →
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- 6. MÁY TÍNH TIỀN TRẢ GÓP & SO SÁNH THUÊ NHÀ (Chuẩn công thức Keisan.site — Đặt ngay trên phần Hướng dẫn) -->
+  <!-- 4. MÁY TÍNH TIỀN TRẢ GÓP & SO SÁNH THUÊ NHÀ (Chuẩn công thức Keisan.site) -->
   <section class="featured-section" id="featured">
     <div class="container">
       <div class="section-head" style="margin-bottom: 20px;">
@@ -499,188 +457,243 @@
     </div>
   </section>
 
-  <!-- 7. QUY TRÌNH MUA NHÀ 4 BƯỚC -->
-  <section class="process-section" id="process">
+  <!-- 5. DẢI ẢNH THƯƠNG HIỆU HOÀNG HÔN (Dải nghỉ mắt kiến trúc) -->
+  <section class="brand-banner">
     <div class="container">
-      <div class="section-head">
-        <div class="kicker">購入の流れ</div>
-        <h2 class="section-title">Quy trình 4 bước sở hữu nhà tại Nhật</h2>
+      <div class="banner-frame">
+        <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1600&auto=format&fit=crop" alt="清水寺 — Kyoto, lúc hoàng hôn" loading="lazy">
+        <div class="banner-caption">清水寺 — Kyoto, lúc hoàng hôn</div>
       </div>
-      <div class="process-grid">
-        <div class="process-step">
-          <div class="step-num">01</div>
-          <h3 class="step-title">Tư vấn &amp; xem nhà</h3>
-          <p class="step-desc">Khảo sát nhu cầu ở/đầu tư, phân tích bảng Maisoku, kiểm tra thực địa căn nhà và tiện ích xung quanh ga.</p>
-        </div>
-        <div class="process-step">
-          <div class="step-num">02</div>
-          <h3 class="step-title">Thẩm định vay sơ bộ</h3>
-          <p class="step-desc">Nộp hồ sơ 사전심사 (thẩm định trước) tại các ngân hàng lớn hoặc Flat 35 để chốt hạn mức và lãi suất ưu đãi.</p>
-        </div>
-        <div class="process-step">
-          <div class="step-num">03</div>
-          <h3 class="step-title">Đặt mua &amp; hợp đồng</h3>
-          <p class="step-desc">Ký giấy đăng ký mua (買付証明書), giải thích thuyết minh quan trọng (重要事項説明) và ký hợp đồng mua bán chính thức.</p>
-        </div>
-        <div class="process-step">
-          <div class="step-num">04</div>
-          <h3 class="step-title">Quyết toán &amp; nhận nhà</h3>
-          <p class="step-desc">Ngân hàng giải ngân quyết toán số tiền còn lại, công chứng viên làm thủ tục sang tên sổ đỏ (登記) và bàn giao chìa khóa.</p>
-        </div>
-      </div>
+    </div>
+  </section>
 
-      <!-- KHỐI XEM THÊM QUY TRÌNH CHI TIẾT 7 GIAI ĐOẠN (MỞ KHÓA BẰNG MÃ 2720) -->
-      <div class="vip-process-trigger-wrap" id="vip-process-trigger-wrap">
-        <div class="vip-process-trigger-info">
-          <div class="vip-process-trigger-kicker">ご契約者様限定ガイド · Lộ trình &amp; Checklist độc quyền</div>
-          <h3 class="vip-process-trigger-title serif">Quy trình thực chiến 7 giai đoạn (Trả thẳng &amp; Vay ngân hàng SMBC)</h3>
-          <p class="vip-process-trigger-desc">
-            Tài liệu hướng dẫn chi tiết từng bước: Giấy tờ &amp; tiền cần chuẩn bị (tiền cọc 手付金, tem thuế 収入印紙, 住民票...), các điều khoản bảo vệ tiền cọc và checklist bàn giao dành riêng cho khách hàng đã gặp gỡ tư vấn cùng BIG不動産.
-          </p>
-        </div>
-        <button type="button" class="btn-primary" id="btn-open-vip-process" onclick="toggleVipProcessSection()">
-          🔒 Xem thêm quy trình chi tiết (Nhập mã) →
-        </button>
-      </div>
-
-      <!-- HỘP NHẬP MÃ KHÁCH HÀNG (MÃ 2720) -->
-      <div class="vip-gate-box" id="vip-gate-box">
-        <div class="kicker">CLIENT ACCESS CODE · MÃ KHÁCH HÀNG BIG不動産</div>
-        <h3 class="serif" style="font-size: 21px; margin-bottom: 8px; color: var(--ink);">
-          Nhập mã tư vấn để mở Quy trình 7 giai đoạn &amp; Checklist
-        </h3>
-        <p style="font-size: 13.5px; color: var(--muted); max-width: 500px; margin: 0 auto;">
-          Sau buổi gặp mặt hoặc tư vấn trực tiếp, chuyên viên BIG不動産 đã gửi cho bạn mã gồm 4 chữ số. Vui lòng nhập mã bên dưới để mở khóa toàn bộ quy trình.
+  <!-- 6. CẨM NANG & QUY TRÌNH SỞ HỮU NHÀ (Gom chung Quy trình 4 bước + VIP 7 giai đoạn + Bài viết thực chiến) -->
+  <section class="guide-section" id="guide">
+    <div class="container">
+      <div class="section-head" style="margin-bottom: 32px;">
+        <div class="kicker">ノウハウ・ガイド · Cẩm nang &amp; Quy trình</div>
+        <h2 class="section-title serif">Lộ trình mua nhà &amp; Kinh nghiệm thực chiến</h2>
+        <p style="font-size: 14.5px; color: var(--muted); margin-top: 6px; max-width: 780px;">
+          Toàn bộ hành trình từ lúc tìm kiếm, tính toán tài chính, làm việc với ngân hàng Nhật Bản đến khi nhận chìa khóa và hoàn tất khai thuế năm đầu.
         </p>
+      </div>
 
-        <div class="vip-gate-form">
-          <input
-            type="password"
-            inputmode="numeric"
-            id="vip-code-input"
-            class="vip-code-input"
-            maxlength="8"
-            placeholder="••••"
-            aria-label="Mã khách hàng 4 số"
-          >
-          <button type="button" class="btn-primary" onclick="verifyVipProcessCode()">
-            Mở quy trình →
+      <!-- PHẦN 1: QUY TRÌNH 4 BƯỚC VÀ CHECKLIST 7 GIAI ĐOẠN VIP (MÃ 2720) -->
+      <div class="guide-subblock" id="process">
+        <h3 class="guide-subblock-title serif">1. Quy trình sở hữu nhà tại Nhật (Tổng quan &amp; Checklist chi tiết)</h3>
+        <div class="process-grid">
+          <div class="process-step">
+            <div class="step-num">01</div>
+            <h3 class="step-title">Tư vấn &amp; xem nhà</h3>
+            <p class="step-desc">Khảo sát nhu cầu ở/đầu tư, phân tích bảng Maisoku, kiểm tra thực địa căn nhà và tiện ích xung quanh ga.</p>
+          </div>
+          <div class="process-step">
+            <div class="step-num">02</div>
+            <h3 class="step-title">Thẩm định vay sơ bộ</h3>
+            <p class="step-desc">Nộp hồ sơ 사전심사 (thẩm định trước) tại các ngân hàng lớn hoặc Flat 35 để chốt hạn mức và lãi suất ưu đãi.</p>
+          </div>
+          <div class="process-step">
+            <div class="step-num">03</div>
+            <h3 class="step-title">Đặt mua &amp; hợp đồng</h3>
+            <p class="step-desc">Ký giấy đăng ký mua (買付証明書), giải thích thuyết minh quan trọng (重要事項説明) và ký hợp đồng mua bán chính thức.</p>
+          </div>
+          <div class="process-step">
+            <div class="step-num">04</div>
+            <h3 class="step-title">Quyết toán &amp; nhận nhà</h3>
+            <p class="step-desc">Ngân hàng giải ngân quyết toán số tiền còn lại, công chứng viên làm thủ tục sang tên sổ đỏ (登記) và bàn giao chìa khóa.</p>
+          </div>
+        </div>
+
+        <!-- KHỐI XEM THÊM QUY TRÌNH CHI TIẾT 7 GIAI ĐOẠN (MỞ KHÓA BẰNG MÃ 2720) -->
+        <div class="vip-process-trigger-wrap" id="vip-process-trigger-wrap">
+          <div class="vip-process-trigger-info">
+            <div class="vip-process-trigger-kicker">ご契約者様限定ガイド · Lộ trình &amp; Checklist độc quyền</div>
+            <h3 class="vip-process-trigger-title serif">Quy trình thực chiến 7 giai đoạn (Trả thẳng &amp; Vay ngân hàng SMBC)</h3>
+            <p class="vip-process-trigger-desc">
+              Tài liệu hướng dẫn chi tiết từng bước: Giấy tờ &amp; tiền cần chuẩn bị (tiền cọc 手付金, tem thuế 収入印紙, 住民票...), các điều khoản bảo vệ tiền cọc và checklist bàn giao dành riêng cho khách hàng đã gặp gỡ tư vấn cùng BIG不動産.
+            </p>
+          </div>
+          <button type="button" class="btn-primary" id="btn-open-vip-process" onclick="toggleVipProcessSection()">
+            🔒 Xem thêm quy trình chi tiết (Nhập mã) →
           </button>
         </div>
 
-        <div class="vip-gate-error" id="vip-gate-error">
-          Mã chưa chính xác. Vui lòng kiểm tra lại mã do chuyên viên BIG不動産 cung cấp.
+        <!-- HỘP NHẬP MÃ KHÁCH HÀNG (MÃ 2720) -->
+        <div class="vip-gate-box" id="vip-gate-box">
+          <div class="kicker">CLIENT ACCESS CODE · MÃ KHÁCH HÀNG BIG不動産</div>
+          <h3 class="serif" style="font-size: 21px; margin-bottom: 8px; color: var(--ink);">
+            Nhập mã tư vấn để mở Quy trình 7 giai đoạn &amp; Checklist
+          </h3>
+          <p style="font-size: 13.5px; color: var(--muted); max-width: 500px; margin: 0 auto;">
+            Sau buổi gặp mặt hoặc tư vấn trực tiếp, chuyên viên BIG不動産 đã gửi cho bạn mã gồm 4 chữ số. Vui lòng nhập mã bên dưới để mở khóa toàn bộ quy trình.
+          </p>
+
+          <div class="vip-gate-form">
+            <input
+              type="password"
+              inputmode="numeric"
+              id="vip-code-input"
+              class="vip-code-input"
+              maxlength="8"
+              placeholder="••••"
+              aria-label="Mã khách hàng 4 số"
+            >
+            <button type="button" class="btn-primary" onclick="verifyVipProcessCode()">
+              Mở quy trình →
+            </button>
+          </div>
+
+          <div class="vip-gate-error" id="vip-gate-error">
+            Mã chưa chính xác. Vui lòng kiểm tra lại mã do chuyên viên BIG不動産 cung cấp.
+          </div>
+
+          <div style="margin-top: 16px; padding-top: 12px; border-top: 1px dashed var(--line); font-size: 12.5px; color: var(--muted);">
+            Bạn chưa có mã khách hàng?
+            <a href="#contact" onclick="requestVipCodeFromContact()" style="color: var(--amber-ink); font-weight: 600; text-decoration: underline; margin-left: 4px;">
+              Nhắn BIG不動産 đặt lịch tư vấn &amp; nhận mã →
+            </a>
+          </div>
         </div>
 
-        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px dashed var(--line); font-size: 12.5px; color: var(--muted);">
-          Bạn chưa có mã khách hàng?
-          <a href="#contact" onclick="requestVipCodeFromContact()" style="color: var(--amber-ink); font-weight: 600; text-decoration: underline; margin-left: 4px;">
-            Nhắn BIG不動産 đặt lịch tư vấn &amp; nhận mã →
+        <!-- NỘI DUNG QUY TRÌNH CHI TIẾT 7 GIAI ĐOẠN (HIỆN SAU KHI NHẬP ĐÚNG MÃ 2720) -->
+        <div class="vip-process-panel" id="vip-process-panel">
+          <div class="vip-process-topbar">
+            <div>
+              <span class="vip-unlocked-badge">✓ Đã mở khóa Cẩm nang Quy trình Khách hàng BIG不動産</span>
+              <h3 class="serif" style="font-size: 23px; margin-top: 6px; color: var(--ink);">
+                Lộ trình mua nhà từ A–Z: Nhánh Vay Ngân Hàng &amp; Nhánh Trả Thẳng
+              </h3>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn-outline-amber" onclick="window.print()">
+                🖨️ In / Lưu PDF Checklist A4
+              </button>
+              <button type="button" class="btn-secondary" style="padding: 7px 14px; font-size: 12.5px;" onclick="lockVipProcessSection()">
+                Thu gọn / Khóa lại ↑
+              </button>
+            </div>
+          </div>
+
+          <div class="vip-note-banner">
+            <strong>Lưu ý quan trọng:</strong> Mọi con số tiền (như tiền cọc tham khảo <strong>50万円</strong>, tem thuế hợp đồng <strong>収入印紙 1万円</strong> mua sẵn ở bưu điện), tỷ lệ và mốc thời gian trong quy trình này đều là <strong>tham khảo</strong> dựa trên hồ sơ vận hành thực tế của BIG不動産 (ngân hàng SMBC / dân sinh &amp; mẫu hợp đồng 全日本不動産協会). Số tiền thực tế tùy thuộc vào giá nhà, ngân hàng, loại nhà và hợp đồng cụ thể của từng khách.
+          </div>
+
+          <!-- THANH CHỌN 2 NHÁNH: VAY NGÂN HÀNG (3B) vs TRẢ THẲNG (3A) -->
+          <div class="vip-branch-switcher" role="tablist">
+            <button type="button" class="vip-branch-btn active" id="vip-tab-loan" onclick="switchVipProcessBranch('loan')">
+              <strong>🏦 Nhánh 1: Mua nhà Vay ngân hàng (SMBC / Dân sinh / Flat 35)</strong>
+              <span>Có thẩm định 事前審査・本審査, bảo hiểm 団信, điều khoản bảo vệ cọc ローン特約 &amp; hoàn thuế 減税</span>
+            </button>
+            <button type="button" class="vip-branch-btn" id="vip-tab-cash" onclick="switchVipProcessBranch('cash')">
+              <strong>💴 Nhánh 2: Mua nhà Trả thẳng (Tiền mặt / Chuyển khoản)</strong>
+              <span>Rút gọn bước ngân hàng (2–4 tuần nhận nhà), tập trung chuẩn bị dòng tiền &amp; ngày quyết toán</span>
+            </button>
+          </div>
+
+          <!-- TRỤC TIMELINE 7 GIAI ĐOẠN (RENDER ĐỘNG TỪ app.js THEO NHÁNH ĐANG CHỌN) -->
+          <div class="vip-timeline" id="vip-timeline-container"></div>
+
+          <!-- PHẦN B: BẢNG SO SÁNH NHANH HAI NHÁNH -->
+          <div class="vip-compare-wrap">
+            <div class="kicker">比較まとめ · Phần B</div>
+            <h4 class="serif" style="font-size: 20px; color: var(--ink); margin-bottom: 4px;">
+              Bảng so sánh nhanh: Trả thẳng vs Vay ngân hàng
+            </h4>
+            <p style="font-size: 13.5px; color: var(--muted);">
+              Trả thẳng không “tốt hơn” vay và vay cũng không “khôn hơn” trả thẳng — khác biệt nằm ở chỗ bạn đang dư tiền mặt hay dư khả năng trả hằng tháng, và bạn chịu được loại rủi ro nào hơn.
+            </p>
+
+            <div class="keisan-table-scroll">
+              <table class="vip-compare-table">
+                <thead>
+                  <tr>
+                    <th>Tiêu chí đối chiếu</th>
+                    <th>💴 Nhánh Trả thẳng (Tiền mặt)</th>
+                    <th>🏦 Nhánh Vay ngân hàng (住宅ローン)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Số bên tham gia</td>
+                    <td>Người mua – Bên bán – Luật sư tư pháp (司法書士)</td>
+                    <td>Thêm Ngân hàng, Công ty bảo lãnh (保証会社) và Bảo hiểm 団信</td>
+                  </tr>
+                  <tr>
+                    <td>Thời gian Ký → Bàn giao (tham khảo)</td>
+                    <td><strong>2–4 tuần</strong> (rất nhanh)</td>
+                    <td><strong>1–1,5 tháng</strong> (phụ thuộc tiến độ 本審査 &amp; ký vay)</td>
+                  </tr>
+                  <tr>
+                    <td>Chi phí chỉ có ở nhánh này</td>
+                    <td>Không có chi phí vay ngân hàng</td>
+                    <td>Phí bảo lãnh (保証料), phí thủ tục vay / tem thuế hợp đồng vay, bảo hiểm 団信 mở rộng nếu chọn</td>
+                  </tr>
+                  <tr>
+                    <td>Rủi ro chính cần quản trị</td>
+                    <td>Dồn khoản tiền lớn một lần; rủi ro chậm trễ chuyển tiền quốc tế &amp; chứng minh nguồn tiền</td>
+                    <td>Trượt thẩm định chính thức — nhưng có <strong>ローン特約</strong> bảo vệ tiền cọc nếu nộp hồ sơ đúng hạn</td>
+                  </tr>
+                  <tr>
+                    <td>Điểm mạnh lớn nhất</td>
+                    <td>Nhanh gọn, ít phí, vị thế thương lượng giá mạnh vì thanh toán chắc chắn</td>
+                    <td>Giữ lại tiền mặt dự phòng, tận dụng đòn bẩy lãi suất thấp, được hoàn thuế <strong>住宅ローン減税</strong> lớn những năm đầu</td>
+                  </tr>
+                  <tr>
+                    <td>Giấy tờ chuẩn bị thêm</td>
+                    <td>Không cần hồ sơ xét duyệt tín dụng</td>
+                    <td>Hồ sơ thu nhập (源泉徴収票 / 課税証明書), khai báo sức khỏe 団信, hồ sơ ngân hàng</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; padding: 16px 20px; background-color: var(--bg-soft); border: 1px solid var(--line); border-radius: 6px;">
+              <div>
+                <strong style="font-size: 14.5px; color: var(--ink);">Bạn đang ở giai đoạn nào trong 7 bước trên?</strong>
+                <p style="font-size: 13px; color: var(--muted); margin: 2px 0 0;">Nhắn trực tiếp cho chuyên viên phụ trách của BIG不動産 để rà soát giấy tờ hoặc kiểm tra hợp đồng trước ngày ký.</p>
+              </div>
+              <button type="button" class="btn-primary" onclick="consultFromVipProcess()">
+                Nhờ BIG不動産 rà soát hồ sơ của tôi →
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-divider-line"></div>
+
+      <!-- PHẦN 2: THƯ VIỆN BÀI CHIA SẺ & CẬP NHẬT THỊ TRƯỜNG -->
+      <div class="guide-subblock" id="articles">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 24px;">
+          <div>
+            <h3 class="guide-subblock-title serif" style="margin-bottom: 4px;">2. Thư viện bài viết &amp; Kinh nghiệm thực chiến</h3>
+            <p style="font-size: 13.5px; color: var(--muted); margin: 0;">Các bài phân tích chuyên sâu về quy tắc tiền cọc 手付金, bảo lãnh ngân hàng và mẹo giảm thuế 住宅ローン減税.</p>
+          </div>
+          <a href="articles.html" class="btn-outline-amber" style="padding: 7px 18px; font-size: 13px;">
+            Xem tất cả bài viết →
           </a>
         </div>
-      </div>
 
-      <!-- NỘI DUNG QUY TRÌNH CHI TIẾT 7 GIAI ĐOẠN (HIỆN SAU KHI NHẬP ĐÚNG MÃ 2720) -->
-      <div class="vip-process-panel" id="vip-process-panel">
-        <div class="vip-process-topbar">
-          <div>
-            <span class="vip-unlocked-badge">✓ Đã mở khóa Cẩm nang Quy trình Khách hàng BIG不動産</span>
-            <h3 class="serif" style="font-size: 23px; margin-top: 6px; color: var(--ink);">
-              Lộ trình mua nhà từ A–Z: Nhánh Vay Ngân Hàng &amp; Nhánh Trả Thẳng
-            </h3>
-          </div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <button type="button" class="btn-outline-amber" onclick="window.print()">
-              🖨️ In / Lưu PDF Checklist A4
-            </button>
-            <button type="button" class="btn-secondary" style="padding: 7px 14px; font-size: 12.5px;" onclick="lockVipProcessSection()">
-              Thu gọn / Khóa lại ↑
-            </button>
-          </div>
+        <div class="article-grid" id="article-grid" data-limit="3">
+          <!-- Render động từ articles trong data/properties.json -->
         </div>
 
-        <div class="vip-note-banner">
-          <strong>Lưu ý quan trọng:</strong> Mọi con số tiền (như tiền cọc tham khảo <strong>50万円</strong>, tem thuế hợp đồng <strong>収入印紙 1万円</strong> mua sẵn ở bưu điện), tỷ lệ và mốc thời gian trong quy trình này đều là <strong>tham khảo</strong> dựa trên hồ sơ vận hành thực tế của BIG不動産 (ngân hàng SMBC / dân sinh &amp; mẫu hợp đồng 全日本不動産協会). Số tiền thực tế tùy thuộc vào giá nhà, ngân hàng, loại nhà và hợp đồng cụ thể của từng khách.
+        <!-- Nút dẫn sang trang Cẩm nang & Bài chia sẻ đầy đủ -->
+        <div class="section-more-bar" id="articles-more-wrap">
+          <a href="articles.html" class="btn-secondary" id="btn-view-all-articles">
+            Xem toàn bộ bài chia sẻ &amp; cẩm nang →
+          </a>
         </div>
 
-        <!-- THANH CHỌN 2 NHÁNH: VAY NGÂN HÀNG (3B) vs TRẢ THẲNG (3A) -->
-        <div class="vip-branch-switcher" role="tablist">
-          <button type="button" class="vip-branch-btn active" id="vip-tab-loan" onclick="switchVipProcessBranch('loan')">
-            <strong>🏦 Nhánh 1: Mua nhà Vay ngân hàng (SMBC / Dân sinh / Flat 35)</strong>
-            <span>Có thẩm định 事前審査・本審査, bảo hiểm 団信, điều khoản bảo vệ cọc ローン特約 &amp; hoàn thuế 減税</span>
+        <!-- DẢI CTA GIỮA TRANG -->
+        <div class="mid-cta-band">
+          <div class="mid-cta-copy">
+            <div class="mid-cta-kicker">無料相談 · Tư vấn chọn căn &amp; Hồ sơ vay</div>
+            <h3 class="mid-cta-title serif" data-i18n="mid_cta_title">Chưa thấy căn ưng ý? Đăng ký nhận nhà mới theo nhu cầu</h3>
+          </div>
+          <button type="button" class="btn-mid-cta" onclick="requestCustomPropertyDemand()" data-i18n="mid_cta_btn">
+            Đăng ký nhận nhà mới →
           </button>
-          <button type="button" class="vip-branch-btn" id="vip-tab-cash" onclick="switchVipProcessBranch('cash')">
-            <strong>💴 Nhánh 2: Mua nhà Trả thẳng (Tiền mặt / Chuyển khoản)</strong>
-            <span>Rút gọn bước ngân hàng (2–4 tuần nhận nhà), tập trung chuẩn bị dòng tiền &amp; ngày quyết toán</span>
-          </button>
-        </div>
-
-        <!-- TRỤC TIMELINE 7 GIAI ĐOẠN (RENDER ĐỘNG TỪ app.js THEO NHÁNH ĐANG CHỌN) -->
-        <div class="vip-timeline" id="vip-timeline-container"></div>
-
-        <!-- PHẦN B: BẢNG SO SÁNH NHANH HAI NHÁNH -->
-        <div class="vip-compare-wrap">
-          <div class="kicker">比較まとめ · Phần B</div>
-          <h4 class="serif" style="font-size: 20px; color: var(--ink); margin-bottom: 4px;">
-            Bảng so sánh nhanh: Trả thẳng vs Vay ngân hàng
-          </h4>
-          <p style="font-size: 13.5px; color: var(--muted);">
-            Trả thẳng không “tốt hơn” vay và vay cũng không “khôn hơn” trả thẳng — khác biệt nằm ở chỗ bạn đang dư tiền mặt hay dư khả năng trả hằng tháng, và bạn chịu được loại rủi ro nào hơn.
-          </p>
-
-          <div class="keisan-table-scroll">
-            <table class="vip-compare-table">
-              <thead>
-                <tr>
-                  <th>Tiêu chí đối chiếu</th>
-                  <th>💴 Nhánh Trả thẳng (Tiền mặt)</th>
-                  <th>🏦 Nhánh Vay ngân hàng (住宅ローン)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Số bên tham gia</td>
-                  <td>Người mua – Bên bán – Luật sư tư pháp (司法書士)</td>
-                  <td>Thêm Ngân hàng, Công ty bảo lãnh (保証会社) và Bảo hiểm 団信</td>
-                </tr>
-                <tr>
-                  <td>Thời gian Ký → Bàn giao (tham khảo)</td>
-                  <td><strong>2–4 tuần</strong> (rất nhanh)</td>
-                  <td><strong>1–1,5 tháng</strong> (phụ thuộc tiến độ 本審査 &amp; ký vay)</td>
-                </tr>
-                <tr>
-                  <td>Chi phí chỉ có ở nhánh này</td>
-                  <td>Không có chi phí vay ngân hàng</td>
-                  <td>Phí bảo lãnh (保証料), phí thủ tục vay / tem thuế hợp đồng vay, bảo hiểm 団信 mở rộng nếu chọn</td>
-                </tr>
-                <tr>
-                  <td>Rủi ro chính cần quản trị</td>
-                  <td>Dồn khoản tiền lớn một lần; rủi ro chậm trễ chuyển tiền quốc tế &amp; chứng minh nguồn tiền</td>
-                  <td>Trượt thẩm định chính thức — nhưng có <strong>ローン特約</strong> bảo vệ tiền cọc nếu nộp hồ sơ đúng hạn</td>
-                </tr>
-                <tr>
-                  <td>Điểm mạnh lớn nhất</td>
-                  <td>Nhanh gọn, ít phí, vị thế thương lượng giá mạnh vì thanh toán chắc chắn</td>
-                  <td>Giữ lại tiền mặt dự phòng, tận dụng đòn bẩy lãi suất thấp, được hoàn thuế <strong>住宅ローン減税</strong> lớn những năm đầu</td>
-                </tr>
-                <tr>
-                  <td>Giấy tờ chuẩn bị thêm</td>
-                  <td>Không cần hồ sơ xét duyệt tín dụng</td>
-                  <td>Hồ sơ thu nhập (源泉徴収票 / 課税証明書), khai báo sức khỏe 団信, hồ sơ ngân hàng</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; padding: 16px 20px; background-color: var(--bg-soft); border: 1px solid var(--line); border-radius: 6px;">
-            <div>
-              <strong style="font-size: 14.5px; color: var(--ink);">Bạn đang ở giai đoạn nào trong 7 bước trên?</strong>
-              <p style="font-size: 13px; color: var(--muted); margin: 2px 0 0;">Nhắn trực tiếp cho chuyên viên phụ trách của BIG不動産 để rà soát giấy tờ hoặc kiểm tra hợp đồng trước ngày ký.</p>
-            </div>
-            <button type="button" class="btn-primary" onclick="consultFromVipProcess()">
-              Nhờ BIG不動産 rà soát hồ sơ của tôi →
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -766,10 +779,9 @@
           <p>Big Real Estate Co., Ltd. · Osaka, Japan</p>
         </div>
         <ul class="footer-links">
-          <li><a href="#featured" class="footer-link">Căn nổi bật</a></li>
           <li><a href="#portfolio" class="footer-link">Danh sách nhà</a></li>
-          <li><a href="#articles" class="footer-link">Bài chia sẻ</a></li>
-          <li><a href="#process" class="footer-link">Quy trình mua</a></li>
+          <li><a href="#featured" class="footer-link">Tính tiền nhà · Trả góp</a></li>
+          <li><a href="#guide" class="footer-link">Cẩm nang &amp; Quy trình</a></li>
           <li><a href="#contact" class="footer-link">Liên hệ tư vấn</a></li>
         </ul>
       </div>
@@ -825,8 +837,8 @@
     <!-- Render động từ window.SITE trong app.js -->
   </div>
 
-  <script src="config.js?v=20261108a"></script>
-  <script src="i18n.js?v=20261108a"></script>
-  <script src="app.js?v=20261108a"></script>
+  <script src="config.js?v=20261109b"></script>
+  <script src="i18n.js?v=20261109b"></script>
+  <script src="app.js?v=20261109b"></script>
 </body>
 </html>
