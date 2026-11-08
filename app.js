@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupContactForm();
   setupDialogClose();
   initKeisanCalculator();
+  initVipProcessSection();
   loadData();
 });
 
@@ -2142,4 +2143,412 @@ window.consultWithKeisanResult = function() {
     if (nameInput) nameInput.focus();
   }, 450);
 };
+
+// --------------------------------------------------------------------------
+// 12. QUY TRÌNH CHI TIẾT 7 GIAI ĐOẠN & CHECKLIST ĐỘC QUYỀN (MỞ KHÓA BẰNG MÃ 2720)
+// --------------------------------------------------------------------------
+const VIP_ACCESS_CODE = '2720';
+const VIP_CHECKLIST_STORAGE_KEY = 'big_vip_checklist_v1';
+let currentVipBranch = 'loan'; // 'loan' (3B Vay ngân hàng) | 'cash' (3A Trả thẳng)
+let isVipUnlockedSession = false;
+
+const VIP_PROCESS_STAGES = [
+  {
+    id: 'stage-0',
+    branch: 'common',
+    stepTag: 'Giai đoạn 0 · 準備・物件探し',
+    title: 'Chuẩn bị ngân sách, Thẩm định sơ bộ & Tìm nhà',
+    timeframe: 'Từ vài ngày tới vài tuần',
+    todo: 'Chốt ngân sách tổng và cách trả tiền ngay từ đầu — trả thẳng hay vay ngân hàng — vì hai cách này quyết định tốc độ, giấy tờ và chiến lược thương lượng về sau. Nếu vay, làm thẩm định sơ bộ 事前審査 càng sớm càng tốt để biết hạn mức vay thực tế. Sau đó mới tìm nhà, đi xem nhà và so sánh các lựa chọn theo tiêu chí rõ ràng: vị trí, khoảng cách tới ga, môi trường sống và diện tích.',
+    prepText: 'Chưa cần nộp tiền ở giai đoạn này. Nếu vay, chuẩn bị trước giấy tờ thu nhập và giấy tờ cá nhân cơ bản để nộp 事前審査. Ghi lại ngân sách tối đa gồm cả giá nhà lẫn các khoản phí đi kèm, không chỉ nhìn giá bán.',
+    checklist: [
+      { id: 's0-1', label: 'Thẻ lưu trú 在留カード / Giấy tờ cá nhân (nếu nộp 事前審査)' },
+      { id: 's0-2', label: 'Giấy thu nhập 源泉徴収票 / 課税証明書 (nhánh vay ngân hàng)' },
+      { id: 's0-3', label: 'Chốt ngân sách tổng (Giá nhà + khoảng 7–10% phụ phí dự kiến)' }
+    ],
+    notes: 'Kết quả 事前審査 không chỉ để biết vay được bao nhiêu — trong thực tế làm việc của BIG, khi thương lượng giá, BIG gửi kèm kết quả ngân hàng cho bên bán để lời đề nghị có sức nặng hơn, vì bên bán thấy người mua đã được ngân hàng xem qua. Nếu nhắm tới giảm trừ thuế 住宅ローン減税, phải so diện tích theo sổ đăng ký (登記簿面積 ≥ 50㎡) ngay từ bước xem nhà, không dùng diện tích trên quảng cáo.',
+    articles: [
+      { id: 'kinh-nghiem-vay-nha-7', label: 'Đọc Bài 7: 住宅ローン減税 là gì & 3 con số quyết định' },
+      { id: 'kinh-nghiem-vay-nha-8', label: 'Đọc Bài 8: 5 chỗ người mua nhà hay vấp với 減税' }
+    ]
+  },
+  {
+    id: 'stage-1',
+    branch: 'common',
+    stepTag: 'Giai đoạn 1 · 買付・条件交渉',
+    title: 'Đặt mua (買付書) & Thương lượng điều kiện',
+    timeframe: 'Thường vài ngày cho mỗi vòng thương lượng',
+    todo: 'Khi đã chọn được nhà, BIG nhập dữ kiện vào bộ hồ sơ bán hàng, gửi đơn đặt mua 買付書 kèm thư gửi 買付送付状 cho bên bán. Hai bên thương lượng giá và các điều kiện mua bán. Bên bán chấp thuận bằng văn bản trả lời 回答書 thì thương lượng mới được coi là chốt.',
+    prepText: 'Đơn đặt mua 買付書 ghi rõ giá đề nghị, ngày bàn giao mong muốn và điều kiện thanh toán. Nếu đã có kết quả 事前審査, chuẩn bị sẵn bản kết quả để BIG gửi kèm khi thương lượng.',
+    checklist: [
+      { id: 's1-1', label: 'Đơn đặt mua 買付証明書 (chốt giá đề nghị & điều kiện)' },
+      { id: 's1-2', label: 'Bản kết quả duyệt sơ bộ 事前審査 (để BIG đính kèm tăng sức nặng đàm phán)' },
+      { id: 's1-3', label: 'Chốt ngày bàn giao mong muốn (khớp với lịch trả nhà thuê hiện tại)' }
+    ],
+    notes: 'Điểm phải chốt ngay từ vòng này là NGÀY BÀN GIAO (引渡日). Khách đang ở nhà thuê cần ngày bàn giao chắc chắn để tính ngày báo trả nhà thuê, tránh trả tiền hai nơi cùng lúc hoặc phải dọn ra trước khi nhà mới sẵn sàng. Đừng chỉ thương lượng giá mà quên khóa ngày.',
+    articles: []
+  },
+  {
+    id: 'stage-2',
+    branch: 'common',
+    stepTag: 'Giai đoạn 2 · 重要事項説明・売買契約',
+    title: 'Giải thích trọng yếu (重説) & Ký hợp đồng mua bán',
+    timeframe: 'Khoảng 1–2 giờ trong cùng một buổi ký',
+    todo: 'Nghe giải thích trọng yếu 重要事項説明 từ người có chứng chỉ 宅建士 về căn nhà, quyền sở hữu, các hạn chế pháp lý và điều kiện giao dịch. Sau đó ký hợp đồng mua bán 売買契約書 — hợp đồng do bên bán hoặc BIG soạn và đều qua kiểm tra của 宅建士. Đồng thời thống nhất bên chỉ định luật sư tư pháp 司法書士 phụ trách đăng ký sang tên.',
+    prepText: 'Tiền cọc 手付金 — tham khảo 50万円, nộp bằng chuyển khoản hoặc tiền mặt ngay khi ký. Mang đầy đủ bộ giấy tờ và con dấu bên dưới tới buổi ký hợp đồng:',
+    checklist: [
+      { id: 's2-1', label: 'Tiền cọc 手付金 (Tham khảo 50万円 — chuyển khoản hoặc tiền mặt)' },
+      { id: 's2-2', label: 'Tem thuế hợp đồng 収入印紙 1万円 (Mua sẵn ở bưu điện mang theo)' },
+      { id: 's2-3', label: 'Thẻ người nước ngoài / Giấy tờ tùy thân 身分証明書 (在留カード)' },
+      { id: 's2-4', label: 'Con dấu thật 実印 & Giấy chứng nhận con dấu 印鑑証明書' },
+      { id: 's2-5', label: 'Giấy cư trú 住民票 (Bản có ghi đầy đủ phiên âm Katakana)' },
+      { id: 's2-6', label: 'Hợp đồng thuê nhà hiện tại (để đối chiếu điều khoản báo trả nhà)' }
+    ],
+    notes: 'Trước khi đặt bút ký, phải soi kỹ 3 điều khoản: (1) Hủy bằng tiền cọc 手付解除 (được hủy tới ngày nào, người mua đổi ý mất cọc, bên bán đổi ý đền gấp đôi), (2) Mức phạt vi phạm 違約金 (thường tới 20% giá nhà) khi quá hạn không thực hiện hợp đồng, và (3) Với người vay — Điều khoản vay vốn ローン特約 kèm đúng 2 mốc ngày (ngày hẹn lấy duyệt vay và ngày hẹn hủy hợp đồng nhận lại cọc).',
+    articles: [
+      { id: 'kinh-nghiem-vay-nha-5', label: 'Đọc Bài 5: Tiền cọc 手付金 — Đổi ý mất cọc, bên bán đổi ý đền gấp đôi' },
+      { id: 'kinh-nghiem-vay-nha-6', label: 'Đọc Bài 6: Điều khoản ローン特約, mốc 20% phạt & 2 ngày phải ghi vào lịch' }
+    ]
+  },
+  {
+    id: 'stage-3-loan',
+    branch: 'loan',
+    isBranchStage: true,
+    stepTag: 'Giai đoạn 3B (Nhánh Vay) · 本審査・金消契約',
+    title: 'Thẩm định chính thức (本審査), Bảo hiểm 団信 & Ký hợp đồng vay',
+    timeframe: 'Tổng thời gian từ ký HĐ mua bán → bàn giao: 1–1,5 tháng',
+    todo: 'Nộp thẩm định chính thức 本審査 — khách lên ngân hàng (như SMBC / Resona) trực tiếp, đồng thời mở tài khoản ngân hàng nếu chưa có. Đăng ký bảo hiểm nhân thọ tín dụng 団信 và khai báo sức khỏe. Hồ sơ đồng thời qua công ty bảo lãnh (保証会社) của ngân hàng. Khi có kết quả duyệt, khách lên ngân hàng lần nữa để ký hợp đồng vay 金銭消費貸借契約 (金消契約).',
+    prepText: 'Giấy tờ cá nhân, giấy tờ thu nhập và hồ sơ nhà theo yêu cầu của từng ngân hàng. Buổi ký hợp đồng vay 金銭消費貸借契約 nhớ mang theo:',
+    checklist: [
+      { id: 's3b-1', label: 'Hồ sơ nộp 本審査 & Tờ khai sức khỏe bảo hiểm 団信 (khai trung thực 100%)' },
+      { id: 's3b-2', label: 'Mở tài khoản ngân hàng giải ngân & lấy thông tin đăng nhập trang cá nhân' },
+      { id: 's3b-3', label: 'Thẻ ngân hàng (キャッシュカード), 実印, 印鑑証明書, 住民票 khi đi ký 金消契約' }
+    ],
+    notes: 'Ba điểm sống còn phải nhớ: (1) Khai báo sức khỏe cho 団信 phải trung thực tuyệt đối — giấu bệnh có thể làm mất quyền được bảo hiểm trả nợ thay khi có biến cố. (2) Ngân hàng dân sinh luôn đi qua Công ty bảo lãnh (保証会社) và chính công ty này mới là nơi xét duyệt quyết định. (3) Lãi suất áp dụng chốt tại NGÀY GIẢI NGÂN, không phải ngày nộp hồ sơ, và tuyệt đối tránh 3 chiêu gian lận hồ sơ. Nếu chẳng may trượt duyệt, dùng điều khoản ローン特約 để hủy và nhận lại đủ tiền cọc (với điều kiện nộp hồ sơ trung thực, đúng hạn).',
+    articles: [
+      { id: 'kinh-nghiem-vay-nha-1', label: 'Đọc Bài 1: 3 chiêu gian lận phải né & quy tắc lãi suất' },
+      { id: 'kinh-nghiem-vay-nha-3', label: 'Đọc Bài 3: Bảo hiểm 団信 & khi nào ngân hàng đòi người bảo lãnh' },
+      { id: 'kinh-nghiem-vay-nha-9', label: 'Đọc Bài 9: Công ty bảo lãnh 保証会社 — người gác cổng thực sự' },
+      { id: 'kinh-nghiem-vay-nha-6', label: 'Đọc Bài 6: Cách dùng ローン特約 bảo vệ tiền cọc' }
+    ]
+  },
+  {
+    id: 'stage-3-cash',
+    branch: 'cash',
+    isBranchStage: true,
+    stepTag: 'Giai đoạn 3A (Nhánh Trả thẳng) · 残代金準備・決済日確定',
+    title: 'Chuẩn bị dòng tiền thanh toán & Chốt ngày quyết toán',
+    timeframe: 'Từ ký hợp đồng → bàn giao: khoảng 2–4 tuần (ngắn hơn hẳn nhánh vay)',
+    todo: 'Chuẩn bị toàn bộ phần tiền còn lại của giá nhà cộng các khoản phí đi kèm (phí môi giới, thuế phí, phí đăng ký sang tên). Chốt lại ngày quyết toán với bên bán và BIG. Không có bước xét duyệt ngân hàng nên lịch trình chủ yếu phụ thuộc vào việc tiền có sẵn sàng đúng ngày hay không.',
+    prepText: 'Toàn bộ số tiền còn lại phải nằm sẵn trong tài khoản tại Nhật trước ngày quyết toán. Nếu tiền chuyển từ Việt Nam sang, chuẩn bị trước giấy tờ chứng minh nguồn tiền và tính dư biên độ ngày chuyển tiền quốc tế:',
+    checklist: [
+      { id: 's3a-1', label: 'Tập hợp đủ số dư phần tiền nhà còn lại + phụ phí trong tài khoản tại Nhật' },
+      { id: 's3a-2', label: 'Hồ sơ chứng minh nguồn tiền / quan hệ thân nhân (nếu chuyển tiền từ Việt Nam)' },
+      { id: 's3a-3', label: 'Kiểm tra hạn mức chuyển khoản trong ngày của tài khoản ngân hàng' }
+    ],
+    notes: 'Rủi ro chính của nhánh trả thẳng không nằm ở thủ tục mà ở DÒNG TIỀN: dồn một khoản lớn trong thời gian ngắn và rủi ro chậm trễ khi chuyển tiền từ nước ngoài. Hãy tính ngày chuyển tiền ngược từ ngày quyết toán, cộng thêm biên an toàn vài ngày làm việc. Lưu ý: Nhánh trả thẳng không có ローン特約 bảo vệ, nên nếu không gom kịp tiền đúng hạn sẽ rơi vào vi phạm hợp đồng mất cọc / phạt 違約金.',
+    articles: [
+      { id: 'kinh-nghiem-vay-nha-5', label: 'Đọc Bài 5: Quy tắc tiền cọc 手付金' },
+      { id: 'kinh-nghiem-vay-nha-6', label: 'Đọc Bài 6: Mức phạt vi phạm hợp đồng 20% cần lưu ý' }
+    ]
+  },
+  {
+    id: 'stage-4',
+    branch: 'common',
+    stepTag: 'Giai đoạn 4 · 決済前準備・精算書確認',
+    title: 'Trước ngày quyết toán: Đối chiếu bảng kê 精算書 & Bảo hiểm cháy nổ',
+    timeframe: 'Chuẩn bị trong khoảng 1 tuần trước ngày quyết toán',
+    todo: 'Nhận bảng kê quyết toán 精算書 và đối chiếu từng khoản: phần tiền nhà còn lại, phí môi giới, tiền chia lại thuế tài sản cố định (固定資産税・都市計画税の精算金 theo ngày sở hữu), phí đăng ký luật sư. Nạp sẵn tiền phụ phí vào tài khoản trước ngày quyết toán. Chọn gói bảo hiểm cháy nổ 火災保険 và đăng ký trừ tiền tự động. Xác nhận lại lần cuối ngày, giờ và địa điểm quyết toán với bên bán.',
+    prepText: 'Tiền phụ phí theo bảng kê 精算書 nạp sẵn trong tài khoản. Hồ sơ phối hợp cùng luật sư tư pháp 司法書士 để chuẩn bị đăng ký sang tên 所有権移転登記 (và 抵当権設定登記 nếu vay):',
+    checklist: [
+      { id: 's4-1', label: 'Kiểm tra kỹ bảng kê quyết toán 精算書 (tiền nhà còn lại + thuế + phí môi giới + phí luật sư)' },
+      { id: 's4-2', label: 'Nạp sẵn toàn bộ tiền phụ phí vào tài khoản trước ngày quyết toán' },
+      { id: 's4-3', label: 'Hoàn tất đăng ký gói Bảo hiểm cháy nổ 火災保険 (bắt buộc có hiệu lực từ ngày nhận nhà)' },
+      { id: 's4-4', label: 'Hồ sơ gửi luật sư tư pháp: Hợp đồng mua bán đóng dấu, 評価証明書, giấy tờ đăng ký' }
+    ],
+    notes: 'Đừng để tới sáng ngày quyết toán mới phát hiện thiếu một khoản phụ phí hoặc thiếu một giấy tờ của luật sư tư pháp. Người vay ngân hàng cần kiểm tra thêm cách ngân hàng thu phí bảo lãnh (保証料) và phí thủ tục vay (事務手数料) trong bảng kê.',
+    articles: [
+      { id: 'kinh-nghiem-vay-nha-2', label: 'Đọc Bài 2: So sánh 2 cách trả phí thủ tục vay (trả 1 cục vs cộng +0,2% lãi)' },
+      { id: 'kinh-nghiem-vay-nha-9', label: 'Đọc Bài 9: Phí bảo lãnh 保証料 và những điều cần biết' }
+    ]
+  },
+  {
+    id: 'stage-5',
+    branch: 'common',
+    stepTag: 'Giai đoạn 5 · 決済・引渡し',
+    title: 'Ngày quyết toán & Bàn giao chìa khóa (決済・引渡し)',
+    timeframe: 'Diễn ra và hoàn tất trong 1 buổi (thường tại ngân hàng)',
+    todo: 'Thanh toán toàn bộ phần tiền còn lại cho bên bán. Với người vay, ngân hàng giải ngân khoản vay trong chính ngày này để hoàn tất chuyển khoản. Luật sư tư pháp 司法書士 kiểm tra xác nhận tiền đã đủ và nộp hồ sơ đăng ký sang tên ngay trong ngày. Sau đó bên bán bàn giao chìa khóa và hoàn tất nhận nhà.',
+    prepText: 'Mang đầy đủ giấy tờ cá nhân, con dấu, sổ/thẻ ngân hàng theo dặn dò của buổi quyết toán. Khi nhận bàn giao nhà, kiểm tra kỹ trang thiết bị theo bảng 付帯設備表:',
+    checklist: [
+      { id: 's5-1', label: 'Giấy tờ tùy thân, con dấu, thẻ/sổ ngân hàng và phiếu chuyển khoản tại buổi 決済' },
+      { id: 's5-2', label: 'Kiểm tra thiết bị thực tế đối chiếu với Bảng thiết bị đi kèm 付帯設備表' },
+      { id: 's5-3', label: 'Nhận toàn bộ bộ chìa khóa nhà & biên nhận quyết toán' },
+      { id: 's5-4', label: 'Lưu giữ cẩn thận 精算書, biên nhận, hợp đồng để dùng khai thuế năm sau' }
+    ],
+    notes: 'Từ thời điểm bàn giao, căn nhà chính thức thuộc quyền sở hữu của bạn — mọi rủi ro và trách nhiệm với căn nhà cũng chuyển sang bạn, nên bảo hiểm cháy nổ phải có hiệu lực từ đúng ngày này. Giữ lại toàn bộ hồ sơ ngày quyết toán vì sẽ cần cho thủ tục hoàn thuế 住宅ローン減税.',
+    articles: [
+      { id: 'kinh-nghiem-vay-nha-7', label: 'Đọc Bài 7: Hồ sơ cần giữ để làm 住宅ローン減税' },
+      { id: 'kinh-nghiem-vay-nha-8', label: 'Đọc Bài 8: Lưu ý chuyển vào ở trong vòng 6 tháng sau bàn giao' }
+    ]
+  },
+  {
+    id: 'stage-6',
+    branch: 'common',
+    stepTag: 'Giai đoạn 6 · 入居後・確定申告',
+    title: 'Sau khi nhận nhà: Chuyển vào ở, Khai thuế năm đầu & Kỷ luật trả nợ',
+    timeframe: 'Vào ở trong vòng 6 tháng; khai thuế 確定申告 vào đầu năm tiếp theo',
+    todo: 'Dọn vào ở, chuyển địa chỉ trên 住民票 và bắt đầu cuộc sống trong nhà mới. Người vay bắt đầu trả nợ hằng tháng theo lịch ngân hàng. Thực hiện các thủ tục định kỳ của chủ nhà: đóng thuế tài sản cố định 固定資産税 khi có giấy báo, trả phí quản lý & quỹ sửa chữa hằng tháng (nếu là chung cư Mansion), và duy trì bảo hiểm cháy nổ.',
+    prepText: 'Chuẩn bị bộ hồ sơ khai thuế năm đầu tiên (確定申告) để nhận hoàn thuế 住宅ローン減税 và duy trì số dư tài khoản trả nợ:',
+    checklist: [
+      { id: 's6-1', label: 'Chuyển vào ở thực tế trong vòng 6 tháng kể từ ngày nhận bàn giao' },
+      { id: 's6-2', label: 'Đặt lịch nhắc nạp tiền vào tài khoản ngân hàng trước ngày trừ nợ ít nhất 1 ngày' },
+      { id: 's6-3', label: 'Giấy chứng nhận số dư nợ cuối năm (残高証明書) do ngân hàng gửi + Bản sao HĐ mua bán + Sổ đăng ký để nộp 確定申告 năm đầu' }
+    ],
+    notes: 'Ba kỷ luật vàng sau khi mua nhà: (1) Luôn nạp tiền trước ngày trừ nợ ít nhất 1 ngày — trả chậm có thể bị phạt lãi suất 14%/năm và mất luôn mức giảm lãi ưu đãi. (2) Năm đầu tiên BẮT BUỘC phải tự nộp tờ khai thuế 確定申告, từ năm thứ 2 mới làm qua công ty (年末調整) — quên năm đầu là mất khoản hoàn thuế lớn nhất. (3) Khi có tiền nhàn rỗi muốn trả nợ trước hạn (繰上返済), phải kiểm tra mốc 120 lần trả (10 năm) để không vô tình làm mất quyền hưởng 住宅ローン減税.',
+    articles: [
+      { id: 'kinh-nghiem-vay-nha-2', label: 'Đọc Bài 2: Hậu quả mất lãi ưu đãi nếu để trễ kỳ trừ nợ' },
+      { id: 'kinh-nghiem-vay-nha-4', label: 'Đọc Bài 4: Trả nợ trước hạn & cái bẫy dưới 120 lần trả làm mất 減税' },
+      { id: 'kinh-nghiem-vay-nha-8', label: 'Đọc Bài 8: Khai thuế 確定申告 năm đầu tiên' }
+    ]
+  }
+];
+
+function getSavedChecklistState() {
+  try {
+    const raw = localStorage.getItem(VIP_CHECKLIST_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+window.toggleVipChecklistItem = function(itemId, checked) {
+  try {
+    const state = getSavedChecklistState();
+    state[itemId] = Boolean(checked);
+    localStorage.setItem(VIP_CHECKLIST_STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {
+    // Ignore storage error
+  }
+};
+
+function renderVipProcessTimeline() {
+  const container = document.getElementById('vip-timeline-container');
+  if (!container) return;
+
+  const checkState = getSavedChecklistState();
+  const visibleStages = VIP_PROCESS_STAGES.filter(
+    st => st.branch === 'common' || st.branch === currentVipBranch
+  );
+
+  container.innerHTML = visibleStages.map(st => {
+    const checklistHtml = (st.checklist && st.checklist.length > 0) ? `
+      <ul class="vip-checklist">
+        ${st.checklist.map(item => `
+          <li>
+            <label>
+              <input
+                type="checkbox"
+                ${checkState[item.id] ? 'checked' : ''}
+                onchange="toggleVipChecklistItem('${item.id}', this.checked)"
+              >
+              <span>${item.label}</span>
+            </label>
+          </li>
+        `).join('')}
+      </ul>
+    ` : '';
+
+    const articlesHtml = (st.articles && st.articles.length > 0) ? `
+      <div class="vip-article-links">
+        ${st.articles.map(art => `
+          <button type="button" class="vip-article-chip" onclick="openArticleDialog('${art.id}')">
+            📖 ${art.label}
+          </button>
+        `).join('')}
+      </div>
+    ` : '';
+
+    return `
+      <div class="vip-stage-card ${st.isBranchStage ? 'branch-highlight' : ''}">
+        <div class="vip-stage-dot"></div>
+        <div class="vip-stage-head">
+          <span class="vip-stage-step-tag">${st.stepTag}</span>
+          <span class="vip-stage-time-badge">⏱ Thời gian tham khảo: ${st.timeframe}</span>
+          <h4 class="vip-stage-title serif">${st.title}</h4>
+        </div>
+
+        <div class="vip-stage-rows">
+          <div class="vip-stage-row">
+            <div class="vip-row-label">
+              1. Việc cần làm
+              <span>やるべきこと</span>
+            </div>
+            <div class="vip-row-body">${st.todo}</div>
+          </div>
+
+          <div class="vip-stage-row">
+            <div class="vip-row-label">
+              2. Giấy tờ &amp; Tiền chuẩn bị
+              <span>必要書類・資金チェック</span>
+            </div>
+            <div class="vip-row-body">
+              <div>${st.prepText}</div>
+              ${checklistHtml}
+            </div>
+          </div>
+
+          <div class="vip-stage-row">
+            <div class="vip-row-label">
+              3. Thời gian tham khảo
+              <span>目安期間</span>
+            </div>
+            <div class="vip-row-body">${st.timeframe}</div>
+          </div>
+
+          <div class="vip-stage-row">
+            <div class="vip-row-label">
+              4. Lưu ý &amp; Bài liên quan
+              <span>注意点・関連記事</span>
+            </div>
+            <div class="vip-row-body">
+              <div>${st.notes}</div>
+              ${articlesHtml}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function initVipProcessSection() {
+  const codeInput = document.getElementById('vip-code-input');
+  if (codeInput) {
+    codeInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        window.verifyVipProcessCode();
+      }
+    });
+  }
+  renderVipProcessTimeline();
+}
+
+window.toggleVipProcessSection = function() {
+  const gateBox = document.getElementById('vip-gate-box');
+  const panel = document.getElementById('vip-process-panel');
+  const btn = document.getElementById('btn-open-vip-process');
+  const codeInput = document.getElementById('vip-code-input');
+
+  if (!gateBox || !panel) return;
+
+  if (panel.classList.contains('open')) {
+    panel.classList.remove('open');
+    if (btn) btn.textContent = '🔒 Xem thêm quy trình chi tiết (Nhập mã) →';
+    return;
+  }
+
+  if (isVipUnlockedSession) {
+    gateBox.classList.remove('open');
+    panel.classList.add('open');
+    if (btn) btn.textContent = 'Thu gọn quy trình chi tiết ↑';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+
+  const isGateOpen = gateBox.classList.toggle('open');
+  if (isGateOpen && codeInput) {
+    setTimeout(() => codeInput.focus(), 100);
+  }
+};
+
+window.verifyVipProcessCode = function() {
+  const codeInput = document.getElementById('vip-code-input');
+  const errorBox = document.getElementById('vip-gate-error');
+  const gateBox = document.getElementById('vip-gate-box');
+  const panel = document.getElementById('vip-process-panel');
+  const btn = document.getElementById('btn-open-vip-process');
+
+  if (!codeInput) return;
+  const entered = codeInput.value.trim();
+
+  if (entered === VIP_ACCESS_CODE) {
+    isVipUnlockedSession = true;
+    if (errorBox) errorBox.classList.remove('active');
+    if (gateBox) gateBox.classList.remove('open');
+    if (panel) {
+      renderVipProcessTimeline();
+      panel.classList.add('open');
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    if (btn) {
+      btn.textContent = 'Thu gọn quy trình chi tiết ↑';
+    }
+    trackEvent('unlock_vip_process', { status: 'success' });
+  } else {
+    if (errorBox) errorBox.classList.add('active');
+    codeInput.select();
+  }
+};
+
+window.lockVipProcessSection = function() {
+  const gateBox = document.getElementById('vip-gate-box');
+  const panel = document.getElementById('vip-process-panel');
+  const btn = document.getElementById('btn-open-vip-process');
+  const codeInput = document.getElementById('vip-code-input');
+
+  isVipUnlockedSession = false;
+  if (codeInput) codeInput.value = '';
+  if (gateBox) gateBox.classList.remove('open');
+  if (panel) panel.classList.remove('open');
+  if (btn) btn.textContent = '🔒 Xem thêm quy trình chi tiết (Nhập mã) →';
+
+  const processSec = document.getElementById('process');
+  if (processSec) {
+    processSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+};
+
+window.switchVipProcessBranch = function(branch) {
+  currentVipBranch = branch === 'cash' ? 'cash' : 'loan';
+  const loanBtn = document.getElementById('vip-tab-loan');
+  const cashBtn = document.getElementById('vip-tab-cash');
+  if (loanBtn) loanBtn.classList.toggle('active', currentVipBranch === 'loan');
+  if (cashBtn) cashBtn.classList.toggle('active', currentVipBranch === 'cash');
+  renderVipProcessTimeline();
+};
+
+window.requestVipCodeFromContact = function() {
+  const propInput = document.getElementById('form-property');
+  const msgInput = document.getElementById('form-message');
+  if (propInput) {
+    propInput.value = 'Đăng ký tư vấn & Nhận mã xem Quy trình mua nhà chi tiết';
+  }
+  if (msgInput) {
+    msgInput.value = 'Xin chào BIG不動産, tôi muốn đặt lịch tư vấn mua nhà và nhận mã mở khóa Cẩm nang Quy trình 7 giai đoạn & Checklist hồ sơ.';
+  }
+};
+
+window.consultFromVipProcess = function() {
+  const branchLabel = currentVipBranch === 'loan' ? 'Nhánh Vay ngân hàng (住宅ローン)' : 'Nhánh Trả thẳng (Tiền mặt)';
+  const propInput = document.getElementById('form-property');
+  const msgInput = document.getElementById('form-message');
+  if (propInput) {
+    propInput.value = `Hỗ trợ hồ sơ theo Quy trình 7 giai đoạn — ${branchLabel}`;
+  }
+  if (msgInput) {
+    msgInput.value = `Tôi đã xem Quy trình 7 giai đoạn (${branchLabel}) bằng mã khách hàng 2720 trên web. Nhờ BIG不動産 hỗ trợ kiểm tra giấy tờ và lịch trình bước tiếp theo giúp tôi.`;
+  }
+  const contactSection = document.getElementById('contact');
+  if (contactSection) {
+    contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  setTimeout(() => {
+    const nameInput = document.getElementById('form-name');
+    if (nameInput) nameInput.focus();
+  }, 450);
+};
+
 
