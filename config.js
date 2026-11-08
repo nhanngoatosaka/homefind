@@ -4,6 +4,7 @@ window.SITE = {
   companyName: "BIG不動産株式会社",
   companyAddress: "〒577-0057 大阪府東大阪市足代新町4-12 テレビル5F",
   areas: ["Osaka", "Kyoto", "Tokyo", "Fukuoka"],
+  contactUrl: "", // Link liên hệ tùy chọn (VD: Zalo cá nhân, Google Form, Fanpage...). Nếu để trống sẽ tự cuộn mượt xuống mục Liên hệ (#contact)
   phoneDisplay: "06-4306-5086",
   phoneTel: "+81643065086",
   mobileDisplay: "080-9872-5571",

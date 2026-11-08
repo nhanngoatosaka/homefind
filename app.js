@@ -254,16 +254,19 @@ function renderPropertyDirectActionButtons(p) {
   const btns = [];
   const propId = p ? p.id : 'general';
 
-  // Nút gọi cố định
-  const phoneTel = (site.phoneTel || '').trim();
-  const phoneDisplay = (site.phoneDisplay || phoneTel).trim();
-  if (phoneTel !== '') {
-    btns.push(`
-      <a href="tel:${phoneTel}" class="btn-outline-amber" onclick="trackContactClick('tel', '${propId}')">
-        ${t('btn_call_now')}: ${phoneDisplay}
-      </a>
-    `);
-  }
+  // Nút Liên hệ ngay (ưu tiên contactUrl từ config.js, nếu trống sẽ cuộn mượt xuống #contact)
+  const contactHref = (site.contactUrl || '').trim() || '#contact';
+  const isExternal = contactHref.startsWith('http') || contactHref.startsWith('tel:');
+  const targetAttr = isExternal && !contactHref.startsWith('tel:') ? ' target="_blank" rel="noopener"' : '';
+  const clickHandler = !isExternal
+    ? `onclick="trackContactClick('contact_btn', '${propId}'); closePropertyDialog(); document.getElementById('contact')?.scrollIntoView({behavior:'smooth'});"`
+    : `onclick="trackContactClick('contact_btn', '${propId}')"`;
+
+  btns.push(`
+    <a href="${contactHref}"${targetAttr} class="btn-outline-amber" ${clickHandler}>
+      ${t('btn_contact_now') || 'Liên hệ ngay'}
+    </a>
+  `);
 
   // Các kênh chat trực tiếp (chỉ hiện khi được cấu hình khác rỗng)
   const chatChannels = getConfiguredDirectChatChannels(p);
@@ -325,15 +328,20 @@ function initMobileStickyBar() {
   const site = getSiteConfig();
   const buttons = [];
 
-  const phoneTel = (site.phoneTel || '').trim();
-  const phoneDisplay = (site.phoneDisplay || phoneTel).trim();
-  if (phoneTel !== '') {
-    buttons.push(`
-      <a href="tel:${phoneTel}" class="btn-primary mobile-sticky-btn" onclick="trackContactClick('tel', 'mobile_sticky')">
-        ${t('sticky_call')} · ${phoneDisplay}
-      </a>
-    `);
-  }
+  // Nút liên hệ chính ở cuối chân màn hình di động: hiển thị "Liên hệ ngay"
+  // Ưu tiên contactUrl từ config.js (sau này người dùng có thể gắn link Zalo, Form, Messenger...), nếu để trống sẽ cuộn mượt xuống #contact
+  const contactHref = (site.contactUrl || '').trim() || '#contact';
+  const isExternal = contactHref.startsWith('http') || contactHref.startsWith('tel:');
+  const targetAttr = isExternal && !contactHref.startsWith('tel:') ? ' target="_blank" rel="noopener"' : '';
+  const clickHandler = !isExternal
+    ? `onclick="trackContactClick('contact_btn', 'mobile_sticky'); document.getElementById('contact')?.scrollIntoView({behavior:'smooth'}); return false;"`
+    : `onclick="trackContactClick('contact_btn', 'mobile_sticky')"`;
+
+  buttons.push(`
+    <a href="${contactHref}"${targetAttr} class="btn-primary mobile-sticky-btn" ${clickHandler}>
+      ${t('sticky_call') || 'Liên hệ ngay'}
+    </a>
+  `);
 
   const zaloUrl = (site.zaloUrl || '').trim();
   if (zaloUrl !== '') {
@@ -751,21 +759,25 @@ function renderPortfolio() {
     const { primaryTitle, secondaryTitle } = getLocalizedPropertyTitles(p);
     const cornerBadgeHtml = renderCornerBadgeHtml(p);
 
-    // Dòng thông số phụ dưới giá (2-3 thông số ngăn bởi ·, có lợi suất nếu có)
+    // Dòng thông số phụ dưới giá (ưu tiên 1-2 thông số cốt lõi để thẻ gọn gàng, không bị dài lê thê)
     const extraSpecs = [];
     if (p.type === 'buy' && p.gross_yield > 0) {
       extraSpecs.push(`${t('gross_yield')}: ${p.gross_yield}%`);
     }
     if (p.renovation) extraSpecs.push(p.renovation);
-    if (p.management_fee) extraSpecs.push(`Phí QL ¥${p.management_fee.toLocaleString()}${t('unit_per_month')}`);
-    if (p.repair_fund) extraSpecs.push(`Quỹ SC ¥${p.repair_fund.toLocaleString()}${t('unit_per_month')}`);
-    const extraSpecLine = extraSpecs.slice(0, 3).join(' · ');
+    if (p.management_fee) {
+      extraSpecs.push(`Phí QL ¥${p.management_fee.toLocaleString()}${t('unit_per_month')}`);
+    } else if (p.repair_fund) {
+      extraSpecs.push(`Quỹ SC ¥${p.repair_fund.toLocaleString()}${t('unit_per_month')}`);
+    }
+    const extraSpecLine = extraSpecs.slice(0, 2).join(' · ');
 
     const layoutSize = [p.layout, p.size_m2 ? `${p.size_m2}㎡` : ''].filter(Boolean).join(' · ');
+    const addressDisplay = p.station || p.address || '';
 
     return `
-      <div class="property-card">
-        <div class="card-image-wrap">
+      <div class="property-card" data-property-id="${p.id}">
+        <div class="card-image-wrap" onclick="openPropertyDialog('${p.id}')" style="cursor: pointer;">
           ${cornerBadgeHtml}
           <img src="${mainImg}" alt="${p.name_jp}" loading="lazy">
         </div>
@@ -774,16 +786,16 @@ function renderPortfolio() {
             <span>${typeLabel}</span>
             <span>${p.area || ''} ${isSold ? '· (Đã giao dịch)' : ''}</span>
           </div>
-          <h3 class="card-name serif">${primaryTitle}</h3>
-          ${secondaryTitle ? `<div class="card-name-sub">${secondaryTitle}</div>` : ''}
-          <div class="card-address">${p.station || p.address || ''}</div>
+          <h3 class="card-name serif" title="${primaryTitle}"><a href="javascript:void(0)" onclick="openPropertyDialog('${p.id}')" class="card-title-link">${primaryTitle}</a></h3>
+          ${secondaryTitle ? `<div class="card-name-sub" title="${secondaryTitle}">${secondaryTitle}</div>` : ''}
+          <div class="card-address" title="${addressDisplay}">📍 ${addressDisplay}</div>
           <div class="card-price-row">
             <span class="card-price">${p.price_label || (p.price ? p.price.toLocaleString() + '円' : 'Liên hệ')}</span>
-            ${layoutSize ? `<span style="font-size: 13px; color: var(--muted); margin-left: 6px;">· ${layoutSize}</span>` : ''}
+            ${layoutSize ? `<span class="card-layout-tag">· ${layoutSize}</span>` : ''}
           </div>
-          <div class="card-spec-inline">${extraSpecLine || 'Vị trí thuận tiện'}</div>
+          <div class="card-spec-inline" title="${extraSpecLine || 'Vị trí thuận tiện'}">${extraSpecLine || 'Vị trí thuận tiện'}</div>
           <div class="card-footer">
-            <button class="card-btn-detail" onclick="openPropertyDialog('${p.id}')">${t('btn_view_detail')}</button>
+            <button class="card-btn-detail" type="button" onclick="openPropertyDialog('${p.id}')">${t('btn_view_detail') || 'Chi tiết →'}</button>
           </div>
         </div>
       </div>
