@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupDialogClose();
   initKeisanCalculator();
   initVipProcessSection();
+  initJapandiZenMotion();
   loadData();
 });
 
@@ -776,8 +777,8 @@ function renderPortfolio() {
     const addressDisplay = p.station || p.address || '';
 
     return `
-      <div class="property-card" data-property-id="${p.id}">
-        <div class="card-image-wrap" onclick="openPropertyDialog('${p.id}')" style="cursor: pointer;">
+      <div class="property-card zen-fade-up" data-property-id="${p.id}">
+        <div class="card-image-wrap zen-shutter" onclick="openPropertyDialog('${p.id}')" style="cursor: pointer;">
           ${cornerBadgeHtml}
           <img src="${mainImg}" alt="${p.name_jp}" loading="lazy">
         </div>
@@ -801,6 +802,8 @@ function renderPortfolio() {
       </div>
     `;
   }).join('');
+
+  refreshJapandiZenObserver();
 }
 
 // --------------------------------------------------------------------------
@@ -884,8 +887,8 @@ function renderArticles() {
   const displayArticles = limitVal > 0 ? filtered.slice(0, limitVal) : filtered;
 
   grid.innerHTML = displayArticles.map(a => `
-    <article class="article-card">
-      <div class="article-img-wrap">
+    <article class="article-card zen-fade-up">
+      <div class="article-img-wrap zen-shutter zen-shutter-vertical">
         <img src="${a.image || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800'}" alt="${a.title}" loading="lazy">
       </div>
       <div class="article-body">
@@ -899,6 +902,8 @@ function renderArticles() {
       </div>
     </article>
   `).join('');
+
+  refreshJapandiZenObserver();
 }
 
 window.openArticleDialog = function(id) {
@@ -2562,5 +2567,80 @@ window.consultFromVipProcess = function() {
     if (nameInput) nameInput.focus();
   }, 450);
 };
+
+// --------------------------------------------------------------------------
+// 11. JAPANDI ZEN MOTION DESIGN (Shutter Reveal + Architectural Grid Lines)
+// --------------------------------------------------------------------------
+let zenIntersectionObserver = null;
+
+function initJapandiZenMotion() {
+  if (typeof document === 'undefined' || !document.querySelectorAll) return;
+
+  // Gắn class zen-shutter cho banner thương hiệu và ảnh chính
+  document.querySelectorAll('.banner-frame, .gallery-main').forEach(el => {
+    el.classList.add('zen-shutter');
+  });
+
+  // Gắn class arch-grid-line cho đường phân cách hướng dẫn
+  document.querySelectorAll('.guide-divider-line').forEach(el => {
+    el.classList.add('arch-grid-line');
+  });
+
+  // Gắn zen-fade-up cho các bước quy trình và khối máy tính
+  document.querySelectorAll('.process-step, .keisan-card, .mid-cta-band').forEach((el, idx) => {
+    el.classList.add('zen-fade-up');
+    if (el.style) {
+      el.style.transitionDelay = `${(idx % 4) * 70}ms`;
+    }
+  });
+
+  refreshJapandiZenObserver();
+}
+
+function refreshJapandiZenObserver() {
+  if (typeof document === 'undefined' || !document.querySelectorAll) return;
+
+  const targets = document.querySelectorAll(
+    '.zen-shutter, .zen-fade-up, .section-head, .property-card, .arch-grid-line'
+  );
+
+  if (typeof IntersectionObserver === 'undefined') {
+    targets.forEach(el => el.classList.add('is-inview'));
+    return;
+  }
+
+  if (!zenIntersectionObserver) {
+    zenIntersectionObserver = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-inview');
+            zenIntersectionObserver.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: '0px 0px -8% 0px',
+        threshold: 0.12
+      }
+    );
+  }
+
+  // Tạo độ trễ nhịp nhàng (stagger) cho các thẻ BĐS cùng hàng
+  document.querySelectorAll('.property-card.zen-fade-up, .article-card.zen-fade-up').forEach((card, idx) => {
+    if (card.style && !card.dataset.zenStaggered) {
+      card.dataset.zenStaggered = '1';
+      card.style.transitionDelay = `${(idx % 3) * 85}ms`;
+    }
+  });
+
+  targets.forEach(el => {
+    if (!el.classList.contains('is-inview')) {
+      zenIntersectionObserver.observe(el);
+    }
+  });
+}
+
 
 

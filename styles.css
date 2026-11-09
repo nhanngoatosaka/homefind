@@ -5,22 +5,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Shippori+Mincho+B1:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Phong cách Modern Japandi & Kiến trúc Nhật Bản (Gỗ sồi ấm + Xám than kiến trúc + Nền gỗ mộc Wabi-sabi) */
-  --bg: #F4EFEB;          /* Nền màu gỗ mộc ngà ấm (Warm Hinoki / Sanded Timber) */
-  --bg-soft: #EAE3D9;     /* Xám cát bê tông gỗ sáng (Light Sand / Concrete) */
-  --card: #FCFAF7;        /* Trắng kem nền thẻ sạch sẽ */
-  --ink: #25292E;         /* Xám than chì đậm (Deep Slate Charcoal) — tiêu đề, chữ chính */
-  --muted: #596068;       /* Xám trung tính — chữ phụ */
-  --faint: #8A9098;       /* Chữ mờ, ghi chú nhỏ */
-  --line: #DED6CB;        /* Đường kẻ vữa mảnh tinh tế */
-  --accent: #383F47;      /* Xám than kiến trúc — khối đậm, nút phụ */
-  --accent-ink: #25292E;
-  --accent-soft: #EAE4DC;
-  --amber: #B87B41;       /* Nâu gỗ sồi mật ong (Warm Honey Oak) — điểm nhấn chính */
-  --amber-ink: #8F5724;   /* Nâu gỗ đậm cho chữ giá / nhãn trên nền sáng */
-  --amber-soft: #F6EDE2;  /* Nền gỗ sồi nhạt */
-  --amber-line: #E8D3BC;  /* Viền gỗ nhạt */
-  --cta: #A36427;         /* Nút chính — Nâu gỗ ấm tự nhiên */
+  /* Bảng màu UI/UX & Phong thủy Ngũ Hành (60% Kim - 30% Thủy - 10% Thổ) từ kiến trúc Japandi */
+  /* Hành Kim (60% - Nền chủ đạo: Trắng kem tường & Xám sáng bậc đá) */
+  --bg: #F4F3EF;          /* Trắng kem tường (Wall Cream White) — Thoáng đãng, tối giản */
+  --bg-soft: #D8D6D0;     /* Xám sáng bậc đá (Light Stone Gray) — Bề mặt phụ & đường kẻ */
+  --card: #FFFFFF;        /* Nền thẻ sáng sạch giúp ảnh BĐS hiển thị trung thực 100% */
+  --line: #D8D6D0;        /* Đường kẻ kiến trúc 1px màu xám đá (Architectural Grid Line) */
+
+  /* Hành Thủy (30% - Cấu trúc & Chữ: Xám than chì khung vòm bê tông & Đen nhám tay nắm cửa) */
+  --ink: #1A1A1A;         /* Sắc đen nhám tay nắm cửa (Matte Black) — Hệ thống chữ chính */
+  --accent: #2B2D2F;      /* Xám than chì đậm khung vòm bê tông (Charcoal Arch) — Menu & khối cấu trúc */
+  --accent-ink: #1A1A1A;
+  --accent-soft: #E6E4DF;
+  --muted: #4E5154;       /* Xám trung tính cho chữ mô tả */
+  --faint: #7A7E82;       /* Xám đá nhạt cho ghi chú phụ */
+
+  /* Hành Thổ (10% - Điểm nhấn ấm áp: Nâu gỗ Teak / Cam đất ấm & Ánh đèn vàng dịu) */
+  --amber: #B67642;       /* Nâu gỗ Teak / Warm Terracotta — Điểm nhấn chủ đạo */
+  --amber-glow: #C88A51;  /* Ánh đèn spotlight vàng dịu trên hiên nhà */
+  --amber-ink: #965B2B;   /* Nâu gỗ đậm cho nhãn giá & thông tin quan trọng trên nền sáng */
+  --amber-soft: #F6EFE8;  /* Nền ánh gỗ ấm dịu */
+  --amber-line: #E5D0BC;  /* Viền nâu gỗ nhạt */
+  --cta: #B67642;         /* Nút bấm chính (CTA) — Nâu gỗ Teak ấm áp */
   --cta-ink: #FFFFFF;
 }
 
@@ -36,10 +42,6 @@ html {
 
 body {
   background-color: var(--bg);
-  background-image: 
-    radial-gradient(rgba(145, 110, 75, 0.035) 1px, transparent 0),
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.038'/%3E%3C/svg%3E");
-  background-size: 24px 24px, 180px 180px;
   color: var(--ink);
   font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
   font-weight: 300;
@@ -72,10 +74,13 @@ img {
   padding: 0 24px;
 }
 
-/* Buttons */
+/* Buttons — Kết hợp Micro-interactions mô phỏng ánh sáng đèn Spotlight (#C88A51) */
 .btn-primary {
+  position: relative;
+  overflow: hidden;
   display: inline-block;
   background-color: var(--cta);
+  background-image: radial-gradient(circle at 50% 0%, rgba(200, 138, 81, 0.35) 0%, transparent 70%);
   color: var(--cta-ink);
   font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 14px;
@@ -84,10 +89,13 @@ img {
   border-radius: 4px;
   border: 1px solid var(--cta);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1), transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease;
 }
 .btn-primary:hover {
-  opacity: 0.92;
+  background-color: var(--amber-glow);
+  border-color: var(--amber-glow);
+  box-shadow: 0 6px 22px rgba(182, 118, 66, 0.38), 0 0 14px rgba(200, 138, 81, 0.45);
+  transform: translateY(-1px);
 }
 
 .btn-secondary {
@@ -101,13 +109,16 @@ img {
   border-radius: 4px;
   border: 1px solid var(--accent);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .btn-secondary:hover {
-  background-color: var(--accent-soft);
+  background-color: var(--accent);
+  color: #F4F3EF;
+  box-shadow: 0 4px 14px rgba(43, 45, 47, 0.16);
 }
 
 .btn-outline-amber {
+  position: relative;
   display: inline-block;
   background: transparent;
   color: var(--amber-ink);
@@ -117,23 +128,25 @@ img {
   border-radius: 4px;
   border: 1px solid var(--amber);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .btn-outline-amber:hover {
   background-color: var(--amber-soft);
+  border-color: var(--amber-glow);
+  box-shadow: 0 4px 18px rgba(200, 138, 81, 0.28);
 }
 
 /* ==========================================================================
-   1. HEADER (Xám than chì kiến trúc đồng điệu Footer)
+   1. HEADER (Hành Thủy #2B2D2F — Khung vòm bê tông vững chãi)
    ========================================================================== */
 header.site-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: rgba(30, 34, 40, 0.96);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(223, 218, 209, 0.12);
+  background-color: rgba(43, 45, 47, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(216, 214, 208, 0.16);
   padding: 10px 0;
   transition: background-color 0.2s, box-shadow 0.2s;
 }
@@ -910,11 +923,11 @@ textarea.form-control {
 }
 
 /* ==========================================================================
-   9. FOOTER (Xám than kiến trúc & Gỗ sồi)
+   9. FOOTER (Hành Thủy #2B2D2F -> #1A1A1A — Khung vòm bê tông & Đen nhám)
    ========================================================================== */
 footer.site-footer {
-  background: linear-gradient(180deg, #323840 0%, #1A1D20 100%);
-  color: #ECE8DF;
+  background: linear-gradient(180deg, #2B2D2F 0%, #1A1A1A 100%);
+  color: #F4F3EF;
   padding: 56px 0 36px;
 }
 .footer-inner {
@@ -2430,5 +2443,199 @@ footer.site-footer {
     display: block !important;
     border: none !important;
     padding: 0 !important;
+  }
+}
+
+/* ==========================================================================
+   12. JAPANDI ZEN MOTION DESIGN (NHÁNH THỬ NGHIỆM: ui-japandi-zen)
+   - Zen Motion: Màn trập cửa gỗ mở ngang/dọc từ từ (Shutter Reveal)
+   - Architectural Grid Lines: Đường kẻ mảnh 1px xám đá (#D8D6D0) tự vẽ khi cuộn
+   - Spotlight Micro-interactions: Hiệu ứng tỏa sáng ấm (#C88A51) từ đỉnh thẻ/nút
+   ========================================================================== */
+
+/* 12.1. Chuyển động tĩnh tại (Zen Motion) & Màn trập mở ngang (Shutter Reveal) */
+.zen-fade-up {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1), transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.zen-fade-up.is-inview {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.zen-shutter {
+  position: relative;
+  overflow: hidden;
+}
+.zen-shutter::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #D8D6D0 0%, #F4F3EF 94%, #B67642 100%);
+  transform-origin: right center;
+  transform: scaleX(1);
+  transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 3;
+  pointer-events: none;
+}
+.zen-shutter.zen-shutter-vertical::after {
+  background: linear-gradient(180deg, #D8D6D0 0%, #F4F3EF 94%, #B67642 100%);
+  transform-origin: bottom center;
+  transform: scaleY(1);
+}
+.zen-shutter img {
+  transform: scale(1.07);
+  transition: transform 1.25s cubic-bezier(0.22, 1, 0.36, 1), filter 0.8s ease;
+}
+.zen-shutter.is-inview::after {
+  transform: scaleX(0);
+}
+.zen-shutter.zen-shutter-vertical.is-inview::after {
+  transform: scaleY(0);
+}
+.zen-shutter.is-inview img {
+  transform: scale(1);
+}
+.property-card:hover .zen-shutter.is-inview img {
+  transform: scale(1.03);
+}
+
+/* 12.2. Đường kẻ kiến trúc 1px (Architectural Grid Lines) tự động vẽ khi cuộn */
+.section-head {
+  position: relative;
+  padding-left: 16px;
+  padding-bottom: 14px;
+}
+/* Thanh lam dọc bên trái tiêu đề (vẽ từ trên xuống) */
+.section-head::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 14px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--amber) 0%, var(--accent) 100%);
+  transform-origin: top center;
+  transform: scaleY(0);
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* Đường kẻ kiến trúc 1px ngang dưới tiêu đề (vẽ từ trái sang phải) */
+.section-head::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: var(--line);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 1.05s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
+}
+.section-head.is-inview::before {
+  transform: scaleY(1);
+}
+.section-head.is-inview::after {
+  transform: scaleX(1);
+}
+
+/* Đường kẻ 1px chia khung thông tin bên trong thẻ BĐS */
+.property-card .card-price-row,
+.property-card .card-footer {
+  position: relative;
+}
+.property-card .card-footer {
+  border-top: none;
+}
+.property-card .card-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--line);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
+}
+.property-card.is-inview .card-footer::before {
+  transform: scaleX(1);
+}
+
+/* Đường kẻ chia khu vực tự vẽ */
+.arch-grid-line {
+  height: 1px;
+  background-color: var(--line);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.arch-grid-line.is-inview {
+  transform: scaleX(1);
+}
+
+/* 12.3. Micro-interactions mô phỏng ánh đèn Spotlight trần hiên nhà (#B67642 / #C88A51) */
+.property-card,
+.article-card,
+.process-step,
+.channel-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.4s ease;
+}
+.property-card::before,
+.article-card::before,
+.process-step::before,
+.channel-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(200, 138, 81, 0.18) 0%,
+    rgba(182, 118, 66, 0.06) 45%,
+    transparent 75%
+  );
+  opacity: 0;
+  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+.property-card:hover::before,
+.article-card:hover::before,
+.process-step:hover::before,
+.channel-card:hover::before {
+  opacity: 1;
+}
+.property-card:hover,
+.article-card:hover,
+.process-step:hover,
+.channel-card:hover {
+  border-color: var(--amber-glow);
+  box-shadow:
+    0 12px 28px rgba(26, 26, 26, 0.07),
+    0 -2px 18px rgba(200, 138, 81, 0.22);
+}
+
+.property-card .card-body,
+.article-card .article-body {
+  position: relative;
+  z-index: 2;
+}
+
+/* Tôn trọng cài đặt giảm chuyển động của hệ điều hành nếu có */
+@media (prefers-reduced-motion: reduce) {
+  .zen-fade-up,
+  .zen-shutter::after,
+  .zen-shutter img,
+  .section-head::before,
+  .section-head::after,
+  .property-card .card-footer::before {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
   }
 }
