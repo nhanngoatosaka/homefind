@@ -2243,6 +2243,7 @@ const VIP_PROCESS_STAGES = [
     ],
     notes: 'Ba điểm sống còn phải nhớ: (1) Khai báo sức khỏe cho 団信 phải trung thực tuyệt đối — giấu bệnh có thể làm mất quyền được bảo hiểm trả nợ thay khi có biến cố. (2) Ngân hàng dân sinh luôn đi qua Công ty bảo lãnh (保証会社) và chính công ty này mới là nơi xét duyệt quyết định. (3) Lãi suất áp dụng chốt tại NGÀY GIẢI NGÂN, không phải ngày nộp hồ sơ, và tuyệt đối tránh 3 chiêu gian lận hồ sơ. Nếu chẳng may trượt duyệt, dùng điều khoản ローン特約 để hủy và nhận lại đủ tiền cọc (với điều kiện nộp hồ sơ trung thực, đúng hạn).',
     articles: [
+      { id: 'kinh-nghiem-vay-nha-10', label: 'Đọc Bài 10: Lãi biến động, Quy tắc 5 năm & Nước cờ 4–5 năm bán' },
       { id: 'kinh-nghiem-vay-nha-1', label: 'Đọc Bài 1: 3 chiêu gian lận phải né & quy tắc lãi suất' },
       { id: 'kinh-nghiem-vay-nha-3', label: 'Đọc Bài 3: Bảo hiểm 団信 & khi nào ngân hàng đòi người bảo lãnh' },
       { id: 'kinh-nghiem-vay-nha-9', label: 'Đọc Bài 9: Công ty bảo lãnh 保証会社 — người gác cổng thực sự' },

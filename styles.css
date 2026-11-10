@@ -1216,6 +1216,55 @@ footer.site-footer {
   color: var(--ink);
   font-weight: 600;
 }
+.article-reader-body h3,
+.article-reader-body h4 {
+  font-family: inherit;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 22px 0 10px;
+  line-height: 1.4;
+}
+.article-reader-body h3 {
+  font-size: 17px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+.article-reader-body h4 {
+  font-size: 15.5px;
+}
+.article-reader-body .article-callout {
+  background: var(--bg-soft);
+  border-left: 3px solid var(--amber);
+  border-radius: 0 10px 10px 0;
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-size: 14.5px;
+}
+.article-reader-body .article-callout p:last-child {
+  margin-bottom: 0;
+}
+.article-reader-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0 20px;
+  font-size: 13.5px;
+  background: var(--card);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.article-reader-body th,
+.article-reader-body td {
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  text-align: left;
+  line-height: 1.5;
+}
+.article-reader-body th {
+  background-color: var(--bg-soft);
+  font-weight: 600;
+  color: var(--ink);
+}
 
 /* ==========================================================================
    MÁY TÍNH KHOẢN VAY & SO SÁNH TIỀN THUÊ NHÀ (Chuẩn Keisan.site — Japandi UI)
