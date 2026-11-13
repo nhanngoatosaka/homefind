@@ -31,8 +31,8 @@
       </div>
       <nav class="header-nav">
         <ul class="nav-menu">
-          <li><a href="#portfolio" class="nav-link" data-i18n="nav_portfolio">Danh sách nhà</a></li>
           <li><a href="#featured" class="nav-link" data-i18n="nav_calculator">Tính tiền trả góp</a></li>
+          <li><a href="#portfolio" class="nav-link" data-i18n="nav_portfolio">Danh sách nhà</a></li>
           <li><a href="#guide" class="nav-link" data-i18n="nav_guide">Cẩm nang &amp; Quy trình</a></li>
         </ul>
       </nav>
@@ -47,111 +47,26 @@
     </div>
   </header>
 
-  <!-- 2. HERO (Chỉ giữ kicker + tiêu đề serif + đoạn mở đầu ngắn + 2 nút CTA) -->
+  <!-- 2. HERO (Tiêu đề serif + đoạn giới thiệu định vị + 2 nút CTA) -->
   <section class="hero">
     <div class="container">
-      <div class="kicker">Kansai Real Estate · 関西不動産</div>
-      <h1 class="hero-title">Mua bán &amp; cho thuê bất động sản Osaka — Kyoto</h1>
-      <p class="hero-desc">
-        Hỗ trợ cộng đồng người Việt và nhà đầu tư tìm kiếm, thẩm định và sở hữu căn hộ, nhà phố chất lượng tại Osaka và vùng Kansai. Cập nhật thị trường minh bạch, thủ tục vay và pháp lý chuẩn mực.
+      <h1 class="hero-title" data-i18n="hero_title">Chuyên Mua / Bán , Thuê , bất động sản dòng tiền</h1>
+      <p class="hero-desc" data-i18n="hero_desc">
+        Hỗ trợ nhà đầu tư tìm kiếm , thẩm định và sở hữu ngôi nhà chất lượng tại Osaka và Kansai .<br>
+        Minh bạch, uy tín , thủ tục pháp lý rõ ràng  chuẩn mực.
       </p>
       <div class="hero-actions">
-        <a href="#portfolio" class="btn-primary">Xem danh sách nhà</a>
-        <a href="#contact" class="btn-secondary">Tư vấn miễn phí</a>
+        <a href="#portfolio" class="btn-primary" data-i18n="hero_cta_primary">Xem danh sách nhà</a>
+        <a href="#contact" class="btn-secondary" data-i18n="hero_cta_secondary">Tư vấn miễn phí</a>
       </div>
     </div>
   </section>
 
-  <!-- 3. LƯỚI PORTFOLIO CÁC CĂN (Ngay phía sau Hero — Kèm bộ lọc nâng cao, sắp xếp & CTA giữa trang #1) -->
-  <section class="portfolio-section" id="portfolio">
-    <div class="container">
-      <div class="section-head">
-        <div class="kicker">物件一覧</div>
-        <h2 class="section-title">Danh sách bất động sản chọn lọc</h2>
-      </div>
-
-      <!-- Nút lọc loại/khu vực dạng viên tròn (Giữ nguyên 4 tab hiện có) -->
-      <div class="filter-pills" id="filter-pills">
-        <button class="filter-btn active" data-filter="all" data-i18n="filter_all">Tất cả</button>
-        <button class="filter-btn" data-filter="buy" data-i18n="filter_buy">Nhà bán · 売買</button>
-        <button class="filter-btn" data-filter="rent-osaka" data-i18n="filter_rent_osaka">Thuê · Osaka</button>
-        <button class="filter-btn" data-filter="rent-kyoto" data-i18n="filter_rent_kyoto">Thuê · Kyoto</button>
-      </div>
-
-      <!-- Bộ lọc theo tư duy người mua: Khoảng giá, Diện tích tối thiểu, Layout, Sắp xếp -->
-      <div class="portfolio-filter-bar" id="portfolio-filter-bar">
-        <div class="filter-field">
-          <label for="filter-price" data-i18n="filter_price_label">Khoảng ngân sách</label>
-          <select id="filter-price" class="form-control">
-            <option value="all" data-i18n="filter_price_all">Mọi mức giá</option>
-            <option value="buy-under-10m" data-i18n="filter_buy_u10m">Nhà bán: Dưới 1,000万円</option>
-            <option value="buy-10m-30m" data-i18n="filter_buy_10m_30m">Nhà bán: 1,000–3,000万円</option>
-            <option value="buy-over-30m" data-i18n="filter_buy_o30m">Nhà bán: Trên 3,000万円</option>
-            <option value="rent-under-40k" data-i18n="filter_rent_u40k">Thuê: Dưới ¥40,000/tháng</option>
-            <option value="rent-40k-80k" data-i18n="filter_rent_40k_80k">Thuê: ¥40,000–¥80,000/tháng</option>
-            <option value="rent-over-80k" data-i18n="filter_rent_o80k">Thuê: Trên ¥80,000/tháng</option>
-          </select>
-        </div>
-
-        <div class="filter-field">
-          <label for="filter-min-size" data-i18n="filter_size_label">Diện tích sàn tối thiểu</label>
-          <select id="filter-min-size" class="form-control">
-            <option value="0" data-i18n="filter_size_all">Mọi diện tích</option>
-            <option value="20">≥ 20 ㎡</option>
-            <option value="40">≥ 40 ㎡</option>
-            <option value="60">≥ 60 ㎡</option>
-            <option value="80">≥ 80 ㎡</option>
-          </select>
-        </div>
-
-        <div class="filter-field">
-          <label for="filter-layout" data-i18n="filter_layout_label">Bố cục phòng (Layout)</label>
-          <select id="filter-layout" class="form-control">
-            <option value="all" data-i18n="filter_layout_all">Tất cả layout</option>
-          </select>
-        </div>
-
-        <div class="filter-field">
-          <label for="filter-sort" data-i18n="sort_label">Sắp xếp theo</label>
-          <select id="filter-sort" class="form-control">
-            <option value="default" data-i18n="sort_default">Mặc định</option>
-            <option value="price-asc" data-i18n="sort_price_asc">Giá: Thấp → Cao</option>
-            <option value="price-desc" data-i18n="sort_price_desc">Giá: Cao → Thấp</option>
-            <option value="newest" data-i18n="sort_newest">Mới cập nhật</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Lưới thẻ nhà (Trang chủ hiển thị 3 căn đại diện / mới nhất) -->
-      <div class="property-grid" id="property-grid" data-limit="3">
-        <!-- Render động từ data/properties.json -->
-      </div>
-
-      <!-- Nút dẫn sang trang 2: Toàn bộ nhà đang đăng -->
-      <div class="section-more-bar" id="portfolio-more-wrap">
-        <a href="properties.html" class="btn-secondary" id="btn-view-all-properties">
-          Xem toàn bộ danh sách nhà →
-        </a>
-      </div>
-
-      <!-- DẢI CTA GIỮA TRANG #1 (Sau danh sách nhà) -->
-      <div class="mid-cta-band">
-        <div class="mid-cta-copy">
-          <div class="mid-cta-kicker">ご希望条件リクエスト · Tìm nhà theo yêu cầu riêng</div>
-          <h3 class="mid-cta-title serif" data-i18n="mid_cta_title">Chưa thấy căn ưng ý? Đăng ký nhận nhà mới theo nhu cầu</h3>
-        </div>
-        <button type="button" class="btn-mid-cta" onclick="requestCustomPropertyDemand()" data-i18n="mid_cta_btn">
-          Đăng ký nhận nhà mới →
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- 4. MÁY TÍNH TIỀN TRẢ GÓP & SO SÁNH THUÊ NHÀ (Chuẩn công thức Keisan.site) -->
+  <!-- 1. MÁY TÍNH TIỀN TRẢ GÓP & SO SÁNH THUÊ NHÀ (Chuẩn công thức Keisan.site) -->
   <section class="featured-section" id="featured">
     <div class="container">
       <div class="section-head" style="margin-bottom: 20px;">
-        <div class="kicker">ローン返済（ボーナス併用）＆ 家賃比較 · Công cụ tính chi phí nhà ở</div>
+        <div class="kicker">1. ローン返済（ボーナス併用）＆ 家賃比較 · Công cụ tính chi phí nhà ở</div>
         <h2 class="section-title serif">Bảng tính tiền trả góp mua nhà &amp; So sánh tiền thuê</h2>
         <p style="font-size: 14px; color: var(--muted); margin-top: 4px;">
           Tính chính xác số tiền trả hàng tháng, kỳ thưởng Bonus, đổi lãi suất 2 giai đoạn (theo đúng chuẩn ngân hàng &amp; Keisan) và đối chiếu trực tiếp với tiền thuê nhà hàng tháng của bạn.
@@ -457,6 +372,91 @@
     </div>
   </section>
 
+  <!-- 2. LƯỚI PORTFOLIO CÁC CĂN (Danh sách bất động sản chọn lọc) -->
+  <section class="portfolio-section" id="portfolio">
+    <div class="container">
+      <div class="section-head">
+        <div class="kicker">2. 物件一覧</div>
+        <h2 class="section-title">Danh sách bất động sản chọn lọc</h2>
+      </div>
+
+      <!-- Nút lọc loại/khu vực dạng viên tròn (Giữ nguyên 4 tab hiện có) -->
+      <div class="filter-pills" id="filter-pills">
+        <button class="filter-btn active" data-filter="all" data-i18n="filter_all">Tất cả</button>
+        <button class="filter-btn" data-filter="buy" data-i18n="filter_buy">Nhà bán · 売買</button>
+        <button class="filter-btn" data-filter="rent-osaka" data-i18n="filter_rent_osaka">Thuê · Osaka</button>
+        <button class="filter-btn" data-filter="rent-kyoto" data-i18n="filter_rent_kyoto">Thuê · Kyoto</button>
+      </div>
+
+      <!-- Bộ lọc theo tư duy người mua: Khoảng giá, Diện tích tối thiểu, Layout, Sắp xếp -->
+      <div class="portfolio-filter-bar" id="portfolio-filter-bar">
+        <div class="filter-field">
+          <label for="filter-price" data-i18n="filter_price_label">Khoảng ngân sách</label>
+          <select id="filter-price" class="form-control">
+            <option value="all" data-i18n="filter_price_all">Mọi mức giá</option>
+            <option value="buy-under-10m" data-i18n="filter_buy_u10m">Nhà bán: Dưới 1,000万円</option>
+            <option value="buy-10m-30m" data-i18n="filter_buy_10m_30m">Nhà bán: 1,000–3,000万円</option>
+            <option value="buy-over-30m" data-i18n="filter_buy_o30m">Nhà bán: Trên 3,000万円</option>
+            <option value="rent-under-40k" data-i18n="filter_rent_u40k">Thuê: Dưới ¥40,000/tháng</option>
+            <option value="rent-40k-80k" data-i18n="filter_rent_40k_80k">Thuê: ¥40,000–¥80,000/tháng</option>
+            <option value="rent-over-80k" data-i18n="filter_rent_o80k">Thuê: Trên ¥80,000/tháng</option>
+          </select>
+        </div>
+
+        <div class="filter-field">
+          <label for="filter-min-size" data-i18n="filter_size_label">Diện tích sàn tối thiểu</label>
+          <select id="filter-min-size" class="form-control">
+            <option value="0" data-i18n="filter_size_all">Mọi diện tích</option>
+            <option value="20">≥ 20 ㎡</option>
+            <option value="40">≥ 40 ㎡</option>
+            <option value="60">≥ 60 ㎡</option>
+            <option value="80">≥ 80 ㎡</option>
+          </select>
+        </div>
+
+        <div class="filter-field">
+          <label for="filter-layout" data-i18n="filter_layout_label">Bố cục phòng (Layout)</label>
+          <select id="filter-layout" class="form-control">
+            <option value="all" data-i18n="filter_layout_all">Tất cả layout</option>
+          </select>
+        </div>
+
+        <div class="filter-field">
+          <label for="filter-sort" data-i18n="sort_label">Sắp xếp theo</label>
+          <select id="filter-sort" class="form-control">
+            <option value="default" data-i18n="sort_default">Mặc định</option>
+            <option value="price-asc" data-i18n="sort_price_asc">Giá: Thấp → Cao</option>
+            <option value="price-desc" data-i18n="sort_price_desc">Giá: Cao → Thấp</option>
+            <option value="newest" data-i18n="sort_newest">Mới cập nhật</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Lưới thẻ nhà (Trang chủ hiển thị 3 căn đại diện / mới nhất) -->
+      <div class="property-grid" id="property-grid" data-limit="3">
+        <!-- Render động từ data/properties.json -->
+      </div>
+
+      <!-- Nút dẫn sang trang 2: Toàn bộ nhà đang đăng -->
+      <div class="section-more-bar" id="portfolio-more-wrap">
+        <a href="properties.html" class="btn-secondary" id="btn-view-all-properties">
+          Xem toàn bộ danh sách nhà →
+        </a>
+      </div>
+
+      <!-- DẢI CTA GIỮA TRANG #1 (Sau danh sách nhà) -->
+      <div class="mid-cta-band">
+        <div class="mid-cta-copy">
+          <div class="mid-cta-kicker">ご希望条件リクエスト · Tìm nhà theo yêu cầu riêng</div>
+          <h3 class="mid-cta-title serif" data-i18n="mid_cta_title">Chưa thấy căn ưng ý? Đăng ký nhận nhà mới theo nhu cầu</h3>
+        </div>
+        <button type="button" class="btn-mid-cta" onclick="requestCustomPropertyDemand()" data-i18n="mid_cta_btn">
+          Đăng ký nhận nhà mới →
+        </button>
+      </div>
+    </div>
+  </section>
+
   <!-- 5. DẢI ẢNH THƯƠNG HIỆU HOÀNG HÔN (Dải nghỉ mắt kiến trúc) -->
   <section class="brand-banner">
     <div class="container">
@@ -471,7 +471,7 @@
   <section class="guide-section" id="guide">
     <div class="container">
       <div class="section-head" style="margin-bottom: 32px;">
-        <div class="kicker">ノウハウ・ガイド · Cẩm nang &amp; Quy trình</div>
+        <div class="kicker">3. ノウハウ・ガイド · Cẩm nang &amp; Quy trình</div>
         <h2 class="section-title serif">Lộ trình mua nhà &amp; Kinh nghiệm thực chiến</h2>
         <p style="font-size: 14.5px; color: var(--muted); margin-top: 6px; max-width: 780px;">
           Toàn bộ hành trình từ lúc tìm kiếm, tính toán tài chính, làm việc với ngân hàng Nhật Bản đến khi nhận chìa khóa và hoàn tất khai thuế năm đầu.
@@ -480,7 +480,7 @@
 
       <!-- PHẦN 1: QUY TRÌNH 4 BƯỚC VÀ CHECKLIST 7 GIAI ĐOẠN VIP (MÃ 2720) -->
       <div class="guide-subblock" id="process">
-        <h3 class="guide-subblock-title serif">1. Quy trình sở hữu nhà tại Nhật (Tổng quan &amp; Checklist chi tiết)</h3>
+        <h3 class="guide-subblock-title serif">Quy trình sở hữu nhà tại Nhật (Tổng quan &amp; Checklist chi tiết)</h3>
         <div class="process-grid">
           <div class="process-step">
             <div class="step-num">01</div>
@@ -666,8 +666,8 @@
       <div class="guide-subblock" id="articles">
         <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 24px;">
           <div>
-            <h3 class="guide-subblock-title serif" style="margin-bottom: 4px;">2. Thư viện bài viết &amp; Kinh nghiệm thực chiến</h3>
-            <p style="font-size: 13.5px; color: var(--muted); margin: 0;">Các bài phân tích chuyên sâu về quy tắc tiền cọc 手付金, bảo lãnh ngân hàng và mẹo giảm thuế 住宅ローン減税.</p>
+            <h3 class="guide-subblock-title serif" style="margin-bottom: 4px;">4. Thư viện bài viết &amp; Kinh nghiệm thực chiến</h3>
+            <p style="font-size: 13.5px; color: var(--muted); margin: 0;">Các bài phân tích chuyên sâu về lãi suất biến động, quy tắc 5 năm, tiền cọc 手付金, bảo lãnh ngân hàng và mẹo giảm thuế 住宅ローン減税.</p>
           </div>
           <a href="articles.html" class="btn-outline-amber" style="padding: 7px 18px; font-size: 13px;">
             Xem tất cả bài viết →

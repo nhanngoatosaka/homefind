@@ -143,7 +143,12 @@ function applyStaticI18n() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (key) {
-      el.textContent = t(key);
+      const val = t(key);
+      if (typeof val === 'string' && val.includes('\n')) {
+        el.innerHTML = val.replace(/\n/g, '<br>');
+      } else {
+        el.textContent = val;
+      }
     }
   });
 }
