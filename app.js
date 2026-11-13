@@ -1479,68 +1479,10 @@ function renderFooterCompanyInfo() {
 // --------------------------------------------------------------------------
 // 11. MÁY TÍNH TIỀN TRẢ GÓP & SO SÁNH TIỀN THUÊ NHÀ (Chuẩn công thức Keisan.site 1256186048)
 // --------------------------------------------------------------------------
+let currentKeisanViewMode = 'simple'; // 'simple' (Đơn giản) | 'detail' (Chi tiết chuẩn Keisan)
 let currentKeisanMethod = 'ganri'; // 'ganri' (元利均等) | 'gankin' (元金均等)
 let lastKeisanResult = null;
 let isKeisanScheduleOpen = false;
-
-const KEISAN_PRESETS = {
-  house3480: {
-    totalMan: 3480,
-    bonusMan: 0,
-    method: 'ganri',
-    years: 35,
-    months: 0,
-    bonusMonths: '7-1',
-    rate1: 0.6,
-    rate1Years: 5,
-    rate2: 0.6,
-    currentRent: 95000,
-    roundMode: 'floor',
-    startYm: '2026-01'
-  },
-  condo990: {
-    totalMan: 990,
-    bonusMan: 0,
-    method: 'ganri',
-    years: 25,
-    months: 0,
-    bonusMonths: '7-1',
-    rate1: 0.7,
-    rate1Years: 5,
-    rate2: 0.9,
-    currentRent: 68000,
-    roundMode: 'floor',
-    startYm: '2026-01'
-  },
-  standard3000: {
-    totalMan: 3000,
-    bonusMan: 300,
-    method: 'ganri',
-    years: 35,
-    months: 0,
-    bonusMonths: '7-1',
-    rate1: 0.5,
-    rate1Years: 5,
-    rate2: 1.2,
-    currentRent: 85000,
-    roundMode: 'floor',
-    startYm: '2026-01'
-  },
-  keisanDefault: {
-    totalMan: 1000,
-    bonusMan: 400,
-    method: 'ganri',
-    years: 10,
-    months: 0,
-    bonusMonths: '7-1',
-    rate1: 2.0,
-    rate1Years: 5,
-    rate2: 3.0,
-    currentRent: 85000,
-    roundMode: 'floor',
-    startYm: '2026-01'
-  }
-};
 
 function keisanRoundVal(x, mode) {
   if (mode === 'floor') return Math.floor(x + 1e-9);
@@ -1773,10 +1715,6 @@ function initKeisanCalculator() {
   const bonusInput = document.getElementById('ks-bonus-man');
   const bonusSlider = document.getElementById('ks-bonus-slider');
 
-  const clearPresetHighlight = () => {
-    document.querySelectorAll('#keisan-presets .keisan-preset-btn').forEach(b => b.classList.remove('active'));
-  };
-
   // Đồng bộ thanh trượt & ô nhập Tổng tiền vay
   if (totalSlider && totalInput) {
     totalSlider.addEventListener('input', () => {
@@ -1785,12 +1723,10 @@ function initKeisanCalculator() {
         bonusInput.value = totalInput.value;
         if (bonusSlider) bonusSlider.value = totalInput.value;
       }
-      clearPresetHighlight();
       recalcAndRenderKeisan();
     });
     totalInput.addEventListener('input', () => {
       totalSlider.value = Math.min(8000, Math.max(100, Number(totalInput.value) || 0));
-      clearPresetHighlight();
       recalcAndRenderKeisan();
     });
   }
@@ -1802,7 +1738,6 @@ function initKeisanCalculator() {
       const val = Math.min(maxAllowed, Number(bonusSlider.value) || 0);
       bonusInput.value = val;
       bonusSlider.value = val;
-      clearPresetHighlight();
       recalcAndRenderKeisan();
     });
     bonusInput.addEventListener('input', () => {
@@ -1811,7 +1746,6 @@ function initKeisanCalculator() {
         bonusInput.value = maxAllowed;
       }
       bonusSlider.value = Math.min(2000, Math.max(0, Number(bonusInput.value) || 0));
-      clearPresetHighlight();
       recalcAndRenderKeisan();
     });
   }
@@ -1832,33 +1766,83 @@ function initKeisanCalculator() {
   controlIds.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
-      el.addEventListener('input', () => {
-        clearPresetHighlight();
-        recalcAndRenderKeisan();
-      });
-      el.addEventListener('change', () => {
-        clearPresetHighlight();
-        recalcAndRenderKeisan();
-      });
+      el.addEventListener('input', recalcAndRenderKeisan);
+      el.addEventListener('change', recalcAndRenderKeisan);
     }
   });
 
-  recalcAndRenderKeisan();
+  setKeisanViewMode(currentKeisanViewMode);
 }
+
+window.setKeisanViewMode = function(mode, scrollToSection = false) {
+  currentKeisanViewMode = mode === 'detail' ? 'detail' : 'simple';
+  const section = document.getElementById('featured');
+  if (section) {
+    section.classList.toggle('keisan-mode-simple', currentKeisanViewMode === 'simple');
+    section.classList.toggle('keisan-mode-detail', currentKeisanViewMode === 'detail');
+  }
+
+  const btnSimple = document.getElementById('btn-keisan-mode-simple');
+  const btnDetail = document.getElementById('btn-keisan-mode-detail');
+  if (btnSimple) {
+    const isSimple = currentKeisanViewMode === 'simple';
+    btnSimple.classList.toggle('active', isSimple);
+    btnSimple.setAttribute('aria-selected', isSimple ? 'true' : 'false');
+  }
+  if (btnDetail) {
+    const isDetail = currentKeisanViewMode === 'detail';
+    btnDetail.classList.toggle('active', isDetail);
+    btnDetail.setAttribute('aria-selected', isDetail ? 'true' : 'false');
+  }
+
+  if (currentKeisanViewMode === 'simple' && isKeisanScheduleOpen) {
+    isKeisanScheduleOpen = false;
+    const wrap = document.getElementById('keisan-schedule-wrap');
+    const toggleBtn = document.getElementById('btn-toggle-keisan-table');
+    if (wrap) wrap.classList.remove('open');
+    if (toggleBtn) toggleBtn.textContent = 'Xem bảng lịch trả nợ chi tiết ↓';
+  }
+
+  recalcAndRenderKeisan();
+
+  if (scrollToSection && section) {
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+};
 
 function readKeisanInputs() {
   const totalMan = Number(document.getElementById('ks-total-man')?.value) || 0;
-  const bonusMan = Math.min(totalMan, Math.max(0, Number(document.getElementById('ks-bonus-man')?.value) || 0));
   const years = Math.max(1, Math.min(50, Number(document.getElementById('ks-term-years')?.value) || 35));
-  const months = Math.max(0, Math.min(12, Number(document.getElementById('ks-term-months')?.value) || 0));
-  const bonusMonthsPair = document.getElementById('ks-bonus-months')?.value || '7-1';
   const rate1Pct = Math.max(0, Number(document.getElementById('ks-rate1')?.value) || 0);
-  const rate1Years = Math.max(1, Number(document.getElementById('ks-rate1-years')?.value) || 5);
-  const rate2Pct = Math.max(0, Number(document.getElementById('ks-rate2')?.value) || 0);
   const currentRent = Math.max(0, Number(document.getElementById('ks-current-rent')?.value) || 0);
-  const roundMode = document.getElementById('ks-round-mode')?.value || 'floor';
   const startYmStr = document.getElementById('ks-start-ym')?.value || '2026-01';
   const [sy, sm] = startYmStr.split('-').map(Number);
+
+  // Chế độ Đơn giản: dùng 1 lãi suất cố định suốt kỳ, trả gốc+lãi đều, không tách Bonus
+  if (currentKeisanViewMode === 'simple') {
+    return {
+      totalMan,
+      bonusMan: 0,
+      method: 'ganri',
+      years,
+      months: 0,
+      bonusMonthsPair: '7-1',
+      rate1Pct,
+      rate1Years: years,
+      rate2Pct: rate1Pct,
+      currentRent,
+      roundMode: 'floor',
+      startYear: sy || 2026,
+      startMonth: sm || 1
+    };
+  }
+
+  const bonusMan = Math.min(totalMan, Math.max(0, Number(document.getElementById('ks-bonus-man')?.value) || 0));
+  const months = Math.max(0, Math.min(12, Number(document.getElementById('ks-term-months')?.value) || 0));
+  const bonusMonthsPair = document.getElementById('ks-bonus-months')?.value || '7-1';
+  const rate1Years = Math.max(1, Number(document.getElementById('ks-rate1-years')?.value) || 5);
+  const rate2Pct = Math.max(0, Number(document.getElementById('ks-rate2')?.value) || 0);
+  const roundMode = document.getElementById('ks-round-mode')?.value || 'floor';
 
   return {
     totalMan,
@@ -1888,17 +1872,25 @@ function recalcAndRenderKeisan() {
   const fmtYen = n => `¥${Math.round(n).toLocaleString('en-US')}`;
 
   // 1. Hiển thị tiền trả hàng tháng kỳ đầu & giai đoạn 2
+  const pay1LabelEl = document.getElementById('ks-res-pay1-label');
   const pay1El = document.getElementById('ks-res-pay1');
   const pay2LabelEl = document.getElementById('ks-res-pay2-label');
   const pay2El = document.getElementById('ks-res-pay2');
   const bonusPayEl = document.getElementById('ks-res-bonus-pay');
   const endBadgeEl = document.getElementById('ks-res-end-badge');
 
+  if (pay1LabelEl) {
+    pay1LabelEl.textContent = currentKeisanViewMode === 'simple'
+      ? 'Tiền trả hàng tháng · 毎月返済額'
+      : 'Tiền trả hàng tháng (Kỳ đầu) · 毎月返済額';
+  }
   if (pay1El) {
     pay1El.innerHTML = `${fmtYen(res.firstMonthPay)}<span style="font-size: 15px; font-weight: 400; color: var(--muted);">/tháng</span>`;
   }
   if (endBadgeEl) {
-    endBadgeEl.textContent = `${res.totalMonths} kỳ · Tất toán ${res.endYm}`;
+    endBadgeEl.textContent = currentKeisanViewMode === 'simple'
+      ? `${res.totalMonths} kỳ (${params.years} năm)`
+      : `${res.totalMonths} kỳ · Tất toán ${res.endYm}`;
   }
   if (pay2LabelEl) {
     if (params.rate1Years < params.years) {
@@ -1971,6 +1963,10 @@ function recalcAndRenderKeisan() {
       }
     }
 
+    const monthlyLoanRowLabel = params.bonusMan > 0
+      ? 'Trung bình trả góp mua nhà mỗi tháng (gồm Bonus):'
+      : 'Trả góp mua nhà mỗi tháng:';
+
     rentCompareBox.innerHTML = `
       <div class="keisan-rent-compare-title">
         <span>Đối chiếu Thuê nhà (${fmtYen(params.currentRent)}/tháng) vs Mua trả góp</span>
@@ -1981,7 +1977,7 @@ function recalcAndRenderKeisan() {
         <strong style="color: var(--danger);">${fmtYen(totalRentOverTerm)} (Mất trắng tiền thuê)</strong>
       </div>
       <div class="keisan-rent-compare-row">
-        <span>Trung bình trả góp mua nhà mỗi tháng (gồm Bonus):</span>
+        <span>${monthlyLoanRowLabel}</span>
         <strong style="color: var(--ink);">${fmtYen(effectiveMonthly)}/tháng</strong>
       </div>
       ${diffVerdictHtml ? `<div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--line); font-size: 12.5px; color: var(--ink);">${diffVerdictHtml}</div>` : ''}
@@ -2036,35 +2032,6 @@ window.setKeisanMethod = function(method) {
   if (btnGanri) btnGanri.classList.toggle('active', currentKeisanMethod === 'ganri');
   if (btnGankin) btnGankin.classList.toggle('active', currentKeisanMethod === 'gankin');
   recalcAndRenderKeisan();
-};
-
-window.applyKeisanPreset = function(presetKey, btnEl) {
-  const preset = KEISAN_PRESETS[presetKey];
-  if (!preset) return;
-
-  document.querySelectorAll('#keisan-presets .keisan-preset-btn').forEach(b => b.classList.remove('active'));
-  if (btnEl) btnEl.classList.add('active');
-
-  const setVal = (id, val) => {
-    const el = document.getElementById(id);
-    if (el) el.value = val;
-  };
-
-  setVal('ks-total-man', preset.totalMan);
-  setVal('ks-total-slider', Math.min(8000, preset.totalMan));
-  setVal('ks-bonus-man', preset.bonusMan);
-  setVal('ks-bonus-slider', Math.min(2000, preset.bonusMan));
-  setVal('ks-term-years', preset.years);
-  setVal('ks-term-months', preset.months);
-  setVal('ks-bonus-months', preset.bonusMonths);
-  setVal('ks-rate1', preset.rate1);
-  setVal('ks-rate1-years', preset.rate1Years);
-  setVal('ks-rate2', preset.rate2);
-  setVal('ks-current-rent', preset.currentRent);
-  setVal('ks-round-mode', preset.roundMode);
-  setVal('ks-start-ym', preset.startYm);
-
-  window.setKeisanMethod(preset.method);
 };
 
 window.toggleKeisanSchedule = function() {
@@ -2153,7 +2120,11 @@ window.consultWithKeisanResult = function() {
     propInput.value = `Tư vấn vay ${params.totalMan.toLocaleString()}万円 (${params.years} năm · ${methodLabel})`;
   }
   if (msgInput) {
-    msgInput.value = `Tôi vừa tính thử trên web: Vay ${params.totalMan.toLocaleString()}万円 (Bonus ${params.bonusMan}万円), thời hạn ${params.years} năm, lãi suất đầu ${params.rate1Pct}% (${params.rate1Years} năm) → sau đó ${params.rate2Pct}%. Tiền trả ước tính mỗi tháng khoảng ¥${res.firstMonthPay.toLocaleString()}. Nhờ BIG不動産 tư vấn hồ sơ vay và giới thiệu căn phù hợp.`;
+    if (currentKeisanViewMode === 'simple') {
+      msgInput.value = `Tôi vừa tính nhanh trên web: Vay ${params.totalMan.toLocaleString()}万円, thời hạn ${params.years} năm, lãi suất ${params.rate1Pct}%/năm. Tiền trả ước tính mỗi tháng khoảng ¥${res.firstMonthPay.toLocaleString()}. Nhờ BIG不動産 tư vấn hồ sơ vay và giới thiệu căn phù hợp.`;
+    } else {
+      msgInput.value = `Tôi vừa tính thử trên web: Vay ${params.totalMan.toLocaleString()}万円 (Bonus ${params.bonusMan}万円), thời hạn ${params.years} năm, lãi suất đầu ${params.rate1Pct}% (${params.rate1Years} năm) → sau đó ${params.rate2Pct}%. Tiền trả ước tính mỗi tháng khoảng ¥${res.firstMonthPay.toLocaleString()}. Nhờ BIG不動産 tư vấn hồ sơ vay và giới thiệu căn phù hợp.`;
+    }
   }
 
   const contactSection = document.getElementById('contact');

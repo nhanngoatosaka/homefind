@@ -18,7 +18,7 @@
   <meta name="twitter:description" content="Danh mục nhà phố, căn hộ chọn lọc tại Osaka &amp; vùng Kansai. Thông tin minh bạch, tính khoản vay trực tiếp và hỗ trợ pháp lý trọn gói.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1600&auto=format&fit=crop">
 
-  <link rel="stylesheet" href="styles.css?v=20261111">
+  <link rel="stylesheet" href="styles.css?v=20261114f">
 </head>
 <body>
 
@@ -63,36 +63,36 @@
   </section>
 
   <!-- 1. MÁY TÍNH TIỀN TRẢ GÓP & SO SÁNH THUÊ NHÀ (Chuẩn công thức Keisan.site) -->
-  <section class="featured-section" id="featured">
+  <section class="featured-section keisan-mode-simple" id="featured">
     <div class="container">
-      <div class="section-head" style="margin-bottom: 20px;">
+      <div class="section-head" style="margin-bottom: 18px;">
         <div class="kicker">1. ローン返済（ボーナス併用）＆ 家賃比較 · Công cụ tính chi phí nhà ở</div>
         <h2 class="section-title serif">Bảng tính tiền trả góp mua nhà &amp; So sánh tiền thuê</h2>
-        <p style="font-size: 14px; color: var(--muted); margin-top: 4px;">
+        <p style="font-size: 14px; color: var(--muted); margin-top: 4px;" class="ks-simple-only">
+          Ước tính nhanh số tiền trả hàng tháng theo số tiền vay, lãi suất và số năm trả — kèm so sánh trực tiếp với tiền thuê nhà hiện tại.
+        </p>
+        <p style="font-size: 14px; color: var(--muted); margin-top: 4px;" class="ks-detail-only">
           Tính chính xác số tiền trả hàng tháng, kỳ thưởng Bonus, đổi lãi suất 2 giai đoạn (theo đúng chuẩn ngân hàng &amp; Keisan) và đối chiếu trực tiếp với tiền thuê nhà hàng tháng của bạn.
         </p>
       </div>
 
-      <!-- Các nút nạp nhanh kịch bản thực tế -->
-      <div class="keisan-presets" id="keisan-presets">
-        <button type="button" class="keisan-preset-btn active" onclick="applyKeisanPreset('house3480', this)">
-          Nhà phố Osaka 3,480万円 · 35 năm (Lãi 0.6%)
-        </button>
-        <button type="button" class="keisan-preset-btn" onclick="applyKeisanPreset('condo990', this)">
-          Căn hộ 990万円 · 25 năm (Trả nhẹ hơn thuê)
-        </button>
-        <button type="button" class="keisan-preset-btn" onclick="applyKeisanPreset('standard3000', this)">
-          Vay 3,000万円 · 35 năm (5 năm đầu 0.5% → 1.2%)
-        </button>
-        <button type="button" class="keisan-preset-btn" onclick="applyKeisanPreset('keisanDefault', this)">
-          Mẫu gốc Keisan (1,000万円 · Bonus 400万円 · 10 năm)
-        </button>
+      <!-- 2 nút Toggle: Bảng tính đơn giản / Bảng tính chi tiết -->
+      <div class="keisan-mode-bar">
+        <div class="keisan-mode-toggle" role="tablist" aria-label="Chế độ bảng tính vay mua nhà">
+          <button type="button" class="keisan-mode-btn active" id="btn-keisan-mode-simple" role="tab" aria-selected="true" onclick="setKeisanViewMode('simple')">
+            ⚡ Bảng tính đơn giản
+          </button>
+          <button type="button" class="keisan-mode-btn" id="btn-keisan-mode-detail" role="tab" aria-selected="false" onclick="setKeisanViewMode('detail')">
+            📊 Bảng tính chi tiết
+          </button>
+        </div>
       </div>
 
       <div class="keisan-grid">
         <!-- CỘT TRÁI: NHẬP THÔNG SỐ VAY & TIỀN THUÊ ĐỐI CHIẾU -->
         <div class="keisan-card">
-          <div class="keisan-section-label">1. Số tiền vay &amp; Phần trả thưởng Bonus (借入金額)</div>
+          <div class="keisan-section-label ks-simple-only">Thông số vay cơ bản (Nhập nhanh)</div>
+          <div class="keisan-section-label ks-detail-only">1. Số tiền vay &amp; Phần trả thưởng Bonus (借入金額)</div>
 
           <div class="keisan-form-row">
             <div class="keisan-field">
@@ -107,7 +107,7 @@
               <input type="range" id="ks-total-slider" class="keisan-range" min="100" max="8000" step="10" value="3480">
             </div>
 
-            <div class="keisan-field">
+            <div class="keisan-field ks-detail-only">
               <label for="ks-bonus-man">
                 <span>Trong đó trả vào kỳ Bonus</span>
                 <span class="jp-sub">うちボーナス返済</span>
@@ -120,160 +120,165 @@
             </div>
           </div>
 
-          <div class="keisan-section-label" style="margin-top: 8px;">2. Phương thức trả &amp; Thời gian vay (返済方式・期間)</div>
+          <div class="keisan-inputs-body">
+            <div class="keisan-section-label ks-detail-only" style="margin-top: 8px;">2. Phương thức trả &amp; Thời gian vay (返済方式・期間)</div>
 
-          <div class="keisan-field" style="margin-bottom: 14px;">
-            <label>
-              <span>Phương thức tính trả góp</span>
-              <span class="jp-sub">返済方式</span>
-            </label>
-            <div class="keisan-method-tabs">
-              <button type="button" class="keisan-method-btn active" id="ks-method-ganri" onclick="setKeisanMethod('ganri')">
-                元利均等 · Gốc + Lãi đều mỗi tháng
-              </button>
-              <button type="button" class="keisan-method-btn" id="ks-method-gankin" onclick="setKeisanMethod('gankin')">
-                元金均等 · Gốc đều (Lãi giảm dần)
-              </button>
-            </div>
-          </div>
-
-          <div class="keisan-form-row-3">
-            <div class="keisan-field">
-              <label for="ks-term-years">
-                <span>Số năm vay</span>
-                <span class="jp-sub">返済期間(年)</span>
+            <div class="keisan-field ks-detail-only" style="margin-bottom: 14px;">
+              <label>
+                <span>Phương thức tính trả góp</span>
+                <span class="jp-sub">返済方式</span>
               </label>
-              <div class="keisan-input-unit">
-                <input type="number" id="ks-term-years" class="form-control" min="1" max="50" step="1" value="35">
-                <span class="keisan-unit-tag">năm</span>
+              <div class="keisan-method-tabs">
+                <button type="button" class="keisan-method-btn active" id="ks-method-ganri" onclick="setKeisanMethod('ganri')">
+                  元利均等 · Gốc + Lãi đều mỗi tháng
+                </button>
+                <button type="button" class="keisan-method-btn" id="ks-method-gankin" onclick="setKeisanMethod('gankin')">
+                  元金均等 · Gốc đều (Lãi giảm dần)
+                </button>
               </div>
             </div>
 
-            <div class="keisan-field">
-              <label for="ks-term-months">
-                <span>Số tháng lẻ</span>
-                <span class="jp-sub">ヶ月</span>
-              </label>
-              <select id="ks-term-months" class="form-control">
-                <option value="0" selected>0 tháng</option>
-                <option value="1">1 tháng</option>
-                <option value="2">2 tháng</option>
-                <option value="3">3 tháng</option>
-                <option value="4">4 tháng</option>
-                <option value="5">5 tháng</option>
-                <option value="6">6 tháng</option>
-                <option value="7">7 tháng</option>
-                <option value="8">8 tháng</option>
-                <option value="9">9 tháng</option>
-                <option value="10">10 tháng</option>
-                <option value="11">11 tháng</option>
-                <option value="12">12 tháng</option>
-              </select>
-            </div>
+            <div class="keisan-form-row-3">
+              <div class="keisan-field">
+                <label for="ks-term-years">
+                  <span>Số năm vay</span>
+                  <span class="jp-sub">返済期間(年)</span>
+                </label>
+                <div class="keisan-input-unit">
+                  <input type="number" id="ks-term-years" class="form-control" min="1" max="50" step="1" value="35">
+                  <span class="keisan-unit-tag">năm</span>
+                </div>
+              </div>
 
-            <div class="keisan-field">
-              <label for="ks-bonus-months">
-                <span>Tháng trả Bonus</span>
-                <span class="jp-sub">ボーナス月</span>
-              </label>
-              <select id="ks-bonus-months" class="form-control">
-                <option value="7-1" selected>Tháng 7 &amp; Tháng 1 (7月・1月)</option>
-                <option value="6-12">Tháng 6 &amp; Tháng 12 (6月・12月)</option>
-                <option value="8-2">Tháng 8 &amp; Tháng 2 (8月・2月)</option>
-              </select>
-            </div>
-          </div>
+              <div class="keisan-field ks-detail-only">
+                <label for="ks-term-months">
+                  <span>Số tháng lẻ</span>
+                  <span class="jp-sub">ヶ月</span>
+                </label>
+                <select id="ks-term-months" class="form-control">
+                  <option value="0" selected>0 tháng</option>
+                  <option value="1">1 tháng</option>
+                  <option value="2">2 tháng</option>
+                  <option value="3">3 tháng</option>
+                  <option value="4">4 tháng</option>
+                  <option value="5">5 tháng</option>
+                  <option value="6">6 tháng</option>
+                  <option value="7">7 tháng</option>
+                  <option value="8">8 tháng</option>
+                  <option value="9">9 tháng</option>
+                  <option value="10">10 tháng</option>
+                  <option value="11">11 tháng</option>
+                  <option value="12">12 tháng</option>
+                </select>
+              </div>
 
-          <div class="keisan-section-label" style="margin-top: 8px;">3. Lãi suất giai đoạn đầu &amp; Giai đoạn sau (当初金利・以降金利)</div>
-
-          <div class="keisan-form-row-3">
-            <div class="keisan-field">
-              <label for="ks-rate1">
-                <span>Lãi suất đầu</span>
-                <span class="jp-sub">当初金利</span>
-              </label>
-              <div class="keisan-input-unit">
-                <input type="number" id="ks-rate1" class="form-control" min="0" max="20" step="0.01" value="0.6">
-                <span class="keisan-unit-tag">%</span>
+              <div class="keisan-field ks-detail-only">
+                <label for="ks-bonus-months">
+                  <span>Tháng trả Bonus</span>
+                  <span class="jp-sub">ボーナス月</span>
+                </label>
+                <select id="ks-bonus-months" class="form-control">
+                  <option value="7-1" selected>Tháng 7 &amp; Tháng 1 (7月・1月)</option>
+                  <option value="6-12">Tháng 6 &amp; Tháng 12 (6月・12月)</option>
+                  <option value="8-2">Tháng 8 &amp; Tháng 2 (8月・2月)</option>
+                </select>
               </div>
             </div>
 
-            <div class="keisan-field">
-              <label for="ks-rate1-years">
-                <span>Trong mấy năm</span>
-                <span class="jp-sub">当初期間</span>
-              </label>
-              <div class="keisan-input-unit">
-                <input type="number" id="ks-rate1-years" class="form-control" min="1" max="50" step="1" value="5">
-                <span class="keisan-unit-tag">năm</span>
+            <div class="keisan-section-label ks-detail-only" style="margin-top: 8px;">3. Lãi suất giai đoạn đầu &amp; Giai đoạn sau (当初金利・以降金利)</div>
+
+            <div class="keisan-form-row-3">
+              <div class="keisan-field">
+                <label for="ks-rate1">
+                  <span class="ks-simple-only">Lãi suất (%/năm)</span>
+                  <span class="ks-detail-only">Lãi suất đầu</span>
+                  <span class="jp-sub ks-simple-only">金利</span>
+                  <span class="jp-sub ks-detail-only">当初金利</span>
+                </label>
+                <div class="keisan-input-unit">
+                  <input type="number" id="ks-rate1" class="form-control" min="0" max="20" step="0.01" value="0.6">
+                  <span class="keisan-unit-tag">%</span>
+                </div>
+              </div>
+
+              <div class="keisan-field ks-detail-only">
+                <label for="ks-rate1-years">
+                  <span>Trong mấy năm</span>
+                  <span class="jp-sub">当初期間</span>
+                </label>
+                <div class="keisan-input-unit">
+                  <input type="number" id="ks-rate1-years" class="form-control" min="1" max="50" step="1" value="5">
+                  <span class="keisan-unit-tag">năm</span>
+                </div>
+              </div>
+
+              <div class="keisan-field ks-detail-only">
+                <label for="ks-rate2">
+                  <span>Lãi các năm sau</span>
+                  <span class="jp-sub">以降の金利</span>
+                </label>
+                <div class="keisan-input-unit">
+                  <input type="number" id="ks-rate2" class="form-control" min="0" max="20" step="0.01" value="0.6">
+                  <span class="keisan-unit-tag">%</span>
+                </div>
               </div>
             </div>
 
-            <div class="keisan-field">
-              <label for="ks-rate2">
-                <span>Lãi các năm sau</span>
-                <span class="jp-sub">以降の金利</span>
-              </label>
-              <div class="keisan-input-unit">
-                <input type="number" id="ks-rate2" class="form-control" min="0" max="20" step="0.01" value="0.6">
-                <span class="keisan-unit-tag">%</span>
+            <!-- Tùy chọn nâng cao thu gọn (Làm tròn & Tháng bắt đầu vay & Tiền thuê hiện tại) -->
+            <div class="keisan-form-row-3 keisan-advanced-divider">
+              <div class="keisan-field">
+                <label for="ks-current-rent">
+                  <span>Tiền thuê hiện tại</span>
+                  <span class="jp-sub">現在の家賃</span>
+                </label>
+                <div class="keisan-input-unit">
+                  <input type="number" id="ks-current-rent" class="form-control" min="0" max="1000000" step="1000" value="85000">
+                  <span class="keisan-unit-tag">¥/th</span>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <!-- Tùy chọn nâng cao thu gọn (Làm tròn & Tháng bắt đầu vay & Tiền thuê hiện tại) -->
-          <div class="keisan-form-row-3" style="margin-bottom: 0; padding-top: 8px; border-top: 1px solid var(--line);">
-            <div class="keisan-field">
-              <label for="ks-current-rent">
-                <span>Tiền thuê hiện tại</span>
-                <span class="jp-sub">現在の家賃</span>
-              </label>
-              <div class="keisan-input-unit">
-                <input type="number" id="ks-current-rent" class="form-control" min="0" max="1000000" step="1000" value="85000">
-                <span class="keisan-unit-tag">¥/th</span>
+              <div class="keisan-field ks-detail-only">
+                <label for="ks-round-mode">
+                  <span>Làm tròn số lẻ</span>
+                  <span class="jp-sub">端数処理</span>
+                </label>
+                <select id="ks-round-mode" class="form-control">
+                  <option value="floor" selected>切捨て · Làm tròn xuống</option>
+                  <option value="round">四捨五入 · Làm tròn chuẩn</option>
+                  <option value="ceil">切上げ · Làm tròn lên</option>
+                </select>
               </div>
-            </div>
 
-            <div class="keisan-field">
-              <label for="ks-round-mode">
-                <span>Làm tròn số lẻ</span>
-                <span class="jp-sub">端数処理</span>
-              </label>
-              <select id="ks-round-mode" class="form-control">
-                <option value="floor" selected>切捨て · Làm tròn xuống</option>
-                <option value="round">四捨五入 · Làm tròn chuẩn</option>
-                <option value="ceil">切上げ · Làm tròn lên</option>
-              </select>
-            </div>
-
-            <div class="keisan-field">
-              <label for="ks-start-ym">
-                <span>Tháng giải ngân</span>
-                <span class="jp-sub">借入年月</span>
-              </label>
-              <input type="month" id="ks-start-ym" class="form-control" value="2026-01">
+              <div class="keisan-field ks-detail-only">
+                <label for="ks-start-ym">
+                  <span>Tháng giải ngân</span>
+                  <span class="jp-sub">借入年月</span>
+                </label>
+                <input type="month" id="ks-start-ym" class="form-control" value="2026-01">
+              </div>
             </div>
           </div>
         </div>
 
         <!-- CỘT PHẢI: KẾT QUẢ TRẢ GÓP, TỶ LỆ GỐC/LÃI & SO SÁNH TIỀN THUÊ NHÀ -->
         <div class="keisan-result-card">
-          <div class="keisan-section-label">Kết quả ước tính trả góp &amp; So sánh thuê nhà</div>
+          <div class="keisan-section-label ks-simple-only">Kết quả ước tính nhanh (Gốc + Lãi đều mỗi tháng)</div>
+          <div class="keisan-section-label ks-detail-only">Kết quả ước tính trả góp &amp; So sánh thuê nhà</div>
 
           <div class="keisan-hero-numbers">
             <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px;">
               <div>
                 <div style="font-size: 12px; color: var(--muted); font-weight: 500;" id="ks-res-pay1-label">
-                  Tiền trả hàng tháng (Kỳ đầu) · 毎月返済額
+                  Tiền trả hàng tháng · 毎月返済額
                 </div>
                 <div class="keisan-main-pay" id="ks-res-pay1">¥91,881<span style="font-size: 15px; font-weight: 400; color: var(--muted);">/tháng</span></div>
               </div>
               <div style="text-align: right;">
-                <span class="status-pill" id="ks-res-end-badge" style="margin-bottom: 0;">420 kỳ · Tất toán 2061/01</span>
+                <span class="status-pill" id="ks-res-end-badge" style="margin-bottom: 0;">420 kỳ (35 năm)</span>
               </div>
             </div>
 
-            <div class="keisan-sub-pay-grid">
+            <div class="keisan-sub-pay-grid ks-detail-only">
               <div>
                 <div style="font-size: 12px; color: var(--muted);" id="ks-res-pay2-label">Từ năm thứ 6 trở đi · 以降月額</div>
                 <div style="font-size: 17px; font-weight: 600; color: var(--ink);" class="serif" id="ks-res-pay2">¥91,881/tháng</div>
@@ -300,7 +305,7 @@
           </div>
 
           <!-- Bảng tóm tắt chuẩn Keisan (月払 vs ボーナス払) -->
-          <table class="spec-table" style="margin-bottom: 12px;">
+          <table class="spec-table ks-detail-only" style="margin-bottom: 12px;">
             <tbody>
               <tr>
                 <td>Phần trả hàng tháng (月払合計)</td>
@@ -322,7 +327,10 @@
             <button type="button" class="btn-primary" onclick="consultWithKeisanResult()">
               Nhờ BIG不動産 tư vấn gói vay này →
             </button>
-            <button type="button" class="btn-secondary" id="btn-toggle-keisan-table" onclick="toggleKeisanSchedule()">
+            <button type="button" class="btn-secondary ks-simple-only" onclick="setKeisanViewMode('detail', true)">
+              Mở bảng tính chi tiết (Bonus, 2 kỳ lãi, lịch trả nợ) →
+            </button>
+            <button type="button" class="btn-secondary ks-detail-only" id="btn-toggle-keisan-table" onclick="toggleKeisanSchedule()">
               Xem bảng lịch trả nợ chi tiết ↓
             </button>
           </div>
@@ -333,7 +341,7 @@
       </div>
 
       <!-- BẢNG LỊCH TRẢ NỢ CHI TIẾT (Mở rộng khi bấm nút, đúng chuẩn 9 cột của Keisan.site + Tải CSV) -->
-      <div class="keisan-schedule-wrap" id="keisan-schedule-wrap">
+      <div class="keisan-schedule-wrap ks-detail-only" id="keisan-schedule-wrap">
         <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px;">
           <div>
             <h3 class="serif" style="font-size: 18px;">Bảng lịch trả nợ &amp; dư nợ chi tiết (返済予定表)</h3>
@@ -473,7 +481,7 @@
       <div class="section-head" style="margin-bottom: 32px;">
         <div class="kicker">3. ノウハウ・ガイド · Cẩm nang &amp; Quy trình</div>
         <h2 class="section-title serif">Lộ trình mua nhà &amp; Kinh nghiệm thực chiến</h2>
-        <p style="font-size: 14.5px; color: var(--muted); margin-top: 6px; max-width: 780px;">
+        <p style="font-size: 14.5px; color: var(--muted); margin-top: 6px; max-width: 1080px;">
           Toàn bộ hành trình từ lúc tìm kiếm, tính toán tài chính, làm việc với ngân hàng Nhật Bản đến khi nhận chìa khóa và hoàn tất khai thuế năm đầu.
         </p>
       </div>
@@ -838,7 +846,7 @@
   </div>
 
   <script src="config.js?v=20261110z"></script>
-  <script src="i18n.js?v=20261110z"></script>
-  <script src="app.js?v=20261111"></script>
+  <script src="i18n.js?v=20261114a"></script>
+  <script src="app.js?v=20261114a"></script>
 </body>
 </html>
