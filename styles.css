@@ -73,17 +73,23 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Nền bê tông đá terrazzo kiến trúc làm mờ nhẹ giúp chữ phía trước sắc nét, dễ đọc */
+/* Nền vệt nắng chéo qua lam gỗ (Mẫu 1A) làm mờ dịu + chừa biên GPU parallax êm nhẹ */
 body::before {
   content: "";
   position: fixed;
-  inset: -8px;
+  top: -12vh;
+  right: -4vw;
+  bottom: -12vh;
+  left: -4vw;
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(244, 243, 239, 0.50) 0%, rgba(244, 243, 239, 0.42) 55%, rgba(238, 236, 231, 0.50) 100%),
-    url('assets/concrete-wall-bg.jpg?v=20261114e') 0 0 / 512px 1024px repeat;
-  filter: blur(1.8px);
+    linear-gradient(180deg, rgba(246, 244, 240, 0.44) 0%, rgba(245, 242, 237, 0.36) 50%, rgba(240, 237, 231, 0.46) 100%),
+    url('assets/sunbeam-wall-bg.jpg?v=20261114g') center center / cover no-repeat;
+  filter: blur(2.6px) brightness(1.06);
+  transform: translate3d(var(--bg-parallax-x, 0px), var(--bg-parallax-y, 0px), 0) scale(var(--bg-parallax-scale, 1.03));
+  transform-origin: center center;
+  will-change: transform;
 }
 
 h1, h2, h3, h4, .serif {
@@ -397,14 +403,317 @@ section.brand-banner {
 }
 
 /* ==========================================================================
+   3.5. CLIENT SHOWCASE DIPTYCH (1 khung hình lớn tách 2 ảnh thông minh)
+   ========================================================================== */
+section.client-showcase-section {
+  padding: 20px 0 28px;
+}
+.client-showcase-shell {
+  position: relative;
+}
+.client-showcase-stage {
+  position: relative;
+  height: clamp(470px, 59vh, 590px);
+  padding: 7px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(216, 214, 208, 0.88);
+  box-shadow: 0 22px 54px rgba(26, 28, 32, 0.11);
+  transition: border-color 0.35s ease, box-shadow 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.client-showcase-stage:hover {
+  border-color: var(--bulb-gold);
+  box-shadow: var(--bulb-halo);
+}
+.client-showcase-diptych {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  background-color: rgba(244, 243, 239, 0.92);
+}
+.client-showcase-pane {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #232629;
+  cursor: zoom-in;
+}
+.client-showcase-pane::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 22, 26, 0.14) 0%,
+    rgba(20, 22, 26, 0.0) 26%,
+    rgba(20, 22, 26, 0.04) 55%,
+    rgba(18, 20, 24, 0.68) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+.showcase-slide {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 1;
+  transition: opacity 0.72s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.72s step-end;
+}
+.showcase-slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 2;
+  transition: opacity 0.72s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s step-start;
+}
+.showcase-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+  display: block;
+  transform: scale(1.025);
+  transition: transform 4.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.showcase-slide.is-active img {
+  transform: scale(1);
+}
+.client-showcase-pane:hover .showcase-slide.is-active img {
+  transform: scale(1.03);
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.showcase-slide img.is-portrait {
+  object-position: center 15%;
+}
+.showcase-pane-zoom {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 4;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(22, 24, 28, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #FFFFFF;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(-2px);
+  transition: opacity 0.25s ease, transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease;
+  pointer-events: none;
+}
+.client-showcase-pane:hover .showcase-pane-zoom {
+  opacity: 1;
+  transform: translateY(0);
+}
+.showcase-edge-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(20, 22, 26, 0.44);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #FFFFFF;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.28s ease, background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.showcase-edge-nav--prev { left: 20px; }
+.showcase-edge-nav--next { right: 20px; }
+.client-showcase-stage:hover .showcase-edge-nav {
+  opacity: 1;
+}
+.showcase-edge-nav:hover {
+  background: var(--amber);
+  border-color: var(--bulb-gold);
+  box-shadow: var(--bulb-btn-glow);
+}
+
+/* Thẻ kính mờ Japandi căn giữa cân đối giao giữa 2 khung hình lớn */
+.showcase-glass-card {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 4;
+  width: min(620px, calc(100% - 64px));
+  padding: 15px 24px 16px;
+  border-radius: 15px;
+  background: rgba(20, 22, 26, 0.28);
+  backdrop-filter: blur(8px) saturate(125%);
+  -webkit-backdrop-filter: blur(8px) saturate(125%);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+  color: #FFFFFF;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+  text-align: center;
+  pointer-events: auto;
+}
+.showcase-glass-kicker {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--bulb-filament);
+  margin-bottom: 4px;
+}
+.showcase-glass-title {
+  margin: 0;
+  font-size: clamp(18px, 1.7vw, 24px);
+  font-weight: 600;
+  line-height: 1.24;
+  color: #FFFFFF;
+  letter-spacing: -0.012em;
+}
+.showcase-glass-highlights {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 11px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+}
+.showcase-highlight-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 0 12px;
+  text-align: center;
+}
+.showcase-highlight-item + .showcase-highlight-item {
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+.showcase-highlight-main {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #FFFFFF;
+  line-height: 1.25;
+}
+.showcase-highlight-sub {
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.86);
+  line-height: 1.3;
+}
+
+/* Lightbox phóng to ảnh album khách hàng */
+.album-lightbox-box {
+  max-width: min(980px, 94vw);
+  width: auto;
+  background: rgba(24, 26, 29, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #FFFFFF;
+  padding: 16px 16px 18px;
+  position: relative;
+}
+.album-lightbox-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.album-lightbox-stage img {
+  max-width: 100%;
+  max-height: 74vh;
+  width: auto;
+  height: auto;
+  border-radius: 12px;
+  object-fit: contain;
+  display: block;
+}
+.album-lightbox-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 12px;
+  padding: 0 4px;
+}
+.album-lightbox-caption {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 500;
+}
+.album-lightbox-counter {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.64);
+  white-space: nowrap;
+}
+.album-lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(20, 22, 26, 0.68);
+  color: #FFFFFF;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.album-lightbox-nav:hover {
+  background: var(--amber);
+  border-color: var(--bulb-gold);
+}
+.album-lightbox-nav--prev { left: 12px; }
+.album-lightbox-nav--next { right: 12px; }
+.album-lightbox-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(20, 22, 26, 0.72);
+  color: #FFFFFF;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.album-lightbox-close:hover {
+  border-color: var(--bulb-gold);
+  background: rgba(43, 45, 47, 0.95);
+}
+
+/* ==========================================================================
    4. FEATURED PROPERTY (Căn nổi bật)
    ========================================================================== */
 section.featured-section {
-  background-color: rgba(222, 220, 214, 0.56);
-  border-top: 1px solid rgba(43, 45, 47, 0.08);
-  border-bottom: 1px solid rgba(43, 45, 47, 0.08);
-  padding: 64px 0;
-  margin-bottom: 72px;
+  background-color: rgba(244, 243, 239, 0.16);
+  border-bottom: 1px solid rgba(43, 45, 47, 0.1);
+  padding: 36px 0 64px;
+  margin-bottom: 56px;
 }
 .featured-grid {
   display: grid;
@@ -1897,6 +2206,64 @@ footer.site-footer {
   }
 }
 
+@media (max-width: 960px) {
+  .client-showcase-stage {
+    height: auto;
+  }
+  .client-showcase-diptych {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    min-height: 360px;
+  }
+  .showcase-glass-card {
+    position: static;
+    left: auto;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 8px;
+    background: rgba(34, 37, 42, 0.88);
+    border-radius: 14px;
+    padding: 18px 20px;
+  }
+}
+
+@media (max-width: 680px) {
+  section.client-showcase-section {
+    padding: 14px 0 22px;
+  }
+  .client-showcase-stage {
+    padding: 5px;
+    border-radius: 18px;
+  }
+  .client-showcase-diptych {
+    grid-template-columns: 1fr;
+    gap: 5px;
+    min-height: 0;
+    border-radius: 14px;
+  }
+  .client-showcase-pane {
+    aspect-ratio: 4 / 3;
+    height: auto;
+  }
+  .showcase-edge-nav {
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
+  }
+  .showcase-glass-highlights {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .showcase-highlight-item {
+    padding: 0;
+  }
+  .showcase-highlight-item + .showcase-highlight-item {
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    padding-top: 8px;
+  }
+}
+
 @media (max-width: 600px) {
   .loan-calc-grid {
     grid-template-columns: 1fr;
@@ -2937,6 +3304,12 @@ footer.site-footer {
 
 /* Tôn trọng cài đặt giảm chuyển động của hệ điều hành nếu có */
 @media (prefers-reduced-motion: reduce) {
+  body::before {
+    transform: none !important;
+    will-change: auto !important;
+  }
+  .showcase-slide,
+  .showcase-slide img,
   .zen-fade-up,
   .zen-shutter::after,
   .zen-shutter img,

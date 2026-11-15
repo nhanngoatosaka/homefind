@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupDialogClose();
   initKeisanCalculator();
   initVipProcessSection();
+  initClientShowcaseAlbum();
   initJapandiZenMotion();
   loadData();
 });
@@ -715,6 +716,14 @@ function sortPropertiesList(list, sortMode) {
   return indexed.map(entry => entry.item);
 }
 
+function isInvestorProperty(p) {
+  if (!p) return false;
+  if (p.type === 'investor' || p.investor === true || p.for_investor === true) return true;
+  if (Number(p.annual_rent) > 0 || Number(p.gross_yield) > 0) return true;
+  const text = `${p.notes || ''} ${p.renovation || ''} ${p.name_vi || ''} ${p.name_jp || ''}`.toLowerCase();
+  return /đầu tư|dòng tiền|lợi suất|収益|投資|利回り|オーナーチェンジ/.test(text);
+}
+
 function renderPortfolio() {
   const grid = document.getElementById('property-grid');
   if (!grid) return;
@@ -725,7 +734,7 @@ function renderPortfolio() {
     // 1. Lọc theo tab loại / khu vực
     if (currentFilter === 'buy' && p.type !== 'buy') return false;
     if (currentFilter === 'rent-osaka' && !(p.type === 'rent' && p.area === 'Osaka')) return false;
-    if (currentFilter === 'rent-kyoto' && !(p.type === 'rent' && p.area === 'Kyoto')) return false;
+    if (currentFilter === 'investor' && !isInvestorProperty(p)) return false;
 
     // 2. Lọc theo khoảng giá
     if (!matchesPriceFilter(p, currentPriceFilter)) return false;
@@ -1472,7 +1481,7 @@ function renderFooterCompanyInfo() {
   }
 
   if (privacyContact && (phoneDisplay || email)) {
-    privacyContact.innerHTML = `<strong>4. Liên hệ về dữ liệu cá nhân:</strong> BIG不動産株式会社 — 〒577-0057 大阪府東大阪市足代新町4-12 テレビル5F${phoneDisplay ? ` · Tel: ${phoneDisplay}` : ''}${email ? ` · Email: ${email}` : ''}.`;
+    privacyContact.innerHTML = `<strong>4. Liên hệ về dữ liệu cá nhân:</strong> BIG不動産株式会社 · 〒577-0057 大阪府東大阪市足代新町4-12 テレビル5F${phoneDisplay ? ` · Tel: ${phoneDisplay}` : ''}${email ? ` · Email: ${email}` : ''}.`;
   }
 }
 
@@ -1502,7 +1511,7 @@ function keisanCalcPmt(principal, periodRate, n, mode) {
  * Thuật toán tính lịch trả nợ chuẩn Keisan.site (1256186048):
  * - Tách khoản vay thành 2 phần độc lập: Phần trả hàng tháng (Pm) và Phần trả kỳ thưởng Bonus (Pb)
  * - Hỗ trợ 2 phương thức: 元利均等 (ganri - Gốc+Lãi đều) và 元金均等 (gankin - Gốc đều)
- * - Hỗ trợ đổi lãi suất 2 giai đoạn: 당초금리 (rate1 trong rate1Years năm đầu) và 以降金利 (rate2 từ tháng 12*rate1Years + 1)
+ * - Hỗ trợ đổi lãi suất 2 giai đoạn: 当初金利 (rate1 trong rate1Years năm đầu) và 以降金利 (rate2 từ tháng 12*rate1Years + 1)
  * - Tháng trả kỳ thứ 1 bắt đầu sau tháng giải ngân (借入年月) 1 tháng.
  */
 function computeKeisanSchedule(params) {
@@ -1957,7 +1966,7 @@ function recalcAndRenderKeisan() {
     let diffVerdictHtml = '';
     if (params.currentRent > 0) {
       if (diffMonthly <= 0) {
-        diffVerdictHtml = `<strong style="color: var(--ok);">Nhẹ hơn tiền thuê hiện tại ${fmtYen(Math.abs(diffMonthly))}/tháng</strong> — lại sở hữu tài sản riêng sau ${params.years} năm.`;
+        diffVerdictHtml = `<strong style="color: var(--ok);">Thấp hơn tiền thuê hiện tại ${fmtYen(Math.abs(diffMonthly))}/tháng</strong>, đồng thời bạn sở hữu tài sản riêng sau ${params.years} năm.`;
       } else {
         diffVerdictHtml = `Chênh thêm <strong style="color: var(--amber-ink);">+${fmtYen(diffMonthly)}/tháng</strong> so với tiền thuê hiện tại để đổi lấy nhà đứng tên mình.`;
       }
@@ -1974,7 +1983,7 @@ function recalcAndRenderKeisan() {
       </div>
       <div class="keisan-rent-compare-row">
         <span>Nếu tiếp tục thuê nhà (${fmtYen(params.currentRent)} × ${res.totalMonths} tháng):</span>
-        <strong style="color: var(--danger);">${fmtYen(totalRentOverTerm)} (Mất trắng tiền thuê)</strong>
+        <strong style="color: var(--danger);">${fmtYen(totalRentOverTerm)} (Tổng tiền thuê không hoàn lại)</strong>
       </div>
       <div class="keisan-rent-compare-row">
         <span>${monthlyLoanRowLabel}</span>
@@ -2152,17 +2161,17 @@ const VIP_PROCESS_STAGES = [
     stepTag: 'Giai đoạn 0 · 準備・物件探し',
     title: 'Chuẩn bị ngân sách, Thẩm định sơ bộ & Tìm nhà',
     timeframe: 'Từ vài ngày tới vài tuần',
-    todo: 'Chốt ngân sách tổng và cách trả tiền ngay từ đầu — trả thẳng hay vay ngân hàng — vì hai cách này quyết định tốc độ, giấy tờ và chiến lược thương lượng về sau. Nếu vay, làm thẩm định sơ bộ 事前審査 càng sớm càng tốt để biết hạn mức vay thực tế. Sau đó mới tìm nhà, đi xem nhà và so sánh các lựa chọn theo tiêu chí rõ ràng: vị trí, khoảng cách tới ga, môi trường sống và diện tích.',
-    prepText: 'Chưa cần nộp tiền ở giai đoạn này. Nếu vay, chuẩn bị trước giấy tờ thu nhập và giấy tờ cá nhân cơ bản để nộp 事前審査. Ghi lại ngân sách tối đa gồm cả giá nhà lẫn các khoản phí đi kèm, không chỉ nhìn giá bán.',
+    todo: 'Chốt ngân sách tổng và cách thanh toán ngay từ đầu (trả thẳng hoặc vay ngân hàng), vì hai cách này quyết định tốc độ, giấy tờ và cách thương lượng về sau. Nếu vay, làm thẩm định sơ bộ 事前審査 sớm để biết hạn mức vay thực tế. Sau đó mới tìm nhà, đi xem nhà và đối chiếu các lựa chọn theo vị trí, khoảng cách tới ga, môi trường sống và diện tích.',
+    prepText: 'Chưa cần nộp tiền ở giai đoạn này. Nếu vay, chuẩn bị trước giấy tờ thu nhập và giấy tờ cá nhân cơ bản để nộp 事前審査. Ghi lại ngân sách tổng gồm cả giá nhà lẫn các khoản phí đi kèm, thay vì chỉ nhìn giá bán.',
     checklist: [
       { id: 's0-1', label: 'Thẻ lưu trú 在留カード / Giấy tờ cá nhân (nếu nộp 事前審査)' },
       { id: 's0-2', label: 'Giấy thu nhập 源泉徴収票 / 課税証明書 (nhánh vay ngân hàng)' },
-      { id: 's0-3', label: 'Chốt ngân sách tổng (Giá nhà + khoảng 7–10% phụ phí dự kiến)' }
+      { id: 's0-3', label: 'Chốt ngân sách tổng (Giá nhà cộng khoảng 7% đến 10% phụ phí dự kiến)' }
     ],
-    notes: 'Kết quả 事前審査 không chỉ để biết vay được bao nhiêu — trong thực tế làm việc của BIG, khi thương lượng giá, BIG gửi kèm kết quả ngân hàng cho bên bán để lời đề nghị có sức nặng hơn, vì bên bán thấy người mua đã được ngân hàng xem qua. Nếu nhắm tới giảm trừ thuế 住宅ローン減税, phải so diện tích theo sổ đăng ký (登記簿面積 ≥ 50㎡) ngay từ bước xem nhà, không dùng diện tích trên quảng cáo.',
+    notes: 'Kết quả 事前審査 vừa cho biết mức vay dự kiến, vừa hỗ trợ khi thương lượng giá: BIG gửi kèm kết quả ngân hàng cho bên bán để họ thấy người mua đã qua bước xem xét ban đầu. Nếu nhắm tới giảm trừ thuế 住宅ローン減税, cần đối chiếu diện tích trên sổ đăng ký (登記簿面積 ≥ 50㎡) ngay từ bước xem nhà, không dùng diện tích trên quảng cáo.',
     articles: [
-      { id: 'kinh-nghiem-vay-nha-7', label: 'Đọc Bài 7: 住宅ローン減税 là gì & 3 con số quyết định' },
-      { id: 'kinh-nghiem-vay-nha-8', label: 'Đọc Bài 8: 5 chỗ người mua nhà hay vấp với 減税' }
+      { id: 'kinh-nghiem-vay-nha-7', label: 'Đọc Bài 7: 住宅ローン減税 và 5 điều kiện áp dụng' },
+      { id: 'kinh-nghiem-vay-nha-8', label: 'Đọc Bài 8: 5 trường hợp hay vấp với 住宅ローン減税' }
     ]
   },
   {
@@ -2178,7 +2187,7 @@ const VIP_PROCESS_STAGES = [
       { id: 's1-2', label: 'Bản kết quả duyệt sơ bộ 事前審査 (để BIG đính kèm tăng sức nặng đàm phán)' },
       { id: 's1-3', label: 'Chốt ngày bàn giao mong muốn (khớp với lịch trả nhà thuê hiện tại)' }
     ],
-    notes: 'Điểm phải chốt ngay từ vòng này là NGÀY BÀN GIAO (引渡日). Khách đang ở nhà thuê cần ngày bàn giao chắc chắn để tính ngày báo trả nhà thuê, tránh trả tiền hai nơi cùng lúc hoặc phải dọn ra trước khi nhà mới sẵn sàng. Đừng chỉ thương lượng giá mà quên khóa ngày.',
+    notes: 'Ở vòng này cần chốt rõ ngày bàn giao (引渡日). Khách đang ở nhà thuê cần ngày bàn giao cụ thể để tính thời điểm báo trả nhà thuê, tránh trả tiền thuê song song hoặc phải dọn ra trước khi nhà mới sẵn sàng.',
     articles: []
   },
   {
@@ -2186,21 +2195,21 @@ const VIP_PROCESS_STAGES = [
     branch: 'common',
     stepTag: 'Giai đoạn 2 · 重要事項説明・売買契約',
     title: 'Giải thích trọng yếu (重説) & Ký hợp đồng mua bán',
-    timeframe: 'Khoảng 1–2 giờ trong cùng một buổi ký',
-    todo: 'Nghe giải thích trọng yếu 重要事項説明 từ người có chứng chỉ 宅建士 về căn nhà, quyền sở hữu, các hạn chế pháp lý và điều kiện giao dịch. Sau đó ký hợp đồng mua bán 売買契約書 — hợp đồng do bên bán hoặc BIG soạn và đều qua kiểm tra của 宅建士. Đồng thời thống nhất bên chỉ định luật sư tư pháp 司法書士 phụ trách đăng ký sang tên.',
-    prepText: 'Tiền cọc 手付金 — tham khảo 50万円, nộp bằng chuyển khoản hoặc tiền mặt ngay khi ký. Mang đầy đủ bộ giấy tờ và con dấu bên dưới tới buổi ký hợp đồng:',
+    timeframe: 'Khoảng 1 đến 2 giờ trong cùng một buổi ký',
+    todo: 'Nghe giải thích trọng yếu 重要事項説明 từ người có chứng chỉ 宅建士 về căn nhà, quyền sở hữu, các hạn chế pháp lý và điều kiện giao dịch. Sau đó ký hợp đồng mua bán 売買契約書 do bên bán hoặc BIG soạn và đã qua kiểm tra của 宅建士. Hai bên cũng thống nhất việc chỉ định luật sư tư pháp 司法書士 làm thủ tục đăng ký sang tên.',
+    prepText: 'Tiền cọc 手付金 (tham khảo 50万円) nộp bằng chuyển khoản hoặc tiền mặt ngay khi ký. Mang đủ bộ giấy tờ và con dấu bên dưới tới buổi ký hợp đồng:',
     checklist: [
-      { id: 's2-1', label: 'Tiền cọc 手付金 (Tham khảo 50万円 — chuyển khoản hoặc tiền mặt)' },
+      { id: 's2-1', label: 'Tiền cọc 手付金 (Tham khảo 50万円, chuyển khoản hoặc tiền mặt)' },
       { id: 's2-2', label: 'Tem thuế hợp đồng 収入印紙 1万円 (Mua sẵn ở bưu điện mang theo)' },
       { id: 's2-3', label: 'Thẻ người nước ngoài / Giấy tờ tùy thân 身分証明書 (在留カード)' },
       { id: 's2-4', label: 'Con dấu thật 実印 & Giấy chứng nhận con dấu 印鑑証明書' },
       { id: 's2-5', label: 'Giấy cư trú 住民票 (Bản có ghi đầy đủ phiên âm Katakana)' },
       { id: 's2-6', label: 'Hợp đồng thuê nhà hiện tại (để đối chiếu điều khoản báo trả nhà)' }
     ],
-    notes: 'Trước khi đặt bút ký, phải soi kỹ 3 điều khoản: (1) Hủy bằng tiền cọc 手付解除 (được hủy tới ngày nào, người mua đổi ý mất cọc, bên bán đổi ý đền gấp đôi), (2) Mức phạt vi phạm 違約金 (thường tới 20% giá nhà) khi quá hạn không thực hiện hợp đồng, và (3) Với người vay — Điều khoản vay vốn ローン特約 kèm đúng 2 mốc ngày (ngày hẹn lấy duyệt vay và ngày hẹn hủy hợp đồng nhận lại cọc).',
+    notes: 'Trước khi ký cần kiểm tra kỹ 3 điều khoản: (1) Hủy bằng tiền cọc 手付解除 (được hủy tới ngày nào, người mua đổi ý mất cọc, bên bán đổi ý trả gấp đôi); (2) Mức phạt vi phạm 違約金 (thường tới 20% giá nhà) khi quá hạn không thực hiện hợp đồng; và (3) Với nhánh vay ngân hàng, điều khoản vay vốn ローン特約 kèm 2 mốc ngày (ngày hẹn lấy duyệt vay và ngày hẹn hủy hợp đồng nhận lại cọc).',
     articles: [
-      { id: 'kinh-nghiem-vay-nha-5', label: 'Đọc Bài 5: Tiền cọc 手付金 — Đổi ý mất cọc, bên bán đổi ý đền gấp đôi' },
-      { id: 'kinh-nghiem-vay-nha-6', label: 'Đọc Bài 6: Điều khoản ローン特約, mốc 20% phạt & 2 ngày phải ghi vào lịch' }
+      { id: 'kinh-nghiem-vay-nha-5', label: 'Đọc Bài 5: Tiền cọc 手付金, đổi ý mất cọc và bên bán hủy đền gấp đôi' },
+      { id: 'kinh-nghiem-vay-nha-6', label: 'Đọc Bài 6: Điều khoản ローン特約, mốc phạt 20% và 2 mốc ngày cần nhớ' }
     ]
   },
   {
@@ -2209,20 +2218,20 @@ const VIP_PROCESS_STAGES = [
     isBranchStage: true,
     stepTag: 'Giai đoạn 3B (Nhánh Vay) · 本審査・金消契約',
     title: 'Thẩm định chính thức (本審査), Bảo hiểm 団信 & Ký hợp đồng vay',
-    timeframe: 'Tổng thời gian từ ký HĐ mua bán → bàn giao: 1–1,5 tháng',
-    todo: 'Nộp thẩm định chính thức 本審査 — khách lên ngân hàng (như SMBC / Resona) trực tiếp, đồng thời mở tài khoản ngân hàng nếu chưa có. Đăng ký bảo hiểm nhân thọ tín dụng 団信 và khai báo sức khỏe. Hồ sơ đồng thời qua công ty bảo lãnh (保証会社) của ngân hàng. Khi có kết quả duyệt, khách lên ngân hàng lần nữa để ký hợp đồng vay 金銭消費貸借契約 (金消契約).',
+    timeframe: 'Tổng thời gian từ ký hợp đồng mua bán tới bàn giao: khoảng 1 đến 1,5 tháng',
+    todo: 'Nộp thẩm định chính thức 本審査 trực tiếp tại ngân hàng (như SMBC hoặc Resona), đồng thời mở tài khoản ngân hàng nếu chưa có. Đăng ký bảo hiểm nhân thọ tín dụng 団信 và khai báo sức khỏe. Hồ sơ cũng được chuyển qua công ty bảo lãnh (保証会社) của ngân hàng. Sau khi có kết quả duyệt, khách lên ngân hàng ký hợp đồng vay 金銭消費貸借契約 (金消契約).',
     prepText: 'Giấy tờ cá nhân, giấy tờ thu nhập và hồ sơ nhà theo yêu cầu của từng ngân hàng. Buổi ký hợp đồng vay 金銭消費貸借契約 nhớ mang theo:',
     checklist: [
       { id: 's3b-1', label: 'Hồ sơ nộp 本審査 & Tờ khai sức khỏe bảo hiểm 団信 (khai trung thực 100%)' },
       { id: 's3b-2', label: 'Mở tài khoản ngân hàng giải ngân & lấy thông tin đăng nhập trang cá nhân' },
       { id: 's3b-3', label: 'Thẻ ngân hàng (キャッシュカード), 実印, 印鑑証明書, 住民票 khi đi ký 金消契約' }
     ],
-    notes: 'Ba điểm sống còn phải nhớ: (1) Khai báo sức khỏe cho 団信 phải trung thực tuyệt đối — giấu bệnh có thể làm mất quyền được bảo hiểm trả nợ thay khi có biến cố. (2) Ngân hàng dân sinh luôn đi qua Công ty bảo lãnh (保証会社) và chính công ty này mới là nơi xét duyệt quyết định. (3) Lãi suất áp dụng chốt tại NGÀY GIẢI NGÂN, không phải ngày nộp hồ sơ, và tuyệt đối tránh 3 chiêu gian lận hồ sơ. Nếu chẳng may trượt duyệt, dùng điều khoản ローン特約 để hủy và nhận lại đủ tiền cọc (với điều kiện nộp hồ sơ trung thực, đúng hạn).',
+    notes: 'Ba điểm cần lưu ý: (1) Khai báo sức khỏe cho 団信 phải trung thực, vì giấu bệnh có thể làm mất quyền được bảo hiểm trả nợ thay khi có sự cố; (2) Ngân hàng dân sinh gần như luôn xét duyệt qua Công ty bảo lãnh (保証会社) và đây là đơn vị quyết định kết quả hồ sơ; (3) Lãi suất áp dụng chốt tại ngày giải ngân, không phải ngày nộp hồ sơ, và cần tránh 3 lỗi gian lận hồ sơ. Nếu trượt duyệt dù đã nộp hồ sơ trung thực và đúng hạn, người mua dùng điều khoản ローン特約 để hủy và nhận lại đủ tiền cọc.',
     articles: [
-      { id: 'kinh-nghiem-vay-nha-10', label: 'Đọc Bài 10: Lãi biến động, Quy tắc 5 năm & Nước cờ 4–5 năm bán' },
-      { id: 'kinh-nghiem-vay-nha-1', label: 'Đọc Bài 1: 3 chiêu gian lận phải né & quy tắc lãi suất' },
-      { id: 'kinh-nghiem-vay-nha-3', label: 'Đọc Bài 3: Bảo hiểm 団信 & khi nào ngân hàng đòi người bảo lãnh' },
-      { id: 'kinh-nghiem-vay-nha-9', label: 'Đọc Bài 9: Công ty bảo lãnh 保証会社 — người gác cổng thực sự' },
+      { id: 'kinh-nghiem-vay-nha-10', label: 'Đọc Bài 10: Lãi biến động, Quy tắc 5 năm và mốc thuế khi bán nhà' },
+      { id: 'kinh-nghiem-vay-nha-1', label: 'Đọc Bài 1: 3 lỗi gian lận cần tránh & cách tính lãi suất thả nổi' },
+      { id: 'kinh-nghiem-vay-nha-3', label: 'Đọc Bài 3: Bảo hiểm 団信 & trách nhiệm người bảo lãnh' },
+      { id: 'kinh-nghiem-vay-nha-9', label: 'Đọc Bài 9: Công ty bảo lãnh 保証会社 & 2 cách trả phí' },
       { id: 'kinh-nghiem-vay-nha-6', label: 'Đọc Bài 6: Cách dùng ローン特約 bảo vệ tiền cọc' }
     ]
   },
@@ -2232,7 +2241,7 @@ const VIP_PROCESS_STAGES = [
     isBranchStage: true,
     stepTag: 'Giai đoạn 3A (Nhánh Trả thẳng) · 残代金準備・決済日確定',
     title: 'Chuẩn bị dòng tiền thanh toán & Chốt ngày quyết toán',
-    timeframe: 'Từ ký hợp đồng → bàn giao: khoảng 2–4 tuần (ngắn hơn hẳn nhánh vay)',
+    timeframe: 'Từ ký hợp đồng tới bàn giao: khoảng 2 đến 4 tuần',
     todo: 'Chuẩn bị toàn bộ phần tiền còn lại của giá nhà cộng các khoản phí đi kèm (phí môi giới, thuế phí, phí đăng ký sang tên). Chốt lại ngày quyết toán với bên bán và BIG. Không có bước xét duyệt ngân hàng nên lịch trình chủ yếu phụ thuộc vào việc tiền có sẵn sàng đúng ngày hay không.',
     prepText: 'Toàn bộ số tiền còn lại phải nằm sẵn trong tài khoản tại Nhật trước ngày quyết toán. Nếu tiền chuyển từ Việt Nam sang, chuẩn bị trước giấy tờ chứng minh nguồn tiền và tính dư biên độ ngày chuyển tiền quốc tế:',
     checklist: [
@@ -2240,7 +2249,7 @@ const VIP_PROCESS_STAGES = [
       { id: 's3a-2', label: 'Hồ sơ chứng minh nguồn tiền / quan hệ thân nhân (nếu chuyển tiền từ Việt Nam)' },
       { id: 's3a-3', label: 'Kiểm tra hạn mức chuyển khoản trong ngày của tài khoản ngân hàng' }
     ],
-    notes: 'Rủi ro chính của nhánh trả thẳng không nằm ở thủ tục mà ở DÒNG TIỀN: dồn một khoản lớn trong thời gian ngắn và rủi ro chậm trễ khi chuyển tiền từ nước ngoài. Hãy tính ngày chuyển tiền ngược từ ngày quyết toán, cộng thêm biên an toàn vài ngày làm việc. Lưu ý: Nhánh trả thẳng không có ローン特約 bảo vệ, nên nếu không gom kịp tiền đúng hạn sẽ rơi vào vi phạm hợp đồng mất cọc / phạt 違約金.',
+    notes: 'Rủi ro chính của nhánh trả thẳng nằm ở dòng tiền: dồn một khoản tiền lớn trong thời gian ngắn và nguy cơ chậm trễ khi chuyển tiền từ nước ngoài. Cần tính ngày chuyển tiền lùi từ ngày quyết toán, cộng thêm vài ngày làm việc dự phòng. Nhánh trả thẳng không có ローン特約 bảo vệ, nên nếu không gom kịp tiền đúng hạn sẽ thành vi phạm hợp đồng, mất cọc và chịu phạt 違約金.',
     articles: [
       { id: 'kinh-nghiem-vay-nha-5', label: 'Đọc Bài 5: Quy tắc tiền cọc 手付金' },
       { id: 'kinh-nghiem-vay-nha-6', label: 'Đọc Bài 6: Mức phạt vi phạm hợp đồng 20% cần lưu ý' }
@@ -2260,9 +2269,9 @@ const VIP_PROCESS_STAGES = [
       { id: 's4-3', label: 'Hoàn tất đăng ký gói Bảo hiểm cháy nổ 火災保険 (bắt buộc có hiệu lực từ ngày nhận nhà)' },
       { id: 's4-4', label: 'Hồ sơ gửi luật sư tư pháp: Hợp đồng mua bán đóng dấu, 評価証明書, giấy tờ đăng ký' }
     ],
-    notes: 'Đừng để tới sáng ngày quyết toán mới phát hiện thiếu một khoản phụ phí hoặc thiếu một giấy tờ của luật sư tư pháp. Người vay ngân hàng cần kiểm tra thêm cách ngân hàng thu phí bảo lãnh (保証料) và phí thủ tục vay (事務手数料) trong bảng kê.',
+    notes: 'Cần kiểm tra đủ tiền phụ phí và giấy tờ của luật sư tư pháp trước sáng ngày quyết toán. Với nhánh vay ngân hàng, cần xem thêm cách ngân hàng thu phí bảo lãnh (保証料) và phí thủ tục vay (事務手数料) trong bảng kê.',
     articles: [
-      { id: 'kinh-nghiem-vay-nha-2', label: 'Đọc Bài 2: So sánh 2 cách trả phí thủ tục vay (trả 1 cục vs cộng +0,2% lãi)' },
+      { id: 'kinh-nghiem-vay-nha-2', label: 'Đọc Bài 2: So sánh trả phí 2,2% một lần và cộng 0,3% vào lãi suất' },
       { id: 'kinh-nghiem-vay-nha-9', label: 'Đọc Bài 9: Phí bảo lãnh 保証料 và những điều cần biết' }
     ]
   },
@@ -2280,7 +2289,7 @@ const VIP_PROCESS_STAGES = [
       { id: 's5-3', label: 'Nhận toàn bộ bộ chìa khóa nhà & biên nhận quyết toán' },
       { id: 's5-4', label: 'Lưu giữ cẩn thận 精算書, biên nhận, hợp đồng để dùng khai thuế năm sau' }
     ],
-    notes: 'Từ thời điểm bàn giao, căn nhà chính thức thuộc quyền sở hữu của bạn — mọi rủi ro và trách nhiệm với căn nhà cũng chuyển sang bạn, nên bảo hiểm cháy nổ phải có hiệu lực từ đúng ngày này. Giữ lại toàn bộ hồ sơ ngày quyết toán vì sẽ cần cho thủ tục hoàn thuế 住宅ローン減税.',
+    notes: 'Từ thời điểm bàn giao, căn nhà thuộc quyền sở hữu của người mua cùng toàn bộ rủi ro và trách nhiệm đi kèm, nên bảo hiểm cháy nổ phải có hiệu lực từ đúng ngày này. Giữ lại toàn bộ hồ sơ ngày quyết toán để dùng cho thủ tục hoàn thuế 住宅ローン減税.',
     articles: [
       { id: 'kinh-nghiem-vay-nha-7', label: 'Đọc Bài 7: Hồ sơ cần giữ để làm 住宅ローン減税' },
       { id: 'kinh-nghiem-vay-nha-8', label: 'Đọc Bài 8: Lưu ý chuyển vào ở trong vòng 6 tháng sau bàn giao' }
@@ -2299,10 +2308,10 @@ const VIP_PROCESS_STAGES = [
       { id: 's6-2', label: 'Đặt lịch nhắc nạp tiền vào tài khoản ngân hàng trước ngày trừ nợ ít nhất 1 ngày' },
       { id: 's6-3', label: 'Giấy chứng nhận số dư nợ cuối năm (残高証明書) do ngân hàng gửi + Bản sao HĐ mua bán + Sổ đăng ký để nộp 確定申告 năm đầu' }
     ],
-    notes: 'Ba kỷ luật vàng sau khi mua nhà: (1) Luôn nạp tiền trước ngày trừ nợ ít nhất 1 ngày — trả chậm có thể bị phạt lãi suất 14%/năm và mất luôn mức giảm lãi ưu đãi. (2) Năm đầu tiên BẮT BUỘC phải tự nộp tờ khai thuế 確定申告, từ năm thứ 2 mới làm qua công ty (年末調整) — quên năm đầu là mất khoản hoàn thuế lớn nhất. (3) Khi có tiền nhàn rỗi muốn trả nợ trước hạn (繰上返済), phải kiểm tra mốc 120 lần trả (10 năm) để không vô tình làm mất quyền hưởng 住宅ローン減税.',
+    notes: 'Ba việc cần duy trì sau khi nhận nhà: (1) Nạp tiền trước ngày trừ nợ ít nhất 1 ngày để tránh phạt chậm trả 14%/năm và nguy cơ bị cắt lãi suất ưu đãi; (2) Năm đầu tiên bắt buộc tự nộp tờ khai thuế 確定申告, từ năm thứ 2 mới làm qua công ty (年末調整); (3) Khi muốn trả nợ trước hạn (繰上返済), kiểm tra mốc 120 lần trả (10 năm) để không làm mất quyền hưởng 住宅ローン減税.',
     articles: [
       { id: 'kinh-nghiem-vay-nha-2', label: 'Đọc Bài 2: Hậu quả mất lãi ưu đãi nếu để trễ kỳ trừ nợ' },
-      { id: 'kinh-nghiem-vay-nha-4', label: 'Đọc Bài 4: Trả nợ trước hạn & cái bẫy dưới 120 lần trả làm mất 減税' },
+      { id: 'kinh-nghiem-vay-nha-4', label: 'Đọc Bài 4: Trả nợ trước hạn & lưu ý mốc 120 lần trả để không mất 減税' },
       { id: 'kinh-nghiem-vay-nha-8', label: 'Đọc Bài 8: Khai thuế 確定申告 năm đầu tiên' }
     ]
   }
@@ -2530,7 +2539,7 @@ window.consultFromVipProcess = function() {
   const propInput = document.getElementById('form-property');
   const msgInput = document.getElementById('form-message');
   if (propInput) {
-    propInput.value = `Hỗ trợ hồ sơ theo Quy trình 7 giai đoạn — ${branchLabel}`;
+    propInput.value = `Hỗ trợ hồ sơ theo Quy trình 7 giai đoạn (${branchLabel})`;
   }
   if (msgInput) {
     msgInput.value = `Tôi đã xem Quy trình 7 giai đoạn (${branchLabel}) bằng mã khách hàng 2720 trên web. Nhờ BIG不動産 hỗ trợ kiểm tra giấy tờ và lịch trình bước tiếp theo giúp tôi.`;
@@ -2572,6 +2581,88 @@ function initJapandiZenMotion() {
   });
 
   refreshJapandiZenObserver();
+  initZenBackgroundParallax();
+}
+
+/**
+ * Tạo chuyển động trôi chậm kèm quán tính nhẹ cho lớp nền khi người dùng cuộn lên/xuống.
+ */
+function initZenBackgroundParallax() {
+  if (typeof window === 'undefined' || typeof document === 'undefined' || !document.body) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (window._zenBgParallaxInitialized) return;
+  window._zenBgParallaxInitialized = true;
+
+  const docEl = document.documentElement;
+  const bodyStyle = document.body.style;
+  const LERP = 0.075; // Độ trễ quán tính dịu kiểu Japandi
+
+  const getTargets = () => {
+    const vh = window.innerHeight || 900;
+    const vw = window.innerWidth || 1440;
+    const scrollable = (docEl.scrollHeight || document.body.scrollHeight) - vh;
+    const progress = scrollable > 20
+      ? Math.min(1, Math.max(0, (window.scrollY || window.pageYOffset || 0) / scrollable))
+      : 0.5;
+    const travelY = vh * 0.075;
+    const travelX = vw * 0.012;
+    return {
+      y: (0.5 - progress) * 2 * travelY,
+      x: (0.5 - progress) * 2 * travelX,
+      scale: 1.02 + progress * 0.035
+    };
+  };
+
+  let target = getTargets();
+  let curX = target.x;
+  let curY = target.y;
+  let curScale = target.scale;
+  let rafId = null;
+
+  const applyTransform = () => {
+    bodyStyle.setProperty('--bg-parallax-x', `${curX.toFixed(2)}px`);
+    bodyStyle.setProperty('--bg-parallax-y', `${curY.toFixed(2)}px`);
+    bodyStyle.setProperty('--bg-parallax-scale', curScale.toFixed(4));
+  };
+
+  const tick = () => {
+    curX += (target.x - curX) * LERP;
+    curY += (target.y - curY) * LERP;
+    curScale += (target.scale - curScale) * LERP;
+
+    const settled =
+      Math.abs(target.x - curX) < 0.06 &&
+      Math.abs(target.y - curY) < 0.06 &&
+      Math.abs(target.scale - curScale) < 0.00015;
+
+    if (settled) {
+      curX = target.x;
+      curY = target.y;
+      curScale = target.scale;
+      applyTransform();
+      rafId = null;
+      return;
+    }
+
+    applyTransform();
+    rafId = window.requestAnimationFrame(tick);
+  };
+
+  const scheduleTick = () => {
+    target = getTargets();
+    if (!rafId && window.requestAnimationFrame) {
+      rafId = window.requestAnimationFrame(tick);
+    } else if (!window.requestAnimationFrame) {
+      curX = target.x;
+      curY = target.y;
+      curScale = target.scale;
+      applyTransform();
+    }
+  };
+
+  applyTransform();
+  window.addEventListener('scroll', scheduleTick, { passive: true });
+  window.addEventListener('resize', scheduleTick, { passive: true });
 }
 
 function refreshJapandiZenObserver() {
@@ -2617,6 +2708,157 @@ function refreshJapandiZenObserver() {
       zenIntersectionObserver.observe(el);
     }
   });
+}
+
+// --------------------------------------------------------------------------
+// 12. CLIENT SHOWCASE DIPTYCH & LIGHTBOX (Khung ảnh lớn 2 mảnh + xem chi tiết)
+// --------------------------------------------------------------------------
+function initClientShowcaseAlbum() {
+  const shell = document.getElementById('client-showcase-shell');
+  if (!shell) return;
+
+  const slides = Array.from(shell.querySelectorAll('.showcase-slide'));
+  const prevShowcaseBtn = document.getElementById('btn-showcase-prev');
+  const nextShowcaseBtn = document.getElementById('btn-showcase-next');
+  const lightbox = document.getElementById('album-lightbox');
+  const lightboxImg = document.getElementById('album-lightbox-img');
+  const lightboxCaption = document.getElementById('album-lightbox-caption');
+  const lightboxCounter = document.getElementById('album-lightbox-counter');
+  const closeBtn = document.getElementById('album-lightbox-close');
+  const prevBtn = document.getElementById('album-lightbox-prev');
+  const nextBtn = document.getElementById('album-lightbox-next');
+
+  const photos = slides
+    .map(slide => {
+      const idx = Number(slide.dataset.lightboxIndex || 0);
+      const img = slide.querySelector('img');
+      const customCaption = slide.dataset.caption;
+      return {
+        index: idx,
+        src: img ? img.getAttribute('src') : '',
+        alt: img ? img.getAttribute('alt') : '',
+        caption: customCaption || (img ? img.getAttribute('alt') : '')
+      };
+    })
+    .sort((a, b) => a.index - b.index);
+
+  // Tự căn lề khuôn mặt nếu sau này người dùng tải ảnh chụp dọc từ điện thoại
+  slides.forEach(slide => {
+    const img = slide.querySelector('img');
+    if (!img) return;
+    const markAspect = () => {
+      if (img.naturalWidth > 0 && img.naturalHeight > img.naturalWidth * 1.04) {
+        img.classList.add('is-portrait');
+      } else {
+        img.classList.remove('is-portrait');
+      }
+    };
+    if (img.complete) {
+      markAspect();
+    } else {
+      img.addEventListener('load', markAspect, { once: true });
+    }
+  });
+
+  let activePair = 0;
+  let activeLightboxIdx = 0;
+  let autoTimer = null;
+
+  const setActivePair = (pairIdx) => {
+    activePair = Number(pairIdx) === 1 ? 1 : 0;
+    slides.forEach(slide => {
+      const isMatch = Number(slide.dataset.showcasePair) === activePair;
+      slide.classList.toggle('is-active', isMatch);
+    });
+  };
+
+  const stopAutoRotate = () => {
+    if (autoTimer) {
+      window.clearInterval(autoTimer);
+      autoTimer = null;
+    }
+  };
+
+  const startAutoRotate = () => {
+    stopAutoRotate();
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    autoTimer = window.setInterval(() => {
+      if (lightbox && lightbox.classList.contains('open')) return;
+      setActivePair(activePair === 0 ? 1 : 0);
+    }, 7000);
+  };
+
+  const togglePair = () => {
+    setActivePair(activePair === 0 ? 1 : 0);
+    startAutoRotate();
+  };
+
+  if (prevShowcaseBtn) prevShowcaseBtn.addEventListener('click', togglePair);
+  if (nextShowcaseBtn) nextShowcaseBtn.addEventListener('click', togglePair);
+
+  shell.addEventListener('mouseenter', stopAutoRotate);
+  shell.addEventListener('mouseleave', startAutoRotate);
+  shell.addEventListener('focusin', stopAutoRotate);
+  shell.addEventListener('focusout', startAutoRotate);
+
+  const renderLightbox = (idx) => {
+    if (!photos.length || !lightboxImg) return;
+    activeLightboxIdx = ((idx % photos.length) + photos.length) % photos.length;
+    const item = photos[activeLightboxIdx];
+    lightboxImg.src = item.src;
+    lightboxImg.alt = item.alt;
+    if (lightboxCaption) lightboxCaption.textContent = item.caption;
+    if (lightboxCounter) lightboxCounter.textContent = `${activeLightboxIdx + 1} / ${photos.length}`;
+  };
+
+  const openAlbumLightbox = (idx) => {
+    if (!lightbox) return;
+    renderLightbox(idx);
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    isDialogOpen = true;
+    updateMobileStickyVisibility();
+    stopAutoRotate();
+  };
+
+  const closeAlbumLightbox = () => {
+    if (!lightbox) return;
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    isDialogOpen = false;
+    updateMobileStickyVisibility();
+    startAutoRotate();
+  };
+
+  slides.forEach(slide => {
+    const openFromSlide = () => openAlbumLightbox(Number(slide.dataset.lightboxIndex || 0));
+    slide.addEventListener('click', openFromSlide);
+    slide.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openFromSlide();
+      }
+    });
+  });
+
+  if (closeBtn) closeBtn.addEventListener('click', closeAlbumLightbox);
+  if (prevBtn) prevBtn.addEventListener('click', () => renderLightbox(activeLightboxIdx - 1));
+  if (nextBtn) nextBtn.addEventListener('click', () => renderLightbox(activeLightboxIdx + 1));
+
+  if (lightbox) {
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeAlbumLightbox();
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox || !lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') closeAlbumLightbox();
+    if (e.key === 'ArrowLeft') renderLightbox(activeLightboxIdx - 1);
+    if (e.key === 'ArrowRight') renderLightbox(activeLightboxIdx + 1);
+  });
+
+  startAutoRotate();
 }
 
 

@@ -18,7 +18,7 @@
   <meta name="twitter:description" content="Danh mục nhà phố, căn hộ chọn lọc tại Osaka &amp; vùng Kansai. Thông tin minh bạch, tính khoản vay trực tiếp và hỗ trợ pháp lý trọn gói.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1600&auto=format&fit=crop">
 
-  <link rel="stylesheet" href="styles.css?v=20261114f">
+  <link rel="stylesheet" href="styles.css?v=20261115d">
 </head>
 <body>
 
@@ -47,17 +47,59 @@
     </div>
   </header>
 
-  <!-- 2. HERO (Tiêu đề serif + đoạn giới thiệu định vị + 2 nút CTA) -->
-  <section class="hero">
+  <!-- ALBUM KHOẢNH KHẮC ĐỒNG HÀNH CÙNG KHÁCH HÀNG (1 khung lớn tách 2 ảnh thông minh) -->
+  <section class="client-showcase-section" id="client-album" aria-label="Album ảnh đồng hành cùng khách hàng">
     <div class="container">
-      <h1 class="hero-title" data-i18n="hero_title">Chuyên Mua / Bán , Thuê , bất động sản dòng tiền</h1>
-      <p class="hero-desc" data-i18n="hero_desc">
-        Hỗ trợ nhà đầu tư tìm kiếm , thẩm định và sở hữu ngôi nhà chất lượng tại Osaka và Kansai .<br>
-        Minh bạch, uy tín , thủ tục pháp lý rõ ràng  chuẩn mực.
-      </p>
-      <div class="hero-actions">
-        <a href="#portfolio" class="btn-primary" data-i18n="hero_cta_primary">Xem danh sách nhà</a>
-        <a href="#contact" class="btn-secondary" data-i18n="hero_cta_secondary">Tư vấn miễn phí</a>
+      <div class="client-showcase-shell" id="client-showcase-shell">
+        <div class="client-showcase-stage">
+          <div class="client-showcase-diptych">
+
+            <!-- Khung trái (50%): Ảnh chính theo từng giai đoạn (thay ảnh client-1.jpg / client-3.jpg) -->
+            <div class="client-showcase-pane" data-pane="left">
+              <figure class="showcase-slide is-active" data-showcase-pair="0" data-lightbox-index="0" data-caption="Tư vấn phương án & phân tích hồ sơ" role="button" tabindex="0" aria-label="Phóng to ảnh: Tư vấn phương án và phân tích hồ sơ">
+                <img src="assets/client-album/client-1.jpg" alt="Tư vấn phương án mua nhà và phân tích hồ sơ cùng khách hàng tại Osaka" loading="eager" decoding="async">
+                <span class="showcase-pane-zoom" aria-hidden="true">⤢</span>
+              </figure>
+              <figure class="showcase-slide" data-showcase-pair="1" data-lightbox-index="2" data-caption="Bàn giao chìa khóa tổ ấm mới" role="button" tabindex="0" aria-label="Phóng to ảnh: Bàn giao chìa khóa tổ ấm mới">
+                <img src="assets/client-album/client-3.jpg" alt="Khoảnh khắc bàn giao chìa khóa nhà mới cho khách hàng tại Kansai" loading="eager" decoding="async">
+                <span class="showcase-pane-zoom" aria-hidden="true">⤢</span>
+              </figure>
+            </div>
+
+            <!-- Khung phải (50% - hợp tỉ lệ 4:3 điện thoại): Ảnh đi cùng (thay ảnh client-2.jpg / client-4.jpg) -->
+            <div class="client-showcase-pane" data-pane="right">
+              <figure class="showcase-slide is-active" data-showcase-pair="0" data-lightbox-index="1" data-caption="Khảo sát thực tế căn hộ tại Osaka" role="button" tabindex="0" aria-label="Phóng to ảnh: Khảo sát thực tế căn hộ tại Osaka">
+                <img src="assets/client-album/client-2.jpg" alt="Cùng khách hàng đi khảo sát thực tế căn hộ tại Osaka" loading="eager" decoding="async">
+                <span class="showcase-pane-zoom" aria-hidden="true">⤢</span>
+              </figure>
+              <figure class="showcase-slide" data-showcase-pair="1" data-lightbox-index="3" data-caption="Kỷ niệm cùng gia chủ sau giao dịch" role="button" tabindex="0" aria-label="Phóng to ảnh: Kỷ niệm cùng gia chủ sau giao dịch">
+                <img src="assets/client-album/client-4.jpg" alt="Ảnh kỷ niệm cùng gia chủ trước ngôi nhà mới tại Nhật Bản" loading="eager" decoding="async">
+                <span class="showcase-pane-zoom" aria-hidden="true">⤢</span>
+              </figure>
+            </div>
+
+          </div>
+
+          <!-- Mũi tên chuyển cặp ảnh tinh gọn (chỉ hiện nhẹ khi rê chuột lên khung) -->
+          <button type="button" class="showcase-edge-nav showcase-edge-nav--prev" id="btn-showcase-prev" aria-label="Cặp ảnh trước">‹</button>
+          <button type="button" class="showcase-edge-nav showcase-edge-nav--next" id="btn-showcase-next" aria-label="Cặp ảnh tiếp theo">›</button>
+
+          <!-- Thẻ kính mờ Japandi căn giữa cân đối giao giữa 2 khung hình lớn -->
+          <div class="showcase-glass-card">
+            <h2 class="showcase-glass-title serif">Khoảnh khắc đồng hành cùng khách hàng</h2>
+            <div class="showcase-glass-highlights">
+              <div class="showcase-highlight-item">
+                <span class="showcase-highlight-main">Tư vấn 1:1</span>
+              </div>
+              <div class="showcase-highlight-item">
+                <span class="showcase-highlight-main">Xem nhà thực tế</span>
+              </div>
+              <div class="showcase-highlight-item">
+                <span class="showcase-highlight-main">Bàn giao tận tay</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -66,10 +108,9 @@
   <section class="featured-section keisan-mode-simple" id="featured">
     <div class="container">
       <div class="section-head" style="margin-bottom: 18px;">
-        <div class="kicker">1. ローン返済（ボーナス併用）＆ 家賃比較 · Công cụ tính chi phí nhà ở</div>
-        <h2 class="section-title serif">Bảng tính tiền trả góp mua nhà &amp; So sánh tiền thuê</h2>
+        <h1 class="section-title serif">Tính tiền trả góp</h1>
         <p style="font-size: 14px; color: var(--muted); margin-top: 4px;" class="ks-simple-only">
-          Ước tính nhanh số tiền trả hàng tháng theo số tiền vay, lãi suất và số năm trả — kèm so sánh trực tiếp với tiền thuê nhà hiện tại.
+          Ước tính nhanh số tiền trả hàng tháng theo số tiền vay, lãi suất và số năm trả, đồng thời so sánh trực tiếp với tiền thuê nhà hiện tại.
         </p>
         <p style="font-size: 14px; color: var(--muted); margin-top: 4px;" class="ks-detail-only">
           Tính chính xác số tiền trả hàng tháng, kỳ thưởng Bonus, đổi lãi suất 2 giai đoạn (theo đúng chuẩn ngân hàng &amp; Keisan) và đối chiếu trực tiếp với tiền thuê nhà hàng tháng của bạn.
@@ -196,7 +237,7 @@
                   <span class="jp-sub ks-detail-only">当初金利</span>
                 </label>
                 <div class="keisan-input-unit">
-                  <input type="number" id="ks-rate1" class="form-control" min="0" max="20" step="0.01" value="0.6">
+                  <input type="number" id="ks-rate1" class="form-control" min="0" max="20" step="0.01" value="1.6">
                   <span class="keisan-unit-tag">%</span>
                 </div>
               </div>
@@ -218,7 +259,7 @@
                   <span class="jp-sub">以降の金利</span>
                 </label>
                 <div class="keisan-input-unit">
-                  <input type="number" id="ks-rate2" class="form-control" min="0" max="20" step="0.01" value="0.6">
+                  <input type="number" id="ks-rate2" class="form-control" min="0" max="20" step="0.01" value="1.6">
                   <span class="keisan-unit-tag">%</span>
                 </div>
               </div>
@@ -384,8 +425,7 @@
   <section class="portfolio-section" id="portfolio">
     <div class="container">
       <div class="section-head">
-        <div class="kicker">2. 物件一覧</div>
-        <h2 class="section-title">Danh sách bất động sản chọn lọc</h2>
+        <h2 class="section-title">Danh sách bất động sản</h2>
       </div>
 
       <!-- Nút lọc loại/khu vực dạng viên tròn (Giữ nguyên 4 tab hiện có) -->
@@ -393,7 +433,7 @@
         <button class="filter-btn active" data-filter="all" data-i18n="filter_all">Tất cả</button>
         <button class="filter-btn" data-filter="buy" data-i18n="filter_buy">Nhà bán · 売買</button>
         <button class="filter-btn" data-filter="rent-osaka" data-i18n="filter_rent_osaka">Thuê · Osaka</button>
-        <button class="filter-btn" data-filter="rent-kyoto" data-i18n="filter_rent_kyoto">Thuê · Kyoto</button>
+        <button class="filter-btn" data-filter="investor" data-i18n="filter_investor">Nhà đầu tư</button>
       </div>
 
       <!-- Bộ lọc theo tư duy người mua: Khoảng giá, Diện tích tối thiểu, Layout, Sắp xếp -->
@@ -469,8 +509,8 @@
   <section class="brand-banner">
     <div class="container">
       <div class="banner-frame">
-        <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1600&auto=format&fit=crop" alt="清水寺 — Kyoto, lúc hoàng hôn" loading="lazy">
-        <div class="banner-caption">清水寺 — Kyoto, lúc hoàng hôn</div>
+        <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1600&auto=format&fit=crop" alt="清水寺 · Kyoto, lúc hoàng hôn" loading="lazy">
+        <div class="banner-caption">清水寺 · Kyoto, lúc hoàng hôn</div>
       </div>
     </div>
   </section>
@@ -479,8 +519,7 @@
   <section class="guide-section" id="guide">
     <div class="container">
       <div class="section-head" style="margin-bottom: 32px;">
-        <div class="kicker">3. ノウハウ・ガイド · Cẩm nang &amp; Quy trình</div>
-        <h2 class="section-title serif">Lộ trình mua nhà &amp; Kinh nghiệm thực chiến</h2>
+        <h2 class="section-title serif">Quy trình mua nhà &amp; Chia sẻ kinh nghiệm</h2>
         <p style="font-size: 14.5px; color: var(--muted); margin-top: 6px; max-width: 1080px;">
           Toàn bộ hành trình từ lúc tìm kiếm, tính toán tài chính, làm việc với ngân hàng Nhật Bản đến khi nhận chìa khóa và hoàn tất khai thuế năm đầu.
         </p>
@@ -498,25 +537,24 @@
           <div class="process-step">
             <div class="step-num">02</div>
             <h3 class="step-title">Thẩm định vay sơ bộ</h3>
-            <p class="step-desc">Nộp hồ sơ 사전심사 (thẩm định trước) tại các ngân hàng lớn hoặc Flat 35 để chốt hạn mức và lãi suất ưu đãi.</p>
+            <p class="step-desc">Nộp hồ sơ thẩm định sơ bộ 事前審査 tại ngân hàng hoặc gói Flat 35 để biết trước hạn mức vay dự kiến. Lãi suất áp dụng chỉ chốt vào ngày giải ngân.</p>
           </div>
           <div class="process-step">
             <div class="step-num">03</div>
             <h3 class="step-title">Đặt mua &amp; hợp đồng</h3>
-            <p class="step-desc">Ký giấy đăng ký mua (買付証明書), giải thích thuyết minh quan trọng (重要事項説明) và ký hợp đồng mua bán chính thức.</p>
+            <p class="step-desc">Gửi đơn đặt mua (買付証明書), nghe giải thích trọng yếu (重要事項説明) và ký hợp đồng mua bán chính thức.</p>
           </div>
           <div class="process-step">
             <div class="step-num">04</div>
             <h3 class="step-title">Quyết toán &amp; nhận nhà</h3>
-            <p class="step-desc">Ngân hàng giải ngân quyết toán số tiền còn lại, công chứng viên làm thủ tục sang tên sổ đỏ (登記) và bàn giao chìa khóa.</p>
+            <p class="step-desc">Thanh toán số tiền còn lại (ngân hàng giải ngân nếu vay), luật sư tư pháp 司法書士 nộp hồ sơ đăng ký sang tên (登記) và bàn giao chìa khóa.</p>
           </div>
         </div>
 
         <!-- KHỐI XEM THÊM QUY TRÌNH CHI TIẾT 7 GIAI ĐOẠN (MỞ KHÓA BẰNG MÃ 2720) -->
         <div class="vip-process-trigger-wrap" id="vip-process-trigger-wrap">
           <div class="vip-process-trigger-info">
-            <div class="vip-process-trigger-kicker">ご契約者様限定ガイド · Lộ trình &amp; Checklist độc quyền</div>
-            <h3 class="vip-process-trigger-title serif">Quy trình thực chiến 7 giai đoạn (Trả thẳng &amp; Vay ngân hàng SMBC)</h3>
+            <h3 class="vip-process-trigger-title serif">Chi tiết quy trình mua nhà 7 giai đoạn (Trả thẳng hoặc Vay ngân hàng)</h3>
             <p class="vip-process-trigger-desc">
               Tài liệu hướng dẫn chi tiết từng bước: Giấy tờ &amp; tiền cần chuẩn bị (tiền cọc 手付金, tem thuế 収入印紙, 住民票...), các điều khoản bảo vệ tiền cọc và checklist bàn giao dành riêng cho khách hàng đã gặp gỡ tư vấn cùng BIG不動産.
             </p>
@@ -569,7 +607,7 @@
             <div>
               <span class="vip-unlocked-badge">✓ Đã mở khóa Cẩm nang Quy trình Khách hàng BIG不動産</span>
               <h3 class="serif" style="font-size: 23px; margin-top: 6px; color: var(--ink);">
-                Lộ trình mua nhà từ A–Z: Nhánh Vay Ngân Hàng &amp; Nhánh Trả Thẳng
+                Lộ trình mua nhà từ A đến Z: Nhánh Vay Ngân Hàng &amp; Nhánh Trả Thẳng
               </h3>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -589,12 +627,12 @@
           <!-- THANH CHỌN 2 NHÁNH: VAY NGÂN HÀNG (3B) vs TRẢ THẲNG (3A) -->
           <div class="vip-branch-switcher" role="tablist">
             <button type="button" class="vip-branch-btn active" id="vip-tab-loan" onclick="switchVipProcessBranch('loan')">
-              <strong>🏦 Nhánh 1: Mua nhà Vay ngân hàng (SMBC / Dân sinh / Flat 35)</strong>
+              <strong>Nhánh 1: Mua nhà Vay ngân hàng (SMBC / Dân sinh / Flat 35)</strong>
               <span>Có thẩm định 事前審査・本審査, bảo hiểm 団信, điều khoản bảo vệ cọc ローン特約 &amp; hoàn thuế 減税</span>
             </button>
             <button type="button" class="vip-branch-btn" id="vip-tab-cash" onclick="switchVipProcessBranch('cash')">
-              <strong>💴 Nhánh 2: Mua nhà Trả thẳng (Tiền mặt / Chuyển khoản)</strong>
-              <span>Rút gọn bước ngân hàng (2–4 tuần nhận nhà), tập trung chuẩn bị dòng tiền &amp; ngày quyết toán</span>
+              <strong>Nhánh 2: Mua nhà Trả thẳng (Tiền mặt / Chuyển khoản)</strong>
+              <span>Rút gọn bước ngân hàng (2 đến 4 tuần nhận nhà), tập trung chuẩn bị dòng tiền &amp; ngày quyết toán</span>
             </button>
           </div>
 
@@ -605,10 +643,10 @@
           <div class="vip-compare-wrap">
             <div class="kicker">比較まとめ · Phần B</div>
             <h4 class="serif" style="font-size: 20px; color: var(--ink); margin-bottom: 4px;">
-              Bảng so sánh nhanh: Trả thẳng vs Vay ngân hàng
+              Bảng so sánh nhanh: Trả thẳng và Vay ngân hàng
             </h4>
             <p style="font-size: 13.5px; color: var(--muted);">
-              Trả thẳng không “tốt hơn” vay và vay cũng không “khôn hơn” trả thẳng — khác biệt nằm ở chỗ bạn đang dư tiền mặt hay dư khả năng trả hằng tháng, và bạn chịu được loại rủi ro nào hơn.
+              Chọn trả thẳng hay vay ngân hàng tùy vào việc bạn đang sẵn tiền mặt hay có thu nhập ổn định hàng tháng, và bạn ưu tiên giữ vốn hay muốn mua nhanh.
             </p>
 
             <div class="keisan-table-scroll">
@@ -616,20 +654,20 @@
                 <thead>
                   <tr>
                     <th>Tiêu chí đối chiếu</th>
-                    <th>💴 Nhánh Trả thẳng (Tiền mặt)</th>
-                    <th>🏦 Nhánh Vay ngân hàng (住宅ローン)</th>
+                    <th>Nhánh Trả thẳng (Tiền mặt)</th>
+                    <th>Nhánh Vay ngân hàng (住宅ローン)</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td>Số bên tham gia</td>
-                    <td>Người mua – Bên bán – Luật sư tư pháp (司法書士)</td>
+                    <td>Người mua, Bên bán và Luật sư tư pháp (司法書士)</td>
                     <td>Thêm Ngân hàng, Công ty bảo lãnh (保証会社) và Bảo hiểm 団信</td>
                   </tr>
                   <tr>
-                    <td>Thời gian Ký → Bàn giao (tham khảo)</td>
-                    <td><strong>2–4 tuần</strong> (rất nhanh)</td>
-                    <td><strong>1–1,5 tháng</strong> (phụ thuộc tiến độ 本審査 &amp; ký vay)</td>
+                    <td>Thời gian từ lúc ký đến bàn giao (tham khảo)</td>
+                    <td><strong>2 đến 4 tuần</strong></td>
+                    <td><strong>1 đến 1,5 tháng</strong> (phụ thuộc tiến độ 本審査 và ký vay)</td>
                   </tr>
                   <tr>
                     <td>Chi phí chỉ có ở nhánh này</td>
@@ -638,13 +676,13 @@
                   </tr>
                   <tr>
                     <td>Rủi ro chính cần quản trị</td>
-                    <td>Dồn khoản tiền lớn một lần; rủi ro chậm trễ chuyển tiền quốc tế &amp; chứng minh nguồn tiền</td>
-                    <td>Trượt thẩm định chính thức — nhưng có <strong>ローン特約</strong> bảo vệ tiền cọc nếu nộp hồ sơ đúng hạn</td>
+                    <td>Dồn khoản tiền lớn một lần; nguy cơ chậm chuyển tiền quốc tế và chứng minh nguồn tiền</td>
+                    <td>Trượt thẩm định chính thức, nhưng có <strong>ローン特約</strong> bảo vệ tiền cọc nếu nộp hồ sơ đúng hạn</td>
                   </tr>
                   <tr>
-                    <td>Điểm mạnh lớn nhất</td>
-                    <td>Nhanh gọn, ít phí, vị thế thương lượng giá mạnh vì thanh toán chắc chắn</td>
-                    <td>Giữ lại tiền mặt dự phòng, tận dụng đòn bẩy lãi suất thấp, được hoàn thuế <strong>住宅ローン減税</strong> lớn những năm đầu</td>
+                    <td>Điểm lợi chính</td>
+                    <td>Nhanh gọn, ít phí, vị thế thương lượng giá thuận lợi nhờ thanh toán chắc chắn</td>
+                    <td>Giữ lại tiền mặt dự phòng, tận dụng lãi suất thấp và được hoàn thuế <strong>住宅ローン減税</strong> những năm đầu</td>
                   </tr>
                   <tr>
                     <td>Giấy tờ chuẩn bị thêm</td>
@@ -674,8 +712,8 @@
       <div class="guide-subblock" id="articles">
         <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 24px;">
           <div>
-            <h3 class="guide-subblock-title serif" style="margin-bottom: 4px;">4. Thư viện bài viết &amp; Kinh nghiệm thực chiến</h3>
-            <p style="font-size: 13.5px; color: var(--muted); margin: 0;">Các bài phân tích chuyên sâu về lãi suất biến động, quy tắc 5 năm, tiền cọc 手付金, bảo lãnh ngân hàng và mẹo giảm thuế 住宅ローン減税.</p>
+            <h3 class="guide-subblock-title serif" style="margin-bottom: 4px;">Blog chia sẻ kinh nghiệm</h3>
+            <p style="font-size: 13.5px; color: var(--muted); margin: 0;">Các bài viết về lãi suất biến động, quy tắc 5 năm, tiền cọc 手付金, công ty bảo lãnh và điều kiện giảm thuế 住宅ローン減税.</p>
           </div>
           <a href="articles.html" class="btn-outline-amber" style="padding: 7px 18px; font-size: 13px;">
             Xem tất cả bài viết →
@@ -713,8 +751,7 @@
       <div class="contact-grid">
         <!-- Cột trái: Các kênh liên hệ thật đọc từ config.js (kênh trống tự ẩn) -->
         <div class="contact-channels" id="contact-channels-container">
-          <div class="kicker">お問い合わせ</div>
-          <h2 class="section-title" style="margin-bottom: 12px;">Liên hệ trực tiếp với BIG不動産</h2>
+          <h2 class="section-title" style="margin-bottom: 12px;">Liên hệ</h2>
           <p style="font-size: 13.5px; color: var(--muted); margin-bottom: 14px;">
             Bấm trực tiếp vào kênh liên lạc bên dưới để gọi điện hoặc gửi tin nhắn tư vấn ngay.
           </p>
@@ -811,7 +848,7 @@
               <p><strong>1. Thông tin thu thập:</strong> BIG不動産株式会社 chỉ tiếp nhận các thông tin liên hệ do khách hàng chủ động cung cấp (họ tên, số điện thoại, ID liên lạc, nhu cầu tìm mua/thuê bất động sản).</p>
               <p><strong>2. Mục đích sử dụng:</strong> Dùng để phản hồi yêu cầu tư vấn, sắp xếp lịch xem nhà thực tế, hỗ trợ thẩm định hồ sơ vay ngân hàng và thủ tục pháp lý giao dịch bất động sản.</p>
               <p><strong>3. Cam kết bảo mật:</strong> Tuyệt đối không bán, chia sẻ hoặc cung cấp thông tin cá nhân của khách hàng cho bên thứ ba vì mục đích thương mại khi chưa có sự đồng ý của khách hàng (trừ trường hợp theo yêu cầu pháp luật Nhật Bản).</p>
-              <p id="footer-privacy-contact"><strong>4. Liên hệ về dữ liệu cá nhân:</strong> BIG不動産株式会社 — 〒577-0057 大阪府東大阪市足代新町4-12 テレビル5F.</p>
+              <p id="footer-privacy-contact"><strong>4. Liên hệ về dữ liệu cá nhân:</strong> BIG不動産株式会社 · 〒577-0057 大阪府東大阪市足代新町4-12 テレビル5F.</p>
             </div>
           </details>
         </div>
@@ -840,13 +877,29 @@
     </div>
   </div>
 
+  <!-- HỘP THOẠI PHÓNG TO ẢNH ALBUM KHÁCH HÀNG (LIGHTBOX) -->
+  <div class="dialog-overlay" id="album-lightbox" aria-hidden="true">
+    <div class="dialog-box album-lightbox-box">
+      <button type="button" class="album-lightbox-close" id="album-lightbox-close" aria-label="Đóng ảnh phóng to">×</button>
+      <div class="album-lightbox-stage">
+        <button type="button" class="album-lightbox-nav album-lightbox-nav--prev" id="album-lightbox-prev" aria-label="Ảnh trước">‹</button>
+        <img id="album-lightbox-img" src="assets/client-album/client-1.jpg" alt="Ảnh đồng hành cùng khách hàng">
+        <button type="button" class="album-lightbox-nav album-lightbox-nav--next" id="album-lightbox-next" aria-label="Ảnh tiếp theo">›</button>
+      </div>
+      <div class="album-lightbox-footer">
+        <span class="album-lightbox-caption" id="album-lightbox-caption">Tư vấn phương án &amp; phân tích hồ sơ</span>
+        <span class="album-lightbox-counter" id="album-lightbox-counter">1 / 4</span>
+      </div>
+    </div>
+  </div>
+
   <!-- THANH LIÊN HỆ DÍNH TRÊN DI ĐỘNG (Chỉ hiện ở màn hình <= 920px, tự ẩn khi mở Dialog hoặc cuộn tới #contact) -->
   <div class="mobile-sticky-bar is-hidden" id="mobile-sticky-bar" aria-label="Liên hệ nhanh trên di động">
     <!-- Render động từ window.SITE trong app.js -->
   </div>
 
   <script src="config.js?v=20261110z"></script>
-  <script src="i18n.js?v=20261114a"></script>
-  <script src="app.js?v=20261114a"></script>
+  <script src="i18n.js?v=20261115b"></script>
+  <script src="app.js?v=20261115e"></script>
 </body>
 </html>
